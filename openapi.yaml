@@ -1,0 +1,82 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/ALEXLJWOOD24/Codosseum/1.0.0
+info:
+  description: "\tcold with it"
+  version: "1.0.0"
+  title: Codosseum API
+  contact:
+    email: you@your-company.com
+  license:
+    name: AGPL
+    url: https://todo.com
+tags:
+  - name: games
+    description: Things to do with games
+  - name: developers
+    description: Operations available to regular developers
+paths:
+  /games:
+    post:
+      tags:
+        - games
+      operationId: createGame
+      description: Create a new game
+      responses:
+        '201':
+          description: new game created
+          
+        '400':
+          description: 'invalid input, object invalid'
+        '409':
+          description: If your IP address has already created a game in progress
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem'
+        description: Inventory item to add
+      summary: create a new game
+components:
+  schemas:
+    GameSettings:
+      type: object
+      properties:
+        allowedLanguages:
+          type: array
+          items: 
+            type: string
+          description: Which programming languages are allowed to be used for submissions. If omitted, all languages are allowed.
+          minItems: 1
+        
+        allowedGameModes:
+          type: array
+          items: 
+            type: string
+            enum: ["fastest", "reverse", "golf", "arcade"]
+          description: Which game modes should be played. Each game will select a random game mode from this array. If omitted, all game modes may be picked.
+          
+        maxPlayers:
+          type: integer
+          minimum: 2
+          default: 10
+          maximum: 50
+          description: Maximum player count for the game
+          
+        timeLimit:
+          type: integer
+          minimum: 60
+          maximum: 1800
+          default: 900
+          description: Time limit for the game, in seconds.
+        
+        maxWarmupTime:
+          type: integer
+          default: 60
+          minimum: 0
+          maximum: 300
+          description: Maximum warmup time for a game in seconds - that is, a timer that starts once 2 or more players have joined the game that delays the starting of the game to allow more players to join.
+      description: Settings for a Codosseum game
+    
