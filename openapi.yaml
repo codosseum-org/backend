@@ -4,7 +4,7 @@ servers:
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/ALEXLJWOOD24/Codosseum/1.0.0
 info:
-  description: "\tcold with it"
+  description: "cold with it"
   version: "1.0.0"
   title: Codosseum API
   contact:
@@ -36,8 +36,8 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/InventoryItem'
-        description: Inventory item to add
+              $ref: '#/components/schemas/GameSettings'
+        description: Settings for the new game
       summary: create a new game
 components:
   schemas:
