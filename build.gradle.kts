@@ -2,6 +2,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.0.1"
     id("io.micronaut.aot") version "4.0.1"
+    id("io.micronaut.openapi") version "4.0.1"
 }
 
 version = "0.1"
@@ -60,6 +61,16 @@ micronaut {
         optimizeClassLoading.set(true)
         deduceEnvironment.set(true)
         optimizeNetty.set(true)
+    }
+
+    openapi {
+        server(file("openapi.yaml")) {
+            apiPackageName = "org.developerden.codosseum.api"
+            modelPackageName = "org.developerden.codosseum.model"
+            useReactive = false
+            useAuth = false
+            useBeanValidation = false
+        }
     }
 }
 
