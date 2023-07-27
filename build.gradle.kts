@@ -35,11 +35,11 @@ java {
 
 tasks {
     dockerBuild {
-        images = ["${System.env.DOCKER_IMAGE ?: project.name}:$project.version"]
+        images.set(listOf("${System.getenv("DOCKER_IMAGE") ?: project.name}:$project.version"))
     }
 
     dockerBuildNative {
-        images = ["${System.env.DOCKER_IMAGE ?: project.name}:$project.version"]
+        images.set(listOf("${System.getenv("DOCKER_IMAGE") ?: project.name}:$project.version"))
     }
 }
 graalvmNative.toolchainDetection.set(false)
