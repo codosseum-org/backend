@@ -26,7 +26,7 @@ dependencies {
 
 
 application {
-    mainClass.set("org.developerden.Application")
+    mainClass.set("org.developerden.codosseum.Application")
 }
 java {
     sourceCompatibility = JavaVersion.toVersion("17")
