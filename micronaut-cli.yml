@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: org.developerden
+testFramework: junit
+sourceLanguage: java
+buildTool: gradle_kotlin
+features: [ app-name, github-workflow-ci, github-workflow-docker-registry, gradle, http-client-test, java, java-application, junit, logback, micronaut-aot, micronaut-build, netty-server, openapi, readme, serialization-jackson, shade, yaml, yaml-build ]
