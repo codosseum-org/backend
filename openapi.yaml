@@ -25,58 +25,394 @@ paths:
       operationId: createGame
       description: Create a new game
       responses:
-        '201':
+        "201":
           description: new game created
-          
-        '400':
-          description: 'invalid input, object invalid'
-        '409':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedGame"
+        "400":
+          description: "invalid input, object invalid"
+        "409":
           description: If your IP address has already created a game in progress
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GameSettings'
+              $ref: "#/components/schemas/GameSettings"
         description: Settings for the new game
-      summary: create a new game
+  /games/join:
+    post:
+      tags: [games]
+      operationId: joinGame
+      description: Join a game
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - joinCode
+              properties:
+                joinCode:
+                  type: string
+                  description: The join code for the game
+                username:
+                  type: string
+                  maxLength: 36
+                  description: The username to use in the game. If omitted, a random username will be generated.
+
+      responses:
+        "200":
+          description: Successfully joined the game
+          content:
+            application/json:
+              schema:
+                type: string
+                description: A submission key that can be used to submit code to the game
+        "404":
+          description: If the game does not exist
+        "409":
+          description: If the game is not in a joinable state,
+            or if the player has already joined the game (by IP address),
+            or if a username is provided and it is already taken
+
+  /games/leave:
+    post:
+      tags: [games]
+      operationId: leaveGame
+      description: Leave a game
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - joinCode
+              properties:
+                joinCode:
+                  type: string
+                  description: The join code for the game
+
+      responses:
+        "200":
+          description: Successfully left the game
+        "404":
+          description: If the game does not exist
+        "409":
+          description: If the player is not in the game, or it has already ended
+
+  /games/start:
+    post:
+      tags: [games]
+      operationId: startGame
+      description: Forcefully start a game, regardless of player-count and warmup time
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - adminKey
+              properties:
+                adminKey:
+                  type: string
+                  description: The admin key for the game
+
+      responses:
+        "200":
+          description: Successfully started the game
+        "404":
+          description: If the admin key refers to a nonexistent game
+        "409":
+          description: If the game is already started
+
+  /games/solutions/test:
+    post:
+      tags: [games, solutions]
+      operationId: testSolution
+      description: Test a given solution to a game's challenges, returning the test results without submitting the solution
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/Submission"
+              properties:
+                testNumbers:
+                  type: array
+                  items:
+                    type: integer
+                  description: The test numbers to run the code against. If omitted, all tests will be run.
+
+      responses:
+        "200":
+          description: Acknowledgement that the solution was received and is being tested, results will be sent via Server-Sent Events
+
+        "404":
+          description: If the given submissionToken refers to a nonexistent game
+
+        "409":
+          description:
+            If the game is not in a state where solutions can be tested,
+            or the player has already submitted a solution,
+            or the player is not in the game
+
+  /games/solutions/submit:
+    post:
+      tags: [games, solutions]
+      operationId: submitSolution
+      description: Submit a solution to a game's challenges
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Submission"
+
+      responses:
+        "200":
+          description: Acknowledgement that the solution was received and is being tested, results will be sent via Server-Sent Events. The submission token is invalidated and may not be used again.
+
+        "404":
+          description: If the given submissionToken refers to a nonexistent game
+
+        "409":
+          description:
+            If the game is not in a state where solutions can be submitted,
+            or the player has already submitted a solution,
+            or the player is not in the game
+
+  /games/info/{joinCode}:
+    get:
+      tags: [games]
+      operationId: getGameInfo
+      description: Get everything known about this game
+
+      parameters:
+        - in: path
+          name: joinCode
+          schema:
+            type: string
+            description: A join code for a game
+          required: true
+
+      responses:
+        "200":
+          description: Information about the game
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/InWarmupGameInfo"
+                  - $ref: "#/components/schemas/InProgressGameInfo"
+                  - $ref: "#/components/schemas/RoundEndedGameInfo"
+
 components:
   schemas:
+    Submission:
+      type: object
+      required:
+        - submissionToken
+        - language
+        - code
+      properties:
+        submissionToken:
+          type: string
+          description: A submission token for the game, obtained by joining the game
+
+        language:
+          type: string
+          description: The language of the solution attempt, as an identifier supported by Piston
+
+        code:
+          type: string
+          description: The code to test, which is assumed to be in the language specified
+
+    CreatedGame:
+      type: object
+      description: A newly created game
+      allOf: [$ref: "#/components/schemas/GameSettings"]
+      required:
+        - adminKey
+        - joinCode
+        # everything from GameSettings
+        - allowedLanguages
+        - allowedGameModes
+        - maxPlayers
+        - timeLimit
+        - maxWarmupTime
+
+      properties:
+        adminKey:
+          type: string
+          description: A key that can be used to perform admin actions on the game, such as starting it.
+        joinCode:
+          type: string
+          description: A code that can be used to join the game
+
+    InWarmupGameInfo:
+      type: object
+      description: Information about a game that has been created but not yet started, i.e. it is in its warmup phase
+      allOf:
+        - $ref: "#/components/schemas/GameSettings"
+        - $ref: "#/components/schemas/GameParticipants"
+      properties:
+        warmupEndTime:
+          type: string
+          format: date-time
+          description: When the warmup phase is currently scheduled to end, and the game starts. This may be interrupted if players leave, or if the game is started early by an admin
+
+    InProgressGameInfo:
+      type: object
+      description: Information about a game that has started and is in progress
+      allOf:
+        - $ref: "#/components/schemas/GameSettings"
+        - $ref: "#/components/schemas/GameParticipants"
+      properties:
+        startTime:
+          type: string
+          format: date-time
+          description: When the game started
+
+        endTime:
+          type: string
+          format: date-time
+          description: When the current round's time limit will end
+
+        gameMode:
+          type: string
+          enum: ["fastest", "reverse", "golf", "arcade"]
+          description: Which game mode is being played
+
+        totalRounds:
+          type: integer
+          minimum: 1
+          description: How many rounds will be played in this game
+
+        currentRound:
+          type: integer
+          minimum: 1
+          description: "Which round is currently being played. Invariant: 1 <= currentRound <= totalRounds"
+
+        finishedParticipants:
+          type: array
+          description: Information about players who have finished the current round
+          items:
+            $ref: "#/components/schemas/GameParticipantSubmission"
+
+    RoundEndedGameInfo:
+      type: object
+      description: Information about a game whose current round has ended. A new round may be scheduled to start, or the game may be over.
+      allOf:
+        - $ref: "#/components/schemas/GameSettings"
+        - $ref: "#/components/schemas/GameParticipants"
+
+      properties:
+        winner:
+          type: string
+          description: The name of the player who won the game
+
+        submissions:
+          type: array
+          description: Information about the submissions made by each player in the game
+          items:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/GameParticipantSubmission"
+
+            properties:
+              code:
+                type: string
+                description: The code that was submitted. If omitted, the player has chosen to hide their code.
+
+        gameFinished:
+          type: boolean
+          description:
+            Whether the game is complete - i.e. there are no more rounds to be played.
+            If this is false, clients should assume that a new "Game Started" event will be sent soon.
+
+    GameParticipants:
+      type: object
+      description: Information about the participants in a game
+
+      required:
+        - participants
+        - admin
+
+      properties:
+        participants:
+          type: array
+          items:
+            type: string
+          description: The names of the players currently in the game
+
+        admin:
+          type: string
+          description: The name of the player who created the game
+
+    GameParticipantSubmission:
+      type: object
+      description: Information about a player's submission in a game
+      required: [name, language]
+      properties:
+        name:
+          type: string
+          description: The name of the player
+        language:
+          type: string
+          description: The language of the player's solution
+        correctPercentage:
+          type: number
+          description: The percentage of challenges the player solved correctly. If omitted, the code is still being tested.
+
     GameSettings:
       type: object
+      description: Settings for a Codosseum game
+
+      required:
+        - allowedLanguages
+        - allowedGameModes
+        - maxPlayers
+        - timeLimit
+        - maxWarmupTime
       properties:
         allowedLanguages:
           type: array
-          items: 
+          items:
             type: string
           description: Which programming languages are allowed to be used for submissions. If omitted, all languages are allowed.
           minItems: 1
-        
+
         allowedGameModes:
           type: array
-          items: 
+          items:
             type: string
             enum: ["fastest", "reverse", "golf", "arcade"]
           description: Which game modes should be played. Each game will select a random game mode from this array. If omitted, all game modes may be picked.
-          
+
         maxPlayers:
           type: integer
           minimum: 2
           default: 10
           maximum: 50
           description: Maximum player count for the game
-          
+
         timeLimit:
           type: integer
           minimum: 60
           maximum: 1800
           default: 900
           description: Time limit for the game, in seconds.
-        
+
         maxWarmupTime:
           type: integer
           default: 60
           minimum: 0
           maximum: 300
           description: Maximum warmup time for a game in seconds - that is, a timer that starts once 2 or more players have joined the game that delays the starting of the game to allow more players to join.
-      description: Settings for a Codosseum game
-    
