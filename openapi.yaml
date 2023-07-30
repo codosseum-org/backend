@@ -126,6 +126,8 @@ paths:
                   key:
                     type: string
                     description: A submission key that can be used to submit code to the game
+        "400":
+          description: Malformed request body
         "404":
           description: If the game does not exist
         "409":
@@ -171,18 +173,6 @@ paths:
       operationId: startGame
       description: Forcefully start a game, regardless of player-count and warmup time
 
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - adminKey
-              properties:
-                adminKey:
-                  type: string
-                  description: The admin key for the game
-
       responses:
         "204":
           description: Successfully started the game. Further info will be received via server-sent events.
@@ -191,7 +181,10 @@ paths:
         "409":
           description: If the game is already started
 
-  /games/solutions/test:
+  /games/{id}/solutions/test:
+    parameters:
+      - $ref: "#/components/parameters/pathGameId"
+
     post:
       tags: [games, solutions]
       operationId: testSolution
@@ -209,14 +202,19 @@ paths:
                   type: array
                   items:
                     type: integer
-                  description: The test numbers to run the code against. If omitted, all tests will be run.
+                  description: The test numbers (public tests) to run the code against. If omitted, all tests will be run.
 
       responses:
         "200":
+          # Should we introduce a mechanism to cancel tests? Or return some sort of ID here that will be included in the corresponding SSEs
+          # to differentiate parallel test runs from one another?
           description: Acknowledgement that the solution was received and is being tested, results will be sent via Server-Sent Events
 
+        "400":
+          description: malformed request body
+
         "404":
-          description: If the given submissionToken refers to a nonexistent game
+          description: game does not exist
 
         "409":
           description:
@@ -224,7 +222,7 @@ paths:
             or the player has already submitted a solution,
             or the player is not in the game
 
-  /games/solutions/submit:
+  /games/{id}/solutions/submit:
     post:
       tags: [games, solutions]
       operationId: submitSolution
@@ -237,11 +235,14 @@ paths:
               $ref: "#/components/schemas/Submission"
 
       responses:
-        "200":
+        "204":
           description: Acknowledgement that the solution was received and is being tested, results will be sent via Server-Sent Events. The submission token is invalidated and may not be used again.
 
+        "400":
+          description: malformed request body
+
         "404":
-          description: If the given submissionToken refers to a nonexistent game
+          description: game does not exist
 
         "409":
           description:
