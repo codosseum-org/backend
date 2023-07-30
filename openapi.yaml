@@ -332,6 +332,12 @@ paths:
                     - type: object
                       properties:
                         event:
+                          const: gameUpdate
+                        data:
+                          $ref: "#/components/schemas/GameUpdateEvent"
+                    - type: object
+                      properties:
+                        event:
                           const: playerJoin
                         data:
                           $ref: "#/components/schemas/PlayerJoinEvent"
@@ -348,11 +354,13 @@ paths:
                         data:
                           $ref: "#/components/schemas/RoundStartEvent"
                     - type: object
+                      description: |
+                        This event doesn't have data associated with it because all relevant data is received
+                        before this event through PlayerSubmitEvent, PlayerFinishEvent and PlayerCodeRevealEvent.
+                        To get everything at once proactively, GET /games/{id}/rounds/results can be used.
                       properties:
                         event:
-                          const: roundEnd
-                        data:
-                          $ref: "#/components/schemas/RoundEndEvent"
+                          const: roundOver
                     - type: object
                       properties:
                         event:
@@ -383,6 +391,12 @@ paths:
                           const: sync
                         data:
                           $ref: "#/components/schemas/SyncEvent"
+                    - type: object
+                      properties:
+                        event:
+                          const: gameOver
+                        data:
+                          $ref: "#/components/schemas/GameOverEvent"
         "401":
           description: Authentication (game key) is provided but it is not valid for this game. This is *not* returned if *no* authentication is provided.
         "409":
