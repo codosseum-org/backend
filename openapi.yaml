@@ -269,7 +269,7 @@ paths:
   # In the path definition below, they're described using OAS but clients probably can't rely on tooling to implement this for them.
   # The event stram is described as an array whose items are of "one of" the event types.
   # (Inspiration taken from https://github.com/OAI/OpenAPI-Specification/issues/396#issuecomment-894718960)
-  # The events themselves are encoded as JSON.
+  # Event IDs may be sent as well, even though they're not specified here. The data section of the events is always encoded as JSON.
   /games/{id}/events:
     parameters:
       - $ref: "#/components/parameters/pathGameId"
@@ -294,15 +294,60 @@ paths:
                 format: event-stream
                 items:
                   oneOf:
-                    - $ref: "#/components/schemas/PlayerJoinEvent"
-                    - $ref: "#/components/schemas/PlayerLeaveEvent"
-                    - $ref: "#/components/schemas/RoundStartEvent"
-                    - $ref: "#/components/schemas/RoundEndEvent"
-                    - $ref: "#/components/schemas/PlayerSubmitEvent"
-                    - $ref: "#/components/schemas/PlayerCodeRevealEvent"
-                    - $ref: "#/components/schemas/PlayerFinishEvent"
-                    - $ref: "#/components/schemas/TestResultEvent"
-                    - $ref: "#/components/schemas/SyncEvent"
+                    - type: object
+                      properties:
+                        event:
+                          const: playerJoin
+                        data:
+                          $ref: "#/components/schemas/PlayerJoinEvent"
+                    - type: object
+                      properties:
+                        event:
+                          const: playerLeave
+                        data:
+                          $ref: "#/components/schemas/PlayerLeaveEvent"
+                    - type: object
+                      properties:
+                        event:
+                          const: roundStart
+                        data:
+                          $ref: "#/components/schemas/RoundStartEvent"
+                    - type: object
+                      properties:
+                        event:
+                          const: roundEnd
+                        data:
+                          $ref: "#/components/schemas/RoundEndEvent"
+                    - type: object
+                      properties:
+                        event:
+                          const: playerSubmit
+                        data:
+                          $ref: "#/components/schemas/PlayerSubmitEvent"
+                    - type: object
+                      properties:
+                        event:
+                          const: playerCodeReveal
+                        data:
+                          $ref: "#/components/schemas/PlayerCodeRevealEvent"
+                    - type: object
+                      properties:
+                        event:
+                          const: playerFinish
+                        data:
+                          $ref: "#/components/schemas/PlayerFinishEvent"
+                    - type: object
+                      properties:
+                        event:
+                          const: testResult
+                        data:
+                          $ref: "#/components/schemas/TestResultEvent"
+                    - type: object
+                      properties:
+                        event:
+                          const: sync
+                        data:
+                          $ref: "#/components/schemas/SyncEvent"
         "401":
           description: Authentication (game key) is provided but it is not valid for this game. This is *not* returned if *no* authentication is provided.
         "409":
