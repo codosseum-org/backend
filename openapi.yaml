@@ -40,6 +40,14 @@ paths:
               $ref: "#/components/schemas/GameSettings"
         description: Settings for the new game
   /games/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: Game ID (returned from creating game)
+        required: true
+        schema:
+          type: string
+
     get:
       operationId: getGameInfo
       summary: Get everything known about a game
@@ -95,7 +103,7 @@ paths:
         "404":
           description: game does not exist
 
-
+  /games/{id}/participants:
     parameters:
       - name: id
         in: path
@@ -104,7 +112,6 @@ paths:
         schema:
           type: string
 
-  /games/join:
     post:
       tags: [games]
       operationId: joinGame
@@ -114,17 +121,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - joinCode
-              properties:
-                joinCode:
-                  type: string
-                  description: The join code for the game
-                username:
-                  type: string
-                  maxLength: 36
-                  description: The username to use in the game. If omitted, a random username will be generated.
+              $ref: "#/components/schemas/GameParticipant"
 
       responses:
         "200":
@@ -132,14 +129,31 @@ paths:
           content:
             application/json:
               schema:
-                type: string
-                description: A submission key that can be used to submit code to the game
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    description: A submission key that can be used to submit code to the game
         "404":
           description: If the game does not exist
         "409":
-          description: If the game is not in a joinable state,
+          description: |
+            If the game is not in a joinable state,
             or if the player has already joined the game (by IP address),
             or if a username is provided and it is already taken
+    get:
+      operationId: getGameParticipants
+      description: Get list of participants
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameParticipants"
+
 
   /games/leave:
     post:
@@ -376,6 +390,16 @@ components:
             Whether the game is complete - i.e. there are no more rounds to be played.
             If this is false, clients should assume that a new "Game Started" event will be sent soon.
 
+    GameParticipant:
+      type: object
+      description: Participant object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          maxLength: 36
+
     GameParticipants:
       type: object
       description: Information about the participants in a game
@@ -388,7 +412,7 @@ components:
         participants:
           type: array
           items:
-            type: string
+            $ref: "#/components/schemas/GameParticipant"
           description: The names of the players currently in the game
 
         admin:
