@@ -41,12 +41,7 @@ paths:
         description: Settings for the new game
   /games/{id}:
     parameters:
-      - name: id
-        in: path
-        description: Game ID (returned from creating game)
-        required: true
-        schema:
-          type: string
+      - $ref: "#/components/parameters/pathGameId"
 
     get:
       operationId: getGameInfo
@@ -105,12 +100,7 @@ paths:
 
   /games/{id}/participants:
     parameters:
-      - name: id
-        in: path
-        description: Game ID (returned from creating game)
-        required: true
-        schema:
-          type: string
+      - $ref: "#/components/parameters/pathGameId"
 
     post:
       tags: [games]
@@ -154,32 +144,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/GameParticipants"
 
+  /games/{id}/participants/@self:
+    parameters:
+      - $ref: "#/components/parameters/pathGameId"
 
-  /games/leave:
-    post:
-      tags: [games]
+    delete:
       operationId: leaveGame
       description: Leave a game
 
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - joinCode
-              properties:
-                joinCode:
-                  type: string
-                  description: The join code for the game
-
       responses:
-        "200":
-          description: Successfully left the game
+        "204":
+          description: Successfully left game
+        "401":
+          description: Not authenticated with a submission key
+        "409":
+          description: Not a participant of this game (anymore)
         "404":
           description: If the game does not exist
-        "409":
-          description: If the player is not in the game, or it has already ended
 
   /games/start:
     post:
@@ -267,6 +248,14 @@ paths:
 
 
 components:
+  parameters:
+    pathGameId:
+      in: path
+      name: id
+      type: string
+      required: true
+      description: Game ID (returned from creating a game)
+
   schemas:
     Submission:
       type: object
