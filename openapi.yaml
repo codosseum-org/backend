@@ -44,6 +44,7 @@ paths:
       - $ref: "#/components/parameters/pathGameId"
 
     get:
+      tags: [games]
       operationId: getGameInfo
       summary: Get everything known about a game
       responses:
@@ -60,6 +61,7 @@ paths:
           description: game does not exist
 
     patch:
+      tags: [games]
       operationId: updateGame
       summary: Update game settings
       description: (Partially) updates the settings of an existing game. This is only possible during the warmup phase of the game.
@@ -85,6 +87,7 @@ paths:
           description: game does not exist
 
     delete:
+      tags: [games]
       operationId: deleteGame
       summary: Delete a game
       description: Can be used by the admin of a game to delete it while in warmup.
@@ -136,6 +139,7 @@ paths:
             or if the player has already joined the game (by IP address),
             or if a username is provided and it is already taken
     get:
+      tags: [games]
       operationId: getGameParticipants
       description: Get list of participants
       responses:
@@ -151,6 +155,7 @@ paths:
       - $ref: "#/components/parameters/pathGameId"
 
     delete:
+      tags: [games]
       operationId: leaveGame
       description: Leave a game
 
