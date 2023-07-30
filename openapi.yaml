@@ -1,17 +1,15 @@
-openapi: 3.0.0
+openapi: 3.0.3
 servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/ALEXLJWOOD24/Codosseum/1.0.0
 info:
-  description: "cold with it"
-  version: "1.0.0"
+  description: "This document specifies the HTTP API of a codosseum backend server."
+  version: "0.1.0"
   title: Codosseum API
-  contact:
-    email: you@your-company.com
   license:
-    name: AGPL
-    url: https://todo.com
+    name: Affero General Public License 3.0 or later
+    identifier: AGPL-3.0-or-later
 tags:
   - name: games
     description: Things to do with games
