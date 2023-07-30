@@ -293,7 +293,16 @@ paths:
                 type: array
                 format: event-stream
                 items:
-                  oneOf: []
+                  oneOf:
+                    - $ref: "#/components/schemas/PlayerJoinEvent"
+                    - $ref: "#/components/schemas/PlayerLeaveEvent"
+                    - $ref: "#/components/schemas/RoundStartEvent"
+                    - $ref: "#/components/schemas/RoundEndEvent"
+                    - $ref: "#/components/schemas/PlayerSubmitEvent"
+                    - $ref: "#/components/schemas/PlayerCodeRevealEvent"
+                    - $ref: "#/components/schemas/PlayerFinishEvent"
+                    - $ref: "#/components/schemas/TestResultEvent"
+                    - $ref: "#/components/schemas/SyncEvent"
         "401":
           description: Authentication (game key) is provided but it is not valid for this game. This is *not* returned if *no* authentication is provided.
         "409":
@@ -325,6 +334,28 @@ components:
         type: string
 
   schemas:
+
+    # Events
+    PlayerJoinEvent:
+      type: object
+    PlayerLeaveEvent:
+      type: object
+    RoundStartEvent:
+      type: object
+    RoundEndEvent:
+      type: object
+    PlayerSubmitEvent:
+      type: object
+    PlayerCodeRevealEvent:
+      type: object
+    PlayerFinishEvent:
+      type: object
+    TestResultEvent:
+      type: object
+    SyncEvent:
+      type: object
+
+    # Other
     Submission:
       type: object
       required:
