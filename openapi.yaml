@@ -526,12 +526,6 @@ components:
       type: object
       description: Settings for a Codosseum game
 
-      required:
-        - allowedLanguages
-        - allowedGameModes
-        - maxPlayers
-        - timeLimit
-        - maxWarmupTime
       properties:
         allowedLanguages:
           type: array
