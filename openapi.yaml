@@ -246,9 +246,16 @@ paths:
 
       responses:
         "200":
-          # Should we introduce a mechanism to cancel tests? Or return some sort of ID here that will be included in the corresponding SSEs
-          # to differentiate parallel test runs from one another?
+          # Should we introduce a mechanism to cancel tests?
           description: Acknowledgement that the solution was received and is being tested, results will be sent via Server-Sent Events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  testId:
+                    type: string
+                    description: An string to allow clients to associate future incoming test results with which request they respond to.
 
         "400":
           description: malformed request body
