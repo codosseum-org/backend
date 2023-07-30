@@ -223,6 +223,8 @@ paths:
             or the player is not in the game
 
   /games/{id}/solutions/submit:
+    parameters:
+      - $ref: "#/components/parameters/pathGameId"
     post:
       tags: [games, solutions]
       operationId: submitSolution
@@ -256,9 +258,10 @@ components:
     pathGameId:
       in: path
       name: id
-      type: string
       required: true
       description: Game ID (returned from creating a game)
+      schema:
+        type: string
 
   schemas:
     Submission:
