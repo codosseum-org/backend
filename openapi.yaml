@@ -66,7 +66,7 @@ paths:
       summary: Update game settings
       description: (Partially) updates the settings of an existing game. This is only possible during the warmup phase of the game.
       security:
-        gameKey: [admin]
+        - gameKey: [admin]
       requestBody:
         content:
           application/json:
@@ -94,7 +94,7 @@ paths:
       summary: Delete a game
       description: Can be used by the admin of a game to delete it while in warmup.
       security:
-        gameKey: [admin]
+        - gameKey: [admin]
       responses:
         "204":
           description: Sucessfully deleted
@@ -163,7 +163,7 @@ paths:
       operationId: leaveGame
       description: Leave a game
       security:
-        gameKey: []
+        - gameKey: []
       responses:
         "204":
           description: Successfully left game
@@ -183,7 +183,7 @@ paths:
       operationId: startGame
       description: Forcefully start a game, regardless of player-count and warmup time
       security:
-        gameKey: [admin]
+        - gameKey: [admin]
       responses:
         "204":
           description: Successfully started the game. Further info will be received via server-sent events.
@@ -201,7 +201,7 @@ paths:
       operationId: testSolution
       description: Test a given solution to a game's challenges, returning the test results without submitting the solution
       security:
-        gameKey: []
+        - gameKey: []
       requestBody:
         content:
           application/json:
@@ -242,7 +242,7 @@ paths:
       operationId: submitSolution
       description: Submit a solution to a game's challenges
       security:
-        gameKey: []
+        - gameKey: []
       requestBody:
         content:
           application/json:
@@ -264,6 +264,41 @@ paths:
             If the game is not in a state where solutions can be submitted,
             or the player has already submitted a solution,
             or the player is not in the game
+
+  # Server-sent events (SSE) are a crucial part of this API.
+  # In the path definition below, they're described using OAS but clients probably can't rely on tooling to implement this for them.
+  # The event stram is described as an array whose items are of "one of" the event types.
+  # (Inspiration taken from https://github.com/OAI/OpenAPI-Specification/issues/396#issuecomment-894718960)
+  # The events themselves are encoded as JSON.
+  /games/{id}/events:
+    parameters:
+      - $ref: "#/components/parameters/pathGameId"
+    get:
+      tags: [games]
+      operationId: subscribeToGameEvents
+      summary: Receive events relating to a game
+      description: |
+        You should use a tool specifically for server-sent events for interacting with this endpoint.
+        Authentication with a *game key* is optional - if a game key for the specified game is provided,
+        the server will send events that are exclusive to the corresponding participant, such as test results.
+      security:
+        - gameKey: []
+        - {}
+      responses:
+        "200":
+          description: Success - events will be sent.
+          content:
+            text/event-stream:
+              schema:
+                type: array
+                format: event-stream
+                items:
+                  oneOf: []
+        "401":
+          description: Authentication (game key) is provided but it is not valid for this game. This is *not* returned if *no* authentication is provided.
+        "409":
+          description: Game is already over.
+
 
 
 components:
