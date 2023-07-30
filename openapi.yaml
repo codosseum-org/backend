@@ -162,7 +162,10 @@ paths:
         "404":
           description: If the game does not exist
 
-  /games/start:
+  /games/{id}/start:
+    parameters:
+      - $ref: "#/components/parameters/pathGameId"
+
     post:
       tags: [games]
       operationId: startGame
@@ -181,10 +184,10 @@ paths:
                   description: The admin key for the game
 
       responses:
-        "200":
-          description: Successfully started the game
+        "204":
+          description: Successfully started the game. Further info will be received via server-sent events.
         "404":
-          description: If the admin key refers to a nonexistent game
+          description: game does not exist
         "409":
           description: If the game is already started
 
