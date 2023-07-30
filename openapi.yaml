@@ -65,6 +65,8 @@ paths:
       operationId: updateGame
       summary: Update game settings
       description: (Partially) updates the settings of an existing game. This is only possible during the warmup phase of the game.
+      security:
+        gameKey: [admin]
       requestBody:
         content:
           application/json:
@@ -91,6 +93,8 @@ paths:
       operationId: deleteGame
       summary: Delete a game
       description: Can be used by the admin of a game to delete it while in warmup.
+      security:
+        gameKey: [admin]
       responses:
         "204":
           description: Sucessfully deleted
@@ -158,7 +162,8 @@ paths:
       tags: [games]
       operationId: leaveGame
       description: Leave a game
-
+      security:
+        gameKey: []
       responses:
         "204":
           description: Successfully left game
@@ -177,7 +182,8 @@ paths:
       tags: [games]
       operationId: startGame
       description: Forcefully start a game, regardless of player-count and warmup time
-
+      security:
+        gameKey: [admin]
       responses:
         "204":
           description: Successfully started the game. Further info will be received via server-sent events.
@@ -194,7 +200,8 @@ paths:
       tags: [games, solutions]
       operationId: testSolution
       description: Test a given solution to a game's challenges, returning the test results without submitting the solution
-
+      security:
+        gameKey: []
       requestBody:
         content:
           application/json:
@@ -234,7 +241,8 @@ paths:
       tags: [games, solutions]
       operationId: submitSolution
       description: Submit a solution to a game's challenges
-
+      security:
+        gameKey: []
       requestBody:
         content:
           application/json:
@@ -259,6 +267,19 @@ paths:
 
 
 components:
+  securitySchemes:
+    gameKey:
+      type: apiKey
+      description: |
+        A key belonging to a participant of a game.
+        Is used to identify participants when they perform actions relating to themselves,
+        such as submitting a solution or leaving their game.
+
+        Game keys can be either *admin* (role "admin") or *regular* keys (no roles).
+        An admin key is given to the creator of a game and enables management of the game.
+      name: Authorization
+      in: header
+
   parameters:
     pathGameId:
       in: path
