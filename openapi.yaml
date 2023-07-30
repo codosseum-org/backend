@@ -56,6 +56,46 @@ paths:
         "404":
           description: game does not exist
 
+    patch:
+      operationId: updateGame
+      summary: Update game settings
+      description: (Partially) updates the settings of an existing game. This is only possible during the warmup phase of the game.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GameSettings"
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameSettings"
+        "400":
+          description: malformed request body
+        "401":
+          description: No valid key provided
+        "403":
+          description: Key doesn't have admin privileges (cannot update game)
+        "404":
+          description: game does not exist
+
+    delete:
+      operationId: deleteGame
+      summary: Delete a game
+      description: Can be used by the admin of a game to delete it while in warmup.
+      responses:
+        "204":
+          description: Sucessfully deleted
+        "401":
+          description: No valid key provided
+        "403":
+          description: Key doesn't have admin privileges
+        "404":
+          description: game does not exist
+
+
     parameters:
       - name: id
         in: path
