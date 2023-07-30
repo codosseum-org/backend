@@ -192,6 +192,34 @@ paths:
         "409":
           description: If the game is already started
 
+  /games/{id}/template:
+    parameters:
+      - $ref: "#/components/parameters/pathGameId"
+
+    get:
+      tags: [games]
+      operationId: getCodeTemplate
+      description: Get a code template for the current challenge for the specified programming language
+      parameters:
+        - name: lang
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Template created and sent successfully
+          content:
+            text/plain:
+              description: the code
+        "400":
+          description: invalid language
+        "404":
+          description: game does not exist
+        "409":
+          description: no active round in this game, therefore no template available
+
+
   /games/{id}/solutions/test:
     parameters:
       - $ref: "#/components/parameters/pathGameId"
