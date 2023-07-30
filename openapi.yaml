@@ -39,6 +39,31 @@ paths:
             schema:
               $ref: "#/components/schemas/GameSettings"
         description: Settings for the new game
+  /games/{id}:
+    get:
+      operationId: getGameInfo
+      summary: Get everything known about a game
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/InWarmupGameInfo"
+                  - $ref: "#/components/schemas/InProgressGameInfo"
+                  - $ref: "#/components/schemas/RoundEndedGameInfo"
+        "404":
+          description: game does not exist
+
+    parameters:
+      - name: id
+        in: path
+        description: Game ID (returned from creating game)
+        required: true
+        schema:
+          type: string
+
   /games/join:
     post:
       tags: [games]
@@ -186,30 +211,6 @@ paths:
             or the player has already submitted a solution,
             or the player is not in the game
 
-  /games/info/{joinCode}:
-    get:
-      tags: [games]
-      operationId: getGameInfo
-      description: Get everything known about this game
-
-      parameters:
-        - in: path
-          name: joinCode
-          schema:
-            type: string
-            description: A join code for a game
-          required: true
-
-      responses:
-        "200":
-          description: Information about the game
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/components/schemas/InWarmupGameInfo"
-                  - $ref: "#/components/schemas/InProgressGameInfo"
-                  - $ref: "#/components/schemas/RoundEndedGameInfo"
 
 components:
   schemas:
