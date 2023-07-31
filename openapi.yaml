@@ -50,8 +50,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GameSettings"
-        description: Settings for the new game
+              type: object
+              description: Settings for the new game
+              allOf:
+                - $ref: "#/components/schemas/GameSettings"
+              properties:
+                allowedGameModes:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/GameMode"
+                    description: |
+                      If `gameMode` is not given, the new game will select a random game mode from this array.
+                      If both this array and the `gameMode` option are omitted, a game mode will be picked from all available game modes.
   /games/{id}:
     parameters:
       - $ref: "#/components/parameters/pathGameId"
@@ -717,7 +727,7 @@ components:
       description: Information about a game
       allOf:
         - $ref: "#/components/schemas/GameSettings"
-      required: [players, state, allowedLanguages, allowedGameModes, maxPlayers, timeLimit, maxWarmupTime]
+      required: [players, state, allowedLanguages, gameMode, maxPlayers, timeLimit, maxWarmupTime]
       properties:
         id:
           type: string
@@ -725,9 +735,6 @@ components:
         state:
           type: string
           description: game state. One of "warmup", "inProgress", "roundOver", "gameOver"
-        gameMode:
-          type: string
-          description: Game mode. Absent if no game mode has been determined yet ("warmup").
         timeLeft:
           type: integer
           description: Time left on the clock for the current game state. If state is "gameOver", this value is absent
@@ -774,6 +781,11 @@ components:
           type: string
           description: The name of the player who created the game
 
+    GameMode:
+      type: string
+      enum: ["fastest", "reverse", "golf", "arcade", "battleRoyale"]
+      description: A game mode supported by codosseum
+
     GameSettings:
       type: object
       description: Settings for a Codosseum game
@@ -786,12 +798,9 @@ components:
           description: Which programming languages are allowed to be used for submissions. If omitted, all languages are allowed.
           minItems: 1
 
-        allowedGameModes:
-          type: array
-          items:
-            type: string
-            enum: ["fastest", "reverse", "golf", "arcade"]
-          description: Which game modes should be played. Each game will select a random game mode from this array. If omitted, all game modes may be picked.
+        gameMode:
+          description: Game mode of this game
+          $ref: "#/components/schemas/GameMode"
 
         maxPlayers:
           type: integer
