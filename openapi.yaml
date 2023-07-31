@@ -25,10 +25,23 @@ paths:
       responses:
         "201":
           description: new game created
+          headers:
+            Location:
+              description: URL of the newly created game
+              schema:
+                type: string
+                format: uri-reference
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreatedGame"
+                type: object
+                properties:
+                  adminKey:
+                    type: string
+                    description: Key to manage the game and participate
+                  id:
+                    type: string
+                    description: ID of the newly created game
         "400":
           description: "invalid input, object invalid"
         "409":
