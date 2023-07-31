@@ -112,5 +112,3 @@ See [docker/login-action for OCIR](https://github.com/docker/login-action#oci-or
 - [Micronaut OpenAPI Support documentation](https://micronaut-projects.github.io/micronaut-openapi/latest/guide/index.html)
 
 - [https://www.openapis.org](https://www.openapis.org)
-
-
