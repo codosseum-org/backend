@@ -1,3 +1,7 @@
+<!---
+SPDX-FileCopyrightText: 2023 JohnnyJayJay
+SPDX-License-Identifier: CC-BY-4.0
+-->
 # codosseum
 
 *codosseum* is an open platform for engaging in competitive coding against other people.

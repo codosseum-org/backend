@@ -1,3 +1,7 @@
+<!---
+SPDX-FileCopyrightText: Micronaut Foundation
+SPDX-License-Identifier: Apache-2.0
+-->
 ## Micronaut 4.0.1 Documentation
 
 - [User Guide](https://docs.micronaut.io/4.0.1/guide/index.html)

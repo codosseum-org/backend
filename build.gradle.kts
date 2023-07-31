@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2023 Alex Wood
+// SPDX-License-Identifier: AGPL-3.0-or-later
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.0.1"
