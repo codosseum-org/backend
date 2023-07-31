@@ -1,0 +1,27 @@
+name: compliance tasks
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+permissions:
+  contents: read
+
+jobs:
+  reuse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: REUSE Compliance check
+        uses: fsfe/reuse-action@v2
+  openapi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: OpenAPI Compliance check
+        uses: vibhav-jain/spectral-action/@v2.6
+        with:
+          file_path: openapi.yaml
