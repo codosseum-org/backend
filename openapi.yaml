@@ -220,8 +220,7 @@ paths:
         "200":
           description: Template created and sent successfully
           content:
-            text/plain:
-              description: the code
+            text/plain: {}
         "400":
           description: invalid language
         "404":
@@ -244,7 +243,7 @@ paths:
       parameters:
         - name: testNumbers
           in: query
-          descriptions: The test numbers (public tests) to run the code against. If omitted, all tests will be run.
+          description: The test numbers (public tests) to run the code against. If omitted, all tests will be run.
           schema:
             type: array
             items:
