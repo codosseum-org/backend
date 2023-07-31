@@ -627,8 +627,8 @@ components:
       description: Sent to synchronise clock and game state between server and clients.
       properties:
         state:
-          type: string
-          description: Current game state (one of "warmup", "inProgress", "roundOver", "gameOver")
+          $ref: "#/components/schemas/GameState"
+          description: Current game state
         timeLeft:
           type: integer
           description: Time left in seconds until "next thing" (warmup countdown, round timer, next rount countdown)
@@ -733,8 +733,8 @@ components:
           type: string
           description: Game ID
         state:
-          type: string
-          description: game state. One of "warmup", "inProgress", "roundOver", "gameOver"
+          $ref: "#/components/schemas/GameState"
+          description: current game state
         timeLeft:
           type: integer
           description: Time left on the clock for the current game state. If state is "gameOver", this value is absent
@@ -780,6 +780,11 @@ components:
         admin:
           type: string
           description: The name of the player who created the game
+
+    GameState:
+      type: string
+      enum: ["warmup", "inProgress", "roundOver", "gameOver"]
+      description: The available game states
 
     GameMode:
       type: string
