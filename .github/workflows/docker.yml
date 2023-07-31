@@ -1,5 +1,7 @@
-name: Java CI
-on: [ push, pull_request ]
+name: Release
+on:
+  push:
+    branches: [main]
 jobs:
   build:
     runs-on: ubuntu-latest
