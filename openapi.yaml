@@ -230,19 +230,20 @@ paths:
       description: Test a given solution to a game's challenges, returning the test results without submitting the solution
       security:
         - gameKey: []
+
+      parameters:
+        - name: testNumbers
+          in: query
+          descriptions: The test numbers (public tests) to run the code against. If omitted, all tests will be run.
+          schema:
+            type: array
+            items:
+              type: integer
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              allOf:
-                - $ref: "#/components/schemas/Submission"
-              properties:
-                testNumbers:
-                  type: array
-                  items:
-                    type: integer
-                  description: The test numbers (public tests) to run the code against. If omitted, all tests will be run.
+              $ref: "#/components/schemas/Submission"
 
       responses:
         "200":
