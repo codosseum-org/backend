@@ -21,7 +21,7 @@ paths:
       tags:
         - games
       operationId: createGame
-      description: Create a new game
+      summary: Create a new game
       responses:
         "201":
           description: new game created
@@ -122,7 +122,7 @@ paths:
     post:
       tags: [games]
       operationId: joinGame
-      description: Join a game
+      summary: Join a game
 
       requestBody:
         content:
@@ -155,7 +155,7 @@ paths:
     get:
       tags: [games]
       operationId: getPlayers
-      description: Get list of players
+      summary: Get list of players in a game
       responses:
         "200":
           description: success
@@ -171,7 +171,7 @@ paths:
     delete:
       tags: [games]
       operationId: leaveGame
-      description: Leave a game
+      summary: Leave a game
       security:
         - gameKey: []
       responses:
@@ -191,6 +191,7 @@ paths:
     post:
       tags: [games]
       operationId: startGame
+      summary: Start a game
       description: Forcefully start a game, regardless of player-count and warmup time
       security:
         - gameKey: [admin]
@@ -209,6 +210,7 @@ paths:
     get:
       tags: [games]
       operationId: getCodeTemplate
+      summary: Get template code for a challenge
       description: Get a code template for the current challenge for the specified programming language
       parameters:
         - name: lang
@@ -236,6 +238,7 @@ paths:
     post:
       tags: [games, solutions]
       operationId: testSolution
+      summary: Test your solution
       description: Test a given solution to a game's challenges, returning the test results without submitting the solution
       security:
         - gameKey: []
@@ -285,6 +288,7 @@ paths:
     post:
       tags: [games, solutions]
       operationId: submitSolution
+      summary: Submit a solution
       description: Submit a solution to a game's challenges
       security:
         - gameKey: []
@@ -317,6 +321,7 @@ paths:
     get:
       tags: [games]
       operationId: getRound
+      summary: Get information about a round of a game
       description: |
         Get the details of a specific round, including (interim) results, or the most recent round if none specified.
         If authenticated with a game key and the corresponding player has already submitted a solution in
@@ -360,6 +365,7 @@ paths:
     get:
       tags: [games]
       operationId: getRoundResults
+      summary: Get results from a round of a game
       description: |
         Returns the full result of a player for a specific round.
         This is useful as a supplement to GET /games/{id}/rounds/{round}
