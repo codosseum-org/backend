@@ -6,6 +6,7 @@ SPDX-License-Identifier: CC-BY-4.0
 
 Thank you for taking an interest in codosseum and being willing to contribute.
 Before you create an issue or a pull request, make sure to review the corresponding guidelines below.
+And remember to always respect the [code of conduct](./CODE_OF_CONDUCT.md)!
 
 ## Contributor License Agreement (CLA)
 
