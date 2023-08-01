@@ -2,7 +2,8 @@ name: Release CI
 # Todo should perhaps be triggered manually and also create a github release
 on:
   push:
-    branches: [main]
+    branches: [ main ]
+  workflow_dispatch: {}
 jobs:
   publish:
     runs-on: ubuntu-latest
