@@ -22,6 +22,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: OpenAPI Compliance check
-        uses: vibhav-jain/spectral-action/@v2.6
+        uses: vaibhav-jain/spectral-action/@v2.6
         with:
           file_path: openapi.yaml
