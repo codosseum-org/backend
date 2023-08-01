@@ -5,6 +5,7 @@ plugins {
     id("io.micronaut.application") version "4.0.1"
     id("io.micronaut.aot") version "4.0.1"
     id("io.micronaut.openapi") version "4.0.1"
+    checkstyle
 }
 
 version = "0.1"
@@ -34,6 +35,13 @@ application {
 java {
     sourceCompatibility = JavaVersion.toVersion("17")
     targetCompatibility = JavaVersion.toVersion("17")
+}
+
+checkstyle {
+    val archive = configurations.checkstyle.get().resolve().filter {
+        it.name.startsWith("checkstyle")
+    }
+    config = resources.text.fromArchiveEntry(archive, "google_checks.xml")
 }
 
 tasks {
