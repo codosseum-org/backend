@@ -74,12 +74,6 @@ micronaut {
     }
 
     openapi {
-        server(file("openapi.yaml")) {
-            apiPackageName = "org.developerden.codosseum.api"
-            modelPackageName = "org.developerden.codosseum.model"
-            useReactive = false
-            useAuth = false
-            useBeanValidation = false
-        }
+
     }
 }
