@@ -41,10 +41,13 @@ checkstyle {
     val archive = configurations.checkstyle.get().resolve().filter {
         it.name.startsWith("checkstyle")
     }
-    config = resources.text.fromArchiveEntry(archive, "google_checks.xml")
+
+    configFile = configDirectory.file("google_checks.xml").get().asFile
 }
 
+
 tasks {
+
     dockerBuild {
         images.set(listOf("${System.getenv("DOCKER_IMAGE") ?: project.name}:$project.version"))
     }
@@ -53,6 +56,7 @@ tasks {
         images.set(listOf("${System.getenv("DOCKER_IMAGE") ?: project.name}:$project.version"))
     }
 }
+
 graalvmNative.toolchainDetection.set(false)
 micronaut {
     runtime("netty")
