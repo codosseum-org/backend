@@ -1,0 +1,21 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: codosseum-backend
+Upstream-Contact: JohnnyJayJay <johnnyjayjay02@gmail.com>
+Source: https://github.com/codosseum-org/backend
+
+# Sample paragraph, commented out:
+#
+# Files: src/*
+# Copyright: $YEAR $NAME <$CONTACT>
+# License: ...
+
+Files: .github/workflows/*
+Copyright: JohnnyJayJay
+License: CC0-1.0
+
+Files:
+  gradle/*
+  gradlew
+  gradlew.bat
+Copyright: Gradle, Inc.
+License: Apache-2.0

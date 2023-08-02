@@ -1,0 +1,30 @@
+name: compliance tasks
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+permissions:
+  contents: read
+
+jobs:
+  reuse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: REUSE Compliance check
+        uses: fsfe/reuse-action@v2
+  openapi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup python
+        uses: actions/setup-python@v4
+      - name: Install validator
+        run: pip install openapi-spec-validator
+      - name: OpenAPI Compliance check
+        working-directory: ${{ github.workspace }}
+        run: openapi-spec-validator openapi.yaml
