@@ -75,7 +75,7 @@ REUSE-IgnoreEnd
 -->
 
 For an example of these two values, see below. The copyright year is optional and so are the email addresses of the copyright holders.
-If you copy this information from somewhere, you should keep it though.
+However, if you copy the copyright notice from the source, you should keep it as-is.\
 License identifiers specify the license of the file in [SPDX format](https://spdx.dev/ids/). 
 
 If you copy a file or parts of its content from somewhere else, you have to make sure that these two fields are correct by checking the original work (you can't just make something up!). 
