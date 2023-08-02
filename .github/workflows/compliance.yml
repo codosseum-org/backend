@@ -18,16 +18,13 @@ jobs:
         uses: fsfe/reuse-action@v2
   openapi:
     runs-on: ubuntu-latest
-    services:
-      swagger-editor:
-        image: swaggerapi/swagger-editor:next-v5
-        ports:
-          - 8080:8080
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Setup python
+        uses: actions/setup-python@v4
+      - name: Install validator
+        run: pip install openapi-spec-validator
       - name: OpenAPI Compliance check
-        uses: char0n/swagger-editor-validate@v1
-        with:
-          swagger-editor-url: http://localhost:8080
-          definition-file: openapi.yaml
+        working-directory: ${{ github.workspace }}
+        run: openapi-spec-validator openapi.yaml
