@@ -40,8 +40,8 @@ java {
 checkstyle {
     toolVersion = "10.12.2"
     configFile = configDirectory.file("google_checks.xml").get().asFile
+    sourceSets = emptySet()
 }
-
 
 tasks {
 
