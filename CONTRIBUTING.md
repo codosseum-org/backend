@@ -63,10 +63,16 @@ Here are the steps you should perform if you want to make a contribution to this
 This project aims to be [REUSE](https://reuse.software) compliant. That means that *every* file in the repository **must** have licensing information attached to it.\
 To achieve this, you should add the following two lines in a top comment to every file you create:
 
+<!---
+REUSE-IgnoreStart
+-->
 ```
 SPDX-FileCopyrightText: [year] <Copyright holder(s)>
 SPDX-License-Identifier: SOME-LICENSE
 ```
+<!---
+REUSE-IgnoreEnd
+-->
 
 For an example of these two values, see below. The copyright year is optional and so are the email addresses of the copyright holders.
 If you copy this information from somewhere, you should keep it though.
@@ -79,6 +85,9 @@ If you're scratching your head reading this, have a look at the [REUSE tutorial]
 
 In addition to the two lines required for REUSE, we also include the AGPL license header for `.java` files that are part of this project's source code.\
 Here is a full example of a copyright header for a java file in this project:
+<!---
+REUSE-IgnoreStart
+-->
 ```java
 /*
  * SPDX-FileCopyrightText: 2023 JohnnyJayJay
@@ -96,7 +105,9 @@ Here is a full example of a copyright header for a java file in this project:
  * If not, see <https://www.gnu.org/licenses/>.
  */
 ```
-
+<!---
+REUSE-IgnoreEnd
+-->
 If you edit a file, you may insert your name in the list of copyright holders together with the year you edited it.
 
 ### Commit Guidelines
