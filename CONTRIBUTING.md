@@ -58,6 +58,13 @@ Here are the steps you should perform if you want to make a contribution to this
 12. [Open](https://github.com/codosseum-org/backend/compare) a pull request from your branch to upstream's `develop`
     with a detailed description of what you did.
 
+### Style Guidelines
+
+The project uses a variant of the [Google Styleguide](https://google.github.io/styleguide/javaguide.html) for its code.
+You should adhere to this guide at all times. For IntelliJ, we recommend installing the [Checkstyle-IDEA](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea/)
+plugin as well as setting the "Scheme" under *Settings > Editor > Code Style > Java* to the checkstyle configuration found in
+`config/checkstyle/google_checks.xml`.
+
 ### Licensing Guidelines
 
 This project aims to be [REUSE](https://reuse.software) compliant. That means that *every* file in the repository **must** have licensing information attached to it.\
@@ -76,14 +83,15 @@ REUSE-IgnoreEnd
 
 For an example of these two values, see below. The copyright year is optional and so are the email addresses of the copyright holders.
 However, if you copy the copyright notice from the source, you should keep it as-is.\
-License identifiers specify the license of the file in [SPDX format](https://spdx.dev/ids/). 
+License identifiers specify the license of the file in [SPDX format](https://spdx.dev/ids/).
 
-If you copy a file or parts of its content from somewhere else, you have to make sure that these two fields are correct by checking the original work (you can't just make something up!). 
+If you copy a file or parts of its content from somewhere else, you have to make sure that these two fields are correct by checking the original work (you can't just make something up!).
 When you're unsure, you can open your pull request anyway and ask us, or contact us on [Matrix](https://matrix.to/#/#codosseum:yatrix.org).
 
 If you're scratching your head reading this, have a look at the [REUSE tutorial](https://reuse.software/tutorial/).
 
 In addition to the two lines required for REUSE, we also include the AGPL license header for `.java` files that are part of this project's source code.\
+In IntelliJ, you can configure this comment header to be inserted into new files in your *Copyright Profiles*.\
 Here is a full example of a copyright header for a java file in this project:
 <!---
 REUSE-IgnoreStart
