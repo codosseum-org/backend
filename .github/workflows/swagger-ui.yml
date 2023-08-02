@@ -22,6 +22,7 @@ jobs:
       - name: Generate Swagger UI
         uses: Legion2/swagger-ui-action@v1
         with:
+          version: "5.3.1"
           output: swagger-ui
           spec-file: openapi.yaml
       - name: Upload artifact
