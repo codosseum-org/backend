@@ -22,6 +22,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: OpenAPI Compliance check
-        uses: vaibhav-jain/spectral-action/@v2.6
+        uses: char0n/swagger-editor-validate@v1
         with:
-          file_path: openapi.yaml
+          definition-file: openapi.yaml
