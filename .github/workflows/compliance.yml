@@ -22,7 +22,7 @@ jobs:
       swagger-editor:
         image: swaggerapi/swagger-editor:next-v5
         ports:
-          - 8080:80
+          - 8080:8080
     steps:
       - name: Checkout
         uses: actions/checkout@v3
