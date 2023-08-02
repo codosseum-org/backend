@@ -38,10 +38,7 @@ java {
 }
 
 checkstyle {
-    val archive = configurations.checkstyle.get().resolve().filter {
-        it.name.startsWith("checkstyle")
-    }
-
+    toolVersion = "10.12.2"
     configFile = configDirectory.file("google_checks.xml").get().asFile
 }
 
