@@ -25,6 +25,10 @@
                     "description": "(Optional) contact information of the author",
                     "items": {
                         "type": "object",
+                        "required": [
+                            "type",
+                            "contact"
+                        ],
                         "examples": [
                             {
                             "type": "email",
