@@ -1,7 +1,7 @@
 {
     "$schema": "http://json-schema.org/draft/2020-12/schema",
     "type": "object",
-    "description": "This is the basic challenge format schema.\nIt defines the *minimal* requirements that a challenge file has to conform to to be accepted by\nthe codosseum backend (and clients). Many of the fields are therefore optional.\n\nFor the core challenge repository maintained by the codosseum team, the requirements are more strict and refined – if you wish to contribute there, refer to the variant of the schema defined in that repository.\n",
+    "description": "This is the basic challenge format schema.\nIt defines the *minimal* requirements that a challenge file has to conform to to be accepted by\nthe codosseum backend (and clients). Many of the fields are therefore optional.\n\nFor the core challenge repository maintained by the codosseum team, the requirements are more strict and refined – if you wish to contribute there, refer to the variant of the schema defined in that repository.\nTo enable generative testing for a challenge (recommended), you must provide the \"input_format\" and \"solution\" properties.",
     "required": [
         "title",
         "text",
@@ -23,22 +23,22 @@
                 "contact": {
                     "type": "array",
                     "description": "(Optional) contact information of the author",
-                    "examples": [
-                        {
-                        "type": "email",
-                        "contact": "jane.doe@example.com"
-                    },
-                        {
-                        "type": "matrix",
-                        "contact": "@jane:example.com"
-                    },
-                        {
-                        "type": "website",
-                        "contact": "https://user.example.com/blog"
-                    }
-                    ],
                     "items": {
                         "type": "object",
+                        "examples": [
+                            {
+                            "type": "email",
+                            "contact": "jane.doe@example.com"
+                        },
+                            {
+                            "type": "matrix",
+                            "contact": "@jane:example.com"
+                        },
+                            {
+                            "type": "website",
+                            "contact": "https://user.example.com/blog"
+                        }
+                        ],
                         "properties": {
                             "type": {
                                 "type": "string",
@@ -127,6 +127,24 @@
             "minItems": 1,
             "items": {
                 "$ref": "#/$defs/test"
+            }
+        },
+        "solution": {
+            "type": "object",
+            "description": "Information about the solution (provided alongside the challenge file) that will be used for generative tests.",
+            "required": [
+                "language",
+                "file"
+            ],
+            "properties": {
+                "language": {
+                    "type": "string",
+                    "description": "Programming language descriptor of the language the solution is written in."
+                },
+                "file": {
+                    "type": "string",
+                    "description": "File location (relative to challenge file) containing the solution. Must be a regular file without any external dependencies."
+                }
             }
         }
     },
