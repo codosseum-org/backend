@@ -1,11 +1,11 @@
 {
     "$schema": "http://json-schema.org/draft/2020-12/schema",
     "type": "object",
-    "description": "This is the basic challenge format schema.\nIt defines the *minimal* requirements that a challenge file has to conform to to be accepted by\nthe codosseum backend (and clients). Many of the fields are therefore optional.\n\nFor the core challenge repository maintained by the codosseum team, the requirements are more strict and refined – if you wish to contribute there, refer to the variant of the schema defined in that repository.\nTo enable generative testing for a challenge (recommended), you must provide the \"input_format\" and \"solution\" properties.",
+    "description": "This is the basic challenge format schema.\nIt defines the *minimal* requirements that a challenge file has to conform to to be accepted by\nthe codosseum backend (and clients). Many of the fields are therefore optional.\n\nFor the core challenge repository maintained by the codosseum team, the requirements are more strict and refined – if you wish to contribute there, refer to the variant of the schema defined in that repository.\nTo enable generative testing for a challenge (recommended), you must provide the \"inputFormat\" and \"solution\" properties.",
     "required": [
         "title",
         "text",
-        "public_tests"
+        "publicTests"
     ],
     "properties": {
         "author": {
@@ -114,7 +114,7 @@
                 "Given an input of strings, compute the letter with the highest frequency that..."
             ]
         },
-        "input_format": {
+        "inputFormat": {
             "type": "string",
             "description": "A formal description of what inputs for this challenge look like.\nThis is required to generate secret tests and solution templates.\nTherefore, if this isn't specified, these things cannot be accomplished.\n\nRight now, the formal language for this field has not been specified yet,\nso it cannot be\n"
         },
@@ -125,7 +125,7 @@
                 "$ref": "#/$defs/test"
             }
         },
-        "public_tests": {
+        "publicTests": {
             "type": "array",
             "description": "Tests whose inputs and outputs will be made visible to the user.\nThese should cover most cases of the problem and test the user's code for different flaws. There should be more public tests than examples.\nA public test should have a name, and that name should indicate roughly what it is testing.\n\nTests specified in the examples do not have to be specified again here.\n",
             "minItems": 1,
