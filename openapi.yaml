@@ -111,6 +111,8 @@ paths:
           description: Key doesn't have admin privileges (cannot update game)
         "404":
           description: game does not exist
+        "409":
+          description: You have permission to edit this game, but it is already in progress
 
     delete:
       tags: [games]
@@ -128,6 +130,8 @@ paths:
           description: Key doesn't have admin privileges
         "404":
           description: game does not exist
+        "409":
+          description: You have permission to delete this game, but it is already in progress
 
   /games/{id}/players:
     parameters:
@@ -177,6 +181,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Players"
+        "404":
+          description: The game does not exist
 
   /games/{id}/players/@self:
     parameters:
@@ -212,6 +218,10 @@ paths:
       responses:
         "204":
           description: Successfully started the game. Further info will be received via server-sent events.
+        "401":
+          description: Authentication missing or not valid for this game
+        "403":
+          description: Authentication given and valid for this game, but the token does not have admin privileges
         "404":
           description: game does not exist
         "409":
