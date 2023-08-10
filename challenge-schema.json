@@ -107,7 +107,7 @@
         },
         "text": {
             "type": "string",
-            "description": "Challenge text. This is the field that has to contain the explanation for the task.",
+            "description": "Challenge text. This is the field that has to contain the explanation for the task. It may use Markdown formatting",
             "examples": [
                 "Alice just completed an online coding challenge that just required her to square a number. Fortunately, she could come up with a much harder challenge...",
                 "Bob is on an adventure and has to find his way home...",
