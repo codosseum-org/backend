@@ -733,8 +733,14 @@ components:
     PlayerGameResult:
       type: object
       description: The final result of a player, after all rounds (and therefore the game) are over.
-      # TODO figure out what kind of data could be in here (depends on game mode)
-      properties: {}
+      properties:
+        score:
+          type: number
+          description: |
+            An overall (abstract) score determined by the game mode.
+            This score is computed based on the cumulative performance in the rounds in which the player participated.
+            It is abstract in the sense that every game mode computes it differently – It's only transparent that higher
+            equals better.
 
     Game:
       type: object
