@@ -1,7 +1,6 @@
 /*
- * SPDX-FileCopyrightText: 2023 Alex Wood
+ * SPDX-FileCopyrightText: 2023 JohnnyJayJay
  * SPDX-License-Identifier: AGPL-3.0-or-later
- *
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of
  * the GNU Affero General Public License as published by the Free Software Foundation, either
@@ -13,9 +12,10 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
+ *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.server;
 
 import io.micronaut.runtime.Micronaut;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
