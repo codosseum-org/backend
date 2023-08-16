@@ -21,8 +21,11 @@ repositories {
 dependencies {
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
-    annotationProcessor("io.soabase.record-builder:record-builder-processor:v37")
-    implementation("io.soabase.record-builder:record-builder-core:v37")
+    annotationProcessor("io.micronaut.validation:micronaut-validation-processor")
+    annotationProcessor("io.soabase.record-builder:record-builder-processor:37")
+
+    implementation("io.micronaut.validation:micronaut-validation")
+    implementation("io.soabase.record-builder:record-builder-core:37")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
     implementation("io.swagger.core.v3:swagger-annotations")
     implementation("io.micronaut:micronaut-http-client")
