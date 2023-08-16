@@ -23,10 +23,11 @@ import jakarta.annotation.Nonnull;
 import org.developerden.codosseum.challenge.Challenge;
 
 // returned from the api
-@JsonIncludeProperties({
-    "author", "license", "language", "title", "difficulty", "tags", "text", "examples"
-})
 public record ChallengeInfo(
+
+    @JsonIncludeProperties({
+        "author", "license", "language", "title", "difficulty", "tags", "text", "examples"
+    })
     @JsonUnwrapped
     @Nonnull
     Challenge challenge

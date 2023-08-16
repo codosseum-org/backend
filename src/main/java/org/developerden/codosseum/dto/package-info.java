@@ -16,7 +16,8 @@
  */
 
 /**
- * Data transfer object definitions (request and response body data for the endpoints).
+ * Data transfer object definitions
+ * (request and response body data for the endpoints that is not part of the model).
  */
 
 package org.developerden.codosseum.dto;
