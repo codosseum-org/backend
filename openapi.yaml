@@ -626,14 +626,20 @@ components:
               type: boolean
               description: Whether the test passed or not
             input:
-              type: string
+              type: array
               description: test input
+              items:
+                type: string
             expectedOutput:
-              type: string
+              type: array
               description: correct output
+              items:
+                type: string
             actualOutput:
-              type: string
+              type: array
               description: output produced by the player's code
+              items:
+                type: string
 
 
     SyncEvent:
