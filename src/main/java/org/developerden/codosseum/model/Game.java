@@ -17,20 +17,28 @@
 
 package org.developerden.codosseum.model;
 
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import java.util.List;
-import org.developerden.codosseum.dto.GameSettings;
+import org.developerden.codosseum.mode.GameMode;
 
 @RecordBuilder
 public record Game(
     @Nonnull
     String id,
 
-    @JsonUnwrapped
-    GameSettings settings,
+    @Nonnull
+    List<String> allowedLanguages,
+
+    @Nonnull
+    GameMode gameMode,
+
+    int maxPlayers,
+
+    int timeLimit,
+
+    int maxWarmupTime,
 
     @Nonnull
     Players players,
