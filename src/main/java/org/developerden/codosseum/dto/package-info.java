@@ -16,7 +16,7 @@
  */
 
 /**
- * Controller layer (REST endpoints).
+ * Data transfer object definitions (request and response body data for the endpoints).
  */
 
-package org.developerden.codosseum.server.controller;
+package org.developerden.codosseum.dto;

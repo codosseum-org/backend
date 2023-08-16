@@ -16,7 +16,7 @@
  */
 
 /**
- * codosseum HTTP server. Contains model and endpoint definitions.
+ * Service layer.
  */
 
-package org.developerden.codosseum.server;
+package org.developerden.codosseum.service;

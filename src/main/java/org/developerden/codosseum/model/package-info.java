@@ -16,7 +16,7 @@
  */
 
 /**
- * Service layer.
+ * Models/state kept in (persistent or temporary) storage.
  */
 
-package org.developerden.codosseum.server.service;
+package org.developerden.codosseum.model;

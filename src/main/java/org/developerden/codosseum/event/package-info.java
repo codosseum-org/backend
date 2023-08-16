@@ -16,7 +16,7 @@
  */
 
 /**
- * Data transfer object definitions (request and response body data for the endpoints).
+ * Event types (for server-sent events API).
  */
 
-package org.developerden.codosseum.server.dto;
+package org.developerden.codosseum.event;

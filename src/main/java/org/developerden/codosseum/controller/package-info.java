@@ -16,7 +16,7 @@
  */
 
 /**
- * Models/state kept in (persistent or temporary) storage.
+ * Controller layer (REST endpoints).
  */
 
-package org.developerden.codosseum.server.model;
+package org.developerden.codosseum.controller;
