@@ -24,5 +24,5 @@ import jakarta.annotation.Nonnull;
 public record EliminatedEvent(
     @Nonnull
     String message
-) {
+) implements GameEvent {
 }

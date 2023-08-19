@@ -27,5 +27,5 @@ public record SyncEvent(
     GameState state,
 
     int timeLeft
-) {
+) implements GameEvent {
 }

@@ -17,18 +17,8 @@
 
 package org.developerden.codosseum.event;
 
-import io.soabase.recordbuilder.core.RecordBuilder;
-import jakarta.annotation.Nonnull;
-import org.developerden.codosseum.dto.TestResult;
-
-@RecordBuilder
-public record TestResultEvent(
-    @Nonnull
-    String testId,
-
-    int num,
-
-    @Nonnull
-    TestResult result
-) implements GameEvent {
+/**
+ * Marker interface for all codosseum events.
+ */
+public interface GameEvent {
 }

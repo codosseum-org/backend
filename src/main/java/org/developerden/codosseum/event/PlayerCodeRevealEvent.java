@@ -32,5 +32,5 @@ public record PlayerCodeRevealEvent(
     @Nonnull
     String code
 
-) {
+) implements GameEvent {
 }

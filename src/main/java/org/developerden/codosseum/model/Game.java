@@ -23,35 +23,9 @@ import jakarta.annotation.Nullable;
 import java.util.List;
 import org.developerden.codosseum.mode.GameMode;
 
+// TODO: 19/08/23 internal model
 @RecordBuilder
 public record Game(
-    @Nonnull
-    String id,
 
-    @Nonnull
-    List<String> allowedLanguages,
-
-    @Nonnull
-    GameMode gameMode,
-
-    int maxPlayers,
-
-    int timeLimit,
-
-    int maxWarmupTime,
-
-    @Nonnull
-    Players players,
-
-    @Nonnull
-    GameState state,
-
-    int timeLeft,
-
-    @Nullable
-    Integer round,
-
-    @Nonnull
-    List<PlayerGameResult> results
 ) {
 }

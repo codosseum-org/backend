@@ -27,5 +27,5 @@ public record RoundStartEvent(
     ChallengeInfo challenge,
 
     int round
-) {
+) implements GameEvent {
 }

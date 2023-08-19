@@ -15,20 +15,14 @@
  *
  */
 
-package org.developerden.codosseum.event;
+package org.developerden.codosseum.dto;
 
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
-import org.developerden.codosseum.dto.TestResult;
 
 @RecordBuilder
-public record TestResultEvent(
+public record TestResponse(
     @Nonnull
-    String testId,
-
-    int num,
-
-    @Nonnull
-    TestResult result
-) implements GameEvent {
+    String testId
+) {
 }

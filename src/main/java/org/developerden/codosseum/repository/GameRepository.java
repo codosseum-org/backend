@@ -15,20 +15,12 @@
  *
  */
 
-package org.developerden.codosseum.event;
+package org.developerden.codosseum.repository;
 
-import io.soabase.recordbuilder.core.RecordBuilder;
-import jakarta.annotation.Nonnull;
-import org.developerden.codosseum.dto.TestResult;
+import org.developerden.codosseum.model.Game;
 
-@RecordBuilder
-public record TestResultEvent(
-    @Nonnull
-    String testId,
+public interface GameRepository {
 
-    int num,
+  Game findGameById(String id);
 
-    @Nonnull
-    TestResult result
-) implements GameEvent {
 }

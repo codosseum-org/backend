@@ -15,20 +15,46 @@
  *
  */
 
-package org.developerden.codosseum.event;
+package org.developerden.codosseum.dto;
 
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
-import org.developerden.codosseum.dto.TestResult;
+import jakarta.annotation.Nullable;
+import java.util.List;
+import org.developerden.codosseum.mode.GameMode;
+import org.developerden.codosseum.model.GameState;
+import org.developerden.codosseum.model.PlayerGameResult;
+import org.developerden.codosseum.model.Players;
 
 @RecordBuilder
-public record TestResultEvent(
+public record GameInfo(
     @Nonnull
-    String testId,
-
-    int num,
+    String id,
 
     @Nonnull
-    TestResult result
-) implements GameEvent {
+    List<String> allowedLanguages,
+
+    @Nonnull
+    GameMode gameMode,
+
+    int maxPlayers,
+
+    int timeLimit,
+
+    int maxWarmupTime,
+
+    @Nonnull
+    Players players,
+
+    @Nonnull
+    GameState state,
+
+    int timeLeft,
+
+    @Nullable
+    Integer round,
+
+    @Nonnull
+    List<PlayerGameResult> results
+) {
 }

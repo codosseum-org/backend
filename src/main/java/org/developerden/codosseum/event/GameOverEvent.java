@@ -26,5 +26,5 @@ import org.developerden.codosseum.model.PlayerGameResult;
 public record GameOverEvent(
     @Nonnull
     List<PlayerGameResult> finalResults
-) {
+) implements GameEvent {
 }

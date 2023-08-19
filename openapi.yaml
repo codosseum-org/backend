@@ -389,7 +389,7 @@ paths:
     get:
       tags: [games]
       operationId: getRoundResults
-      summary: Get results from a round of a game
+      summary: Get results from a round of a game for a specific player
       description: |
         Returns the full result of a player for a specific round.
         This is useful as a supplement to GET /games/{id}/rounds/{round}
@@ -401,6 +401,10 @@ paths:
       responses:
         "200":
           description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlayerRoundResult"
         "400":
           description: invalid round or player name
         "401":

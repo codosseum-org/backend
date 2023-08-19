@@ -24,5 +24,5 @@ import jakarta.annotation.Nonnull;
 public record PlayerSubmitEvent(
     @Nonnull
     String name
-) {
+) implements GameEvent {
 }
