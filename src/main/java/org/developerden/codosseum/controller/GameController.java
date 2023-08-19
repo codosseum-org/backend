@@ -31,8 +31,12 @@ import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.sse.Event;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import java.security.Principal;
 import org.developerden.codosseum.dto.GameCreateResponse;
 import org.developerden.codosseum.dto.GameInfo;
 import org.developerden.codosseum.dto.GameSettings;
@@ -56,7 +60,9 @@ public class GameController {
   }
 
   @Patch("/{id}")
+  @Secured(SecurityRule.IS_AUTHENTICATED)
   public HttpResponse<GameInfo> updateGame(
+      Principal principal,
       @PathVariable("id") Game game,
       @Valid @Body GameSettings settings
   ) {
@@ -64,18 +70,22 @@ public class GameController {
   }
 
   @Delete("/{id}")
-  public HttpResponse<Void> deleteGame(@PathVariable("id") Game game) {
+  @Secured(SecurityRule.IS_AUTHENTICATED)
+  public HttpResponse<Void> deleteGame(Principal principal, @PathVariable("id") Game game) {
     throw new UnsupportedOperationException();
   }
 
   @Post("/{id}/start")
-  public HttpResponse<Void> startGame(@PathVariable("id") Game game) {
+  @Secured(SecurityRule.IS_AUTHENTICATED)
+  public HttpResponse<Void> startGame(Principal principal, @PathVariable("id") Game game) {
     throw new UnsupportedOperationException();
   }
 
   @Get("/{id}/template")
+  @Secured(SecurityRule.IS_AUTHENTICATED)
   @Produces(MediaType.TEXT_PLAIN)
   public HttpResponse<String> getCodeTemplate(
+      Principal principal,
       @PathVariable("id") Game game,
       @QueryValue("lang") String language
   ) {
@@ -85,7 +95,10 @@ public class GameController {
   @ExecuteOn(TaskExecutors.IO)
   @Get("/{id}/events")
   @Produces(MediaType.TEXT_EVENT_STREAM)
-  public Publisher<Event<GameEvent>> subscribeToGameEvents(@PathVariable("id") Game game) {
+  public Publisher<Event<GameEvent>> subscribeToGameEvents(
+      @Nullable Principal principal,
+      @PathVariable("id") Game game
+  ) {
     throw new UnsupportedOperationException();
   }
 }

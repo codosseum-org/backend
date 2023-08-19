@@ -22,6 +22,7 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.QueryValue;
+import java.security.Principal;
 import org.developerden.codosseum.model.Game;
 import org.developerden.codosseum.dto.PlayerRoundResult;
 import org.developerden.codosseum.dto.Round;
@@ -31,6 +32,7 @@ public class RoundController {
 
   @Get("/{round}")
   public HttpResponse<Round> getRound(
+      Principal principal,
       @PathVariable("id") Game game,
       @PathVariable int round,
       @QueryValue(defaultValue = "false") boolean withCode

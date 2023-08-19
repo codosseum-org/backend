@@ -24,12 +24,15 @@ import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import jakarta.validation.Valid;
+import java.security.Principal;
 import org.developerden.codosseum.dto.GameJoinResponse;
-import org.developerden.codosseum.model.Game;
 import org.developerden.codosseum.dto.Player;
 import org.developerden.codosseum.dto.Players;
+import org.developerden.codosseum.model.Game;
 
 @Validated
 @Controller("/games/{id}/players")
@@ -50,7 +53,8 @@ public class PlayerController {
 
 
   @Delete("/@self")
-  public HttpResponse<Void> leaveGame(@PathVariable("id") Game game) {
+  @Secured(SecurityRule.IS_AUTHENTICATED)
+  public HttpResponse<Void> leaveGame(Principal principal, @PathVariable("id") Game game) {
     throw new UnsupportedOperationException();
   }
 
