@@ -17,6 +17,7 @@
 
 package org.developerden.codosseum.dto;
 
+import io.micronaut.core.annotation.Introspected;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Max;
@@ -25,6 +26,7 @@ import java.util.List;
 import org.developerden.codosseum.mode.GameMode;
 
 
+@Introspected
 @RecordBuilder
 public record GameSettings(
     // custom validator for elements

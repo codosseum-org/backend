@@ -16,7 +16,8 @@
  */
 
 /**
- * Models/state kept in (persistent or temporary) storage.
+ * Models as used internally by the server.
+ * Is not exposed directly through the API.
  */
 
 package org.developerden.codosseum.model;

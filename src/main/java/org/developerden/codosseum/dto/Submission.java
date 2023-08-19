@@ -17,9 +17,11 @@
 
 package org.developerden.codosseum.dto;
 
+import io.micronaut.core.annotation.Introspected;
 import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotNull;
 
+@Introspected
 public record Submission(
     // custom validator
     @Nonnull
