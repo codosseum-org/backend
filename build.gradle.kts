@@ -22,8 +22,10 @@ dependencies {
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     annotationProcessor("io.micronaut.validation:micronaut-validation-processor")
+    annotationProcessor("io.micronaut.security:micronaut-security-annotations")
     annotationProcessor("io.soabase.record-builder:record-builder-processor:37")
 
+    implementation("io.micronaut.security:micronaut-security")
     implementation("io.micronaut.validation:micronaut-validation")
     implementation("io.soabase.record-builder:record-builder-core:37")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
