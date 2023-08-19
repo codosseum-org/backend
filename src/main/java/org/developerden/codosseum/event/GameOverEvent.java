@@ -20,7 +20,7 @@ package org.developerden.codosseum.event;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
 import java.util.List;
-import org.developerden.codosseum.model.PlayerGameResult;
+import org.developerden.codosseum.dto.PlayerGameResult;
 
 @RecordBuilder
 public record GameOverEvent(

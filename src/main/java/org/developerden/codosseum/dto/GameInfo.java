@@ -23,8 +23,6 @@ import jakarta.annotation.Nullable;
 import java.util.List;
 import org.developerden.codosseum.mode.GameMode;
 import org.developerden.codosseum.model.GameState;
-import org.developerden.codosseum.model.PlayerGameResult;
-import org.developerden.codosseum.model.Players;
 
 @RecordBuilder
 public record GameInfo(

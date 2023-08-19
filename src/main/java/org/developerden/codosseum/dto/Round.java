@@ -15,12 +15,20 @@
  *
  */
 
-package org.developerden.codosseum.model;
+package org.developerden.codosseum.dto;
 
 import io.soabase.recordbuilder.core.RecordBuilder;
+import jakarta.annotation.Nonnull;
+import java.util.List;
 
 @RecordBuilder
-public record PlayerGameResult(
-    double score
+public record Round(
+
+    @Nonnull
+    ChallengeInfo challenge,
+    boolean over,
+
+    @Nonnull
+    List<PlayerRoundResult> results
 ) {
 }

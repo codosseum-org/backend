@@ -28,8 +28,8 @@ import io.micronaut.validation.Validated;
 import jakarta.validation.Valid;
 import org.developerden.codosseum.dto.GameJoinResponse;
 import org.developerden.codosseum.model.Game;
-import org.developerden.codosseum.model.Player;
-import org.developerden.codosseum.model.Players;
+import org.developerden.codosseum.dto.Player;
+import org.developerden.codosseum.dto.Players;
 
 @Validated
 @Controller("/games/{id}/players")

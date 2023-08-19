@@ -23,8 +23,8 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.QueryValue;
 import org.developerden.codosseum.model.Game;
-import org.developerden.codosseum.model.PlayerRoundResult;
-import org.developerden.codosseum.model.Round;
+import org.developerden.codosseum.dto.PlayerRoundResult;
+import org.developerden.codosseum.dto.Round;
 
 @Controller("/games/{id}/rounds")
 public class RoundController {

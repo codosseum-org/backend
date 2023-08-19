@@ -15,7 +15,7 @@
  *
  */
 
-package org.developerden.codosseum.model;
+package org.developerden.codosseum.dto;
 
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
