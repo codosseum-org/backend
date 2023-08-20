@@ -26,6 +26,8 @@ import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.validation.Validated;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import org.developerden.codosseum.auth.GameAuthorized;
+import org.developerden.codosseum.auth.GameRole;
 import org.developerden.codosseum.dto.Submission;
 import org.developerden.codosseum.dto.TestResponse;
 import org.developerden.codosseum.model.Game;
@@ -35,6 +37,7 @@ import org.developerden.codosseum.model.Game;
 public class SolutionController {
 
   @Post("/test")
+  @GameAuthorized(GameRole.PLAYER)
   public HttpResponse<TestResponse> testSolution(
       @PathVariable("id") Game game,
       @Nullable @QueryValue int[] testNumbers,
@@ -44,6 +47,7 @@ public class SolutionController {
   }
 
   @Post("/submit")
+  @GameAuthorized(GameRole.PLAYER)
   public HttpResponse<Void> submitSolution(
       @PathVariable("id") Game game,
       @Valid @Body Submission submission
