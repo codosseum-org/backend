@@ -47,7 +47,7 @@ public class GameAuthorizationRule extends AbstractSecurityRule<HttpRequest<?>> 
         && methodMatch.hasAnnotation(GameAuthorized.class)) {
       GameRole[] roles = methodMatch
           .getValue(GameAuthorized.class, GameRole[].class).orElseThrow();
-      String gameId = (String) routeMatch.getVariableValues().get("game");
+      String gameId = (String) routeMatch.getVariableValues().get("id");
       if (gameId == null) {
         throw new AssertionError(
             "GameAuthorized annotation used without game ID parameter in path");
