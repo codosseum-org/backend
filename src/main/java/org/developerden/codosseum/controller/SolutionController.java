@@ -26,6 +26,7 @@ import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.validation.Validated;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.developerden.codosseum.auth.GameAuthorized;
 import org.developerden.codosseum.auth.GameRole;
 import org.developerden.codosseum.dto.Submission;
@@ -40,7 +41,7 @@ public class SolutionController {
   @GameAuthorized(GameRole.PLAYER)
   public HttpResponse<TestResponse> testSolution(
       @PathVariable("id") Game game,
-      @Nullable @QueryValue int[] testNumbers,
+      @Nullable @QueryValue List<Integer> testNumbers,
       @Valid @Body Submission submission
   ) {
     throw new UnsupportedOperationException();
