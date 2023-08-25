@@ -34,5 +34,7 @@ module codosseum {
   requires io.micronaut.validation.micronaut_validation;
   requires org.reactivestreams;
   requires io.micronaut.context;
+  requires io.micronaut.router;
+  requires reactor.core;
 
 }
