@@ -17,15 +17,8 @@
 
 package org.developerden.codosseum.mode;
 
-import java.util.List;
-import org.developerden.codosseum.dto.Player;
-import org.developerden.codosseum.dto.PlayerRoundResult;
-import org.developerden.codosseum.model.Game;
+public interface GameModeFactory {
 
-// should have a serialiser/deserialiser using the game mode name and the available
-// implementations on the classpath
-public interface GameMode {
-
-  double computeScore(Player player, List<PlayerRoundResult> results);
+  GameMode initForGame(String gameId);
 
 }
