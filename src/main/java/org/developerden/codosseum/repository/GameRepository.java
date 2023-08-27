@@ -23,4 +23,6 @@ public interface GameRepository {
 
   Game findGameById(String id);
 
+  void insertGame(Game game);
+
 }

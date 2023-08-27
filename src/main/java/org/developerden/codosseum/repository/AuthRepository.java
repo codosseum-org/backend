@@ -15,30 +15,12 @@
  *
  */
 
-package org.developerden.codosseum.service;
+package org.developerden.codosseum.repository;
 
-import jakarta.inject.Singleton;
-import org.developerden.codosseum.dto.GameCreateResponse;
-import org.developerden.codosseum.dto.GameInfo;
-import org.developerden.codosseum.dto.GameSettings;
+import org.developerden.codosseum.model.EphemeralPlayer;
 
-@Singleton
-public class GameService {
+public interface AuthRepository {
 
-  public GameCreateResponse createGame(String creator) {
-    throw new UnsupportedOperationException();
-  }
-
-  public GameInfo updateGame(GameSettings settings) {
-    throw new UnsupportedOperationException();
-  }
-
-  public GameInfo getGame(String id) {
-    throw new UnsupportedOperationException();
-  }
-
-  public void initiateNextRound(String gameId) {
-    throw new UnsupportedOperationException();
-  }
+  EphemeralPlayer findPlayerByGameKey(String gameKey);
 
 }
