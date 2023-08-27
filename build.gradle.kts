@@ -33,6 +33,7 @@ dependencies {
     implementation("io.swagger.core.v3:swagger-annotations")
     implementation("io.micronaut:micronaut-http-client")
     implementation("com.github.kkuegler:human-readable-ids-java:0.1.1")
+    implementation("com.networknt:json-schema-validator:1.0.86")
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("org.yaml:snakeyaml")
 }
