@@ -2,8 +2,7 @@
 
 {
 
-  # https://devenv.sh/packages/
-  packages = [ pkgs.git pkgs.pre-commit pkgs.checkstyle ];
+  packages = with pkgs; [ git pre-commit checkstyle nixfmt ];
 
   # https://devenv.sh/languages/
    languages.nix.enable = true;
