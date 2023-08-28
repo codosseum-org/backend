@@ -15,21 +15,44 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.dto;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import io.soabase.recordbuilder.core.RecordBuilder;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import java.util.List;
+import org.developerden.codosseum.mode.GameMode;
+import org.developerden.codosseum.model.GameState;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
+@RecordBuilder
+public record GameInfo(
+    @Nonnull
+    String id,
 
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
-  }
+    @Nonnull
+    List<String> allowedLanguages,
+
+    @Nonnull
+    GameMode gameMode,
+
+    int maxPlayers,
+
+    int timeLimit,
+
+    int maxWarmupTime,
+
+    @Nonnull
+    Players players,
+
+    @Nonnull
+    GameState state,
+
+    int timeLeft,
+
+    @Nullable
+    Integer round,
+
+    @Nonnull
+    List<PlayerGameResult> results
+) {
 }

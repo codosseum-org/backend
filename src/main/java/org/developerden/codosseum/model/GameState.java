@@ -15,21 +15,13 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.model;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+public enum GameState {
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
+  WARMUP,
+  IN_PROGRESS,
+  ROUND_OVER,
+  GAME_OVER
 
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
-  }
 }

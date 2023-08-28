@@ -389,7 +389,7 @@ paths:
     get:
       tags: [games]
       operationId: getRoundResults
-      summary: Get results from a round of a game
+      summary: Get results from a round of a game for a specific player
       description: |
         Returns the full result of a player for a specific round.
         This is useful as a supplement to GET /games/{id}/rounds/{round}
@@ -401,6 +401,10 @@ paths:
       responses:
         "200":
           description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlayerRoundResult"
         "400":
           description: invalid round or player name
         "401":
@@ -565,9 +569,9 @@ components:
       description: Fired when a new round starts
       required: [challenge, number]
       properties:
-        # TODO insert challenge schema ref
         challenge:
           description: Challenge for this round
+          $ref: "./challenge-schema.json"
         number:
           type: integer
           description: round number
@@ -591,7 +595,7 @@ components:
         name:
           type: string
           description: Player name
-        lang:
+        language:
           type: string
           description: Language used
         code:
@@ -626,14 +630,20 @@ components:
               type: boolean
               description: Whether the test passed or not
             input:
-              type: string
+              type: array
               description: test input
+              items:
+                type: string
             expectedOutput:
-              type: string
+              type: array
               description: correct output
+              items:
+                type: string
             actualOutput:
-              type: string
+              type: array
               description: output produced by the player's code
+              items:
+                type: string
 
 
     SyncEvent:
@@ -685,9 +695,9 @@ components:
       type: object
       description: Information about a game round
       properties:
-        # TODO insert challenge schema ref
         challenge:
           description: Challenge for that round
+          $ref: "./challenge-schema.json"
         over:
           type: boolean
           description: True if the round is over, false otherwise

@@ -15,21 +15,19 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.auth;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.security.authentication.Authentication;
+import io.micronaut.security.token.validator.TokenValidator;
+import jakarta.inject.Singleton;
+import org.reactivestreams.Publisher;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
-
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
+@Singleton
+public class GameKeyTokenValidator implements TokenValidator<HttpRequest<?>> {
+  @Override
+  public Publisher<Authentication> validateToken(String token, @Nullable HttpRequest<?> request) {
+    return null;
   }
 }

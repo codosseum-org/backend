@@ -15,21 +15,26 @@
  *
  */
 
-package org.developerden.codosseum;
+module codosseum {
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+  requires io.micronaut.core;
+  requires io.micronaut.reactor.micronaut_reactor;
+  requires io.micronaut.serde.micronaut_serde_api;
+  requires io.micronaut.http_client;
+  requires io.micronaut.http_server;
+  requires io.swagger.v3.oas.annotations;
+  requires io.soabase.recordbuilder.core;
+  requires jakarta.annotation;
+  requires jakarta.validation;
+  requires com.fasterxml.jackson.annotation;
+  requires jakarta.inject;
+  requires io.micronaut.security.micronaut_security;
+  requires java.compiler;
+  requires io.micronaut.http;
+  requires io.micronaut.validation.micronaut_validation;
+  requires org.reactivestreams;
+  requires io.micronaut.context;
+  requires io.micronaut.router;
+  requires reactor.core;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
-
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
-  }
 }

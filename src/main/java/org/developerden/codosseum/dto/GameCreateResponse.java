@@ -15,21 +15,17 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.dto;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import io.soabase.recordbuilder.core.RecordBuilder;
+import jakarta.annotation.Nonnull;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
+@RecordBuilder
+public record GameCreateResponse(
+    @Nonnull
+    String adminKey,
 
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
-  }
+    @Nonnull
+    String id
+) {
 }

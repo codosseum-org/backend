@@ -15,21 +15,23 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.auth;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import io.micronaut.security.authentication.Authentication;
+import jakarta.annotation.Nonnull;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
+public final class PlayerAuthentication {
 
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
+  public static Authentication build(
+      @Nonnull String name, @Nonnull String activeGameId, @Nonnull Set<GameRole> roles) {
+    return Authentication.build(
+        name,
+        roles.stream().map(Enum::name).collect(Collectors.toSet()),
+        Map.of("activeGameId", activeGameId)
+    );
   }
+
 }

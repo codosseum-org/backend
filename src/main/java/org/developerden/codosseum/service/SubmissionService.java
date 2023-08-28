@@ -15,21 +15,10 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.service;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import jakarta.inject.Singleton;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
-
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
-  }
+@Singleton
+public class SubmissionService {
 }

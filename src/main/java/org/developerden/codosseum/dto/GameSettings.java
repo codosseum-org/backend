@@ -15,21 +15,40 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.dto;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import io.micronaut.core.annotation.Introspected;
+import io.soabase.recordbuilder.core.RecordBuilder;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import java.util.List;
+import org.developerden.codosseum.mode.GameMode;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
 
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
-  }
+@Introspected
+@RecordBuilder
+public record GameSettings(
+    // custom validator for elements
+    @Nullable
+    List<String> allowedLanguages,
+
+    @Nullable
+    GameMode gameMode,
+
+    @Nullable
+    @Min(2)
+    @Max(50)
+    Integer maxPlayers,
+
+    @Nullable
+    @Min(60)
+    @Max(1800)
+    Integer timeLimit,
+
+    @Nullable
+    @Min(0)
+    @Max(300)
+    Integer maxWarmupTime
+) {
 }

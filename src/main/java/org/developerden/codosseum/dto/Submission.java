@@ -15,21 +15,21 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.dto;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import io.micronaut.core.annotation.Introspected;
+import jakarta.annotation.Nonnull;
+import jakarta.validation.constraints.NotNull;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
+@Introspected
+public record Submission(
+    // custom validator
+    @Nonnull
+    @NotNull
+    String language,
 
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
-  }
+    @Nonnull
+    @NotNull
+    String code
+) {
 }

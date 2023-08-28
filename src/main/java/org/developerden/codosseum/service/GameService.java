@@ -15,21 +15,30 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.service;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import jakarta.inject.Singleton;
+import org.developerden.codosseum.dto.GameCreateResponse;
+import org.developerden.codosseum.dto.GameInfo;
+import org.developerden.codosseum.dto.GameSettings;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
+@Singleton
+public class GameService {
 
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
+  public GameCreateResponse createGame(String creator) {
+    throw new UnsupportedOperationException();
   }
+
+  public GameInfo updateGame(GameSettings settings) {
+    throw new UnsupportedOperationException();
+  }
+
+  public GameInfo getGame(String id) {
+    throw new UnsupportedOperationException();
+  }
+
+  public void initiateNextRound(String gameId) {
+    throw new UnsupportedOperationException();
+  }
+
 }

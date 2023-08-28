@@ -15,21 +15,16 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.event;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import io.soabase.recordbuilder.core.RecordBuilder;
+import jakarta.annotation.Nonnull;
+import java.util.List;
+import org.developerden.codosseum.dto.PlayerGameResult;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
-
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
-  }
+@RecordBuilder
+public record GameOverEvent(
+    @Nonnull
+    List<PlayerGameResult> finalResults
+) implements GameEvent {
 }

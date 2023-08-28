@@ -15,21 +15,21 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.dto;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import jakarta.annotation.Nonnull;
+import org.developerden.codosseum.challenge.Challenge;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
+// returned from the api
+public record ChallengeInfo(
 
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
-  }
+    @JsonIncludeProperties({
+        "author", "license", "language", "title", "difficulty", "tags", "text", "examples"
+    })
+    @JsonUnwrapped
+    @Nonnull
+    Challenge challenge
+) {
 }

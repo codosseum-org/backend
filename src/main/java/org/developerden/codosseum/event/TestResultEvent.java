@@ -15,21 +15,20 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.event;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import io.soabase.recordbuilder.core.RecordBuilder;
+import jakarta.annotation.Nonnull;
+import org.developerden.codosseum.dto.TestResult;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
+@RecordBuilder
+public record TestResultEvent(
+    @Nonnull
+    String testId,
 
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
-  }
+    int num,
+
+    @Nonnull
+    TestResult result
+) implements GameEvent {
 }

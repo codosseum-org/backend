@@ -15,21 +15,9 @@
  *
  */
 
-package org.developerden.codosseum;
+/**
+ * Data transfer object definitions
+ * (request and response body data for the endpoints as defined in the OpenAPI definition).
+ */
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
-
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
-
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
-  }
-}
+package org.developerden.codosseum.dto;

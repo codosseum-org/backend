@@ -15,21 +15,20 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.auth;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import io.micronaut.security.token.reader.HttpHeaderTokenReader;
+import jakarta.inject.Singleton;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
+@Singleton
+public class GameKeyTokenReader extends HttpHeaderTokenReader {
+  @Override
+  protected String getPrefix() {
+    return "Game ";
+  }
 
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
+  @Override
+  protected String getHeaderName() {
+    return "Authorization";
   }
 }

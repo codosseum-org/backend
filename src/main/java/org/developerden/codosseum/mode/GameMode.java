@@ -15,21 +15,17 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.mode;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import java.util.List;
+import org.developerden.codosseum.dto.Player;
+import org.developerden.codosseum.dto.PlayerRoundResult;
+import org.developerden.codosseum.model.Game;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
+// should have a serialiser/deserialiser using the game mode name and the available
+// implementations on the classpath
+public interface GameMode {
 
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
-  }
+  double computeScore(Player player, List<PlayerRoundResult> results);
+
 }

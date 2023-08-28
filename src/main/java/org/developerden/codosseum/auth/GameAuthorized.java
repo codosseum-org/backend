@@ -15,21 +15,26 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.auth;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface GameAuthorized {
 
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
-  }
+  /**
+   * The set of roles that are authorized to access this endpoint.
+   * If you use this annotation there must be a variable called "game" in your route
+   * representing the game ID.
+   *
+   * <p>This rule rejects unauthenticated access.
+   *
+   * @return allowed roles (or empty array, allowing anonymous access).
+   */
+  GameRole[] value();
+
 }

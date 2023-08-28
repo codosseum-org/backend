@@ -15,21 +15,14 @@
  *
  */
 
-package org.developerden.codosseum;
+package org.developerden.codosseum.repository;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import org.developerden.codosseum.model.Game;
 
-@OpenAPIDefinition(
-    info = @Info(
-        title = "codosseum",
-        version = "0.0"
-    )
-)
-public class Application {
+public interface GameRepository {
 
-  public static void main(String[] args) {
-    Micronaut.run(Application.class, args);
-  }
+  Game findGameById(String id);
+
+  void insertGame(Game game);
+
 }
