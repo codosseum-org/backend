@@ -20,6 +20,21 @@ tags:
   - name: developers
     description: Operations available to regular developers
 paths:
+  /languages:
+    get:
+      operationId: getSupportedLanguages
+      summary: Get a list of languages this server knows how to handle.
+      responses:
+        "200":
+          description: The language list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: Language identifiers
+                  examples: ["java", "python3", "haskell", "c23"]
   /games:
     # Perhaps this endpoint could get optional authentication for technical users (e.g. discord bots creating games) so they aren't affected by the IP-based limiting.
     post:
