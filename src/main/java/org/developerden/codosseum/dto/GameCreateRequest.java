@@ -17,38 +17,18 @@
 
 package org.developerden.codosseum.dto;
 
-import io.soabase.recordbuilder.core.RecordBuilder;
+import io.micronaut.core.annotation.Introspected;
 import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-import java.util.List;
-import org.developerden.codosseum.mode.GameMode;
-import org.developerden.codosseum.model.GameState;
+import jakarta.validation.constraints.NotNull;
 
-@RecordBuilder
-public record GameInfo(
+@Introspected
+public record GameCreateRequest(
     @Nonnull
+    @NotNull
     GameSettings settings,
 
     @Nonnull
-    String id,
-
-    @Nonnull
-    GameMode gameMode,
-
-    @Nonnull
-    Players players,
-
-    @Nonnull
-    GameState state,
-
-    int timeLeft,
-
-    long nextStateAt,
-
-    @Nullable
-    Integer round,
-
-    @Nonnull
-    List<PlayerGameResult> results
-) {
+    @NotNull
+    Player player
+){
 }

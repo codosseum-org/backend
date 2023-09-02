@@ -15,40 +15,17 @@
  *
  */
 
-package org.developerden.codosseum.dto;
+package org.developerden.codosseum.controller;
 
-import io.soabase.recordbuilder.core.RecordBuilder;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
 import java.util.List;
-import org.developerden.codosseum.mode.GameMode;
-import org.developerden.codosseum.model.GameState;
 
-@RecordBuilder
-public record GameInfo(
-    @Nonnull
-    GameSettings settings,
+@Controller
+public class InfoController {
 
-    @Nonnull
-    String id,
-
-    @Nonnull
-    GameMode gameMode,
-
-    @Nonnull
-    Players players,
-
-    @Nonnull
-    GameState state,
-
-    int timeLeft,
-
-    long nextStateAt,
-
-    @Nullable
-    Integer round,
-
-    @Nonnull
-    List<PlayerGameResult> results
-) {
+  @Get("/languages")
+  public List<String> getSupportedLanguages() {
+    throw new UnsupportedOperationException();
+  }
 }

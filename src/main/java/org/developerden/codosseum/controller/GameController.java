@@ -92,6 +92,14 @@ public class GameController {
     throw new UnsupportedOperationException();
   }
 
+  @Post("/{id}/restart")
+  @GameAuthorized(GameRole.PLAYER)
+  public HttpResponse<GameCreateResponse> restartGame(
+      Principal principal, @PathVariable("id") Game game
+  ) {
+    throw new UnsupportedOperationException();
+  }
+
   @ExecuteOn(TaskExecutors.IO)
   @Get("/{id}/events")
   @Produces(MediaType.TEXT_EVENT_STREAM)

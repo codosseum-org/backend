@@ -431,7 +431,7 @@ paths:
       - $ref: "#/components/parameters/pathGameId"
     post:
       tags: [games]
-      operationId: restart
+      operationId: restartGame
       summary: Restart the game with the same or adjusted settings
       description: |
         Like starting a new game with the same settings as the current one and directly notifying all previous participants via an event.
