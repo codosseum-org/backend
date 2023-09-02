@@ -54,14 +54,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  adminKey:
-                    type: string
-                    description: Key to manage the game and participate
-                  id:
-                    type: string
-                    description: ID of the newly created game
+                $ref: "#/components/schemas/GameCreateResponse"
         "400":
           description: "invalid input, object invalid"
         "409":
@@ -439,7 +432,35 @@ paths:
         "409":
           description: player has not submitted results in this round (yet)
 
+  /games/{id}/restart:
+    parameters:
+      - $ref: "#/components/parameters/pathGameId"
+    post:
+      tags: [games]
+      operationId: restart
+      summary: Restart the game with the same or adjusted settings
+      description: |
+        Like starting a new game with the same settings as the current one and directly notifying all previous participants via an event.
 
+        Game settings can be selectively overwritten by supplying (partial) GameSettings.
+      security:
+        - gameKey: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GameSettings"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameCreateResponse"
+        "401":
+          description: unauthenticated
+        "404":
+          description: game, round or player does not exist
 
   /games/{id}/events:
     parameters:
@@ -703,6 +724,22 @@ components:
           items:
             $ref: "#/components/schemas/PlayerGameResult"
 
+    GameRestartEvent:
+      type: object
+      description: |
+        Fired when a player restarts the game.
+        A restarted game is a new game; players have to join it proactively.
+        The idea is that clients will implement this by showing a simple yes/no dialog to the players.
+      properties:
+        player:
+          $ref: "#/components/schemas/Player"
+          description: Player who restarted the game
+        game:
+          $ref: "#/components/schemas/Game"
+          description: The new game
+
+
+
 
     # Other
     Submission:
@@ -780,6 +817,16 @@ components:
             This score is computed based on the cumulative performance in the rounds in which the player participated.
             It is abstract in the sense that every game mode computes it differently – It's only transparent that higher
             equals better.
+
+    GameCreateResponse:
+      type: object
+      properties:
+        adminKey:
+          type: string
+          description: Key to manage the game and participate
+        id:
+          type: string
+          description: ID of the newly created game
 
     Game:
       type: object
