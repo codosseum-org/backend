@@ -831,10 +831,14 @@ components:
     Game:
       type: object
       description: Information about a game
-      allOf:
-        - $ref: "#/components/schemas/GameSettings"
-      required: [players, state, allowedLanguages, gameMode, maxPlayers, timeLimit, maxWarmupTime]
+      required: [players, state, gameMode]
       properties:
+        settings:
+          $ref: "#/components/schemas/GameSettings"
+          required: [allowedGameModes, allowedLanguages, maxPlayers, timeLimit, maxWarmupTime]
+        gameMode:
+          $ref: "#/components/schemas/GameMode"
+          description: Active game mode
         id:
           type: string
           description: Game ID
@@ -912,9 +916,11 @@ components:
           description: Which programming languages are allowed to be used for submissions. If omitted, all languages are allowed.
           minItems: 1
 
-        gameMode:
-          description: Game mode of this game
-          $ref: "#/components/schemas/GameMode"
+        allowedGameModes:
+          description: Game modes from which the server will make a random selection.
+          type: array
+          items:
+            $ref: "#/components/schemas/GameMode"
 
         maxPlayers:
           type: integer
