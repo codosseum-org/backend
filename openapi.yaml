@@ -65,8 +65,7 @@ paths:
             schema:
               type: object
               description: Settings for the new game and
-              allOf:
-                - $ref: "#/components/schemas/GameSettings"
+              required: [settings, player]
               properties:
                 player:
                   $ref: "#/components/schemas/Player"
@@ -77,13 +76,8 @@ paths:
 
                     In the future, there might be a mechanism for technical users to create games without joining them,
                     where this property is optional.
-                allowedGameModes:
-                  type: array
-                  items:
-                    $ref: "#/components/schemas/GameMode"
-                    description: |
-                      If `gameMode` is not given, the new game will select a random game mode from this array.
-                      If both this array and the `gameMode` option are omitted, a game mode will be picked from all available game modes.
+                settings:
+                  $ref: "#/components/schemas/GameSettings"
   /games/{id}:
     parameters:
       - $ref: "#/components/parameters/pathGameId"
