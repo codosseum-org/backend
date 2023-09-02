@@ -21,6 +21,7 @@ tags:
     description: Operations available to regular developers
 paths:
   /games:
+    # Perhaps this endpoint could get optional authentication for technical users (e.g. discord bots creating games) so they aren't affected by the IP-based limiting.
     post:
       tags:
         - games
@@ -55,10 +56,19 @@ paths:
           application/json:
             schema:
               type: object
-              description: Settings for the new game
+              description: Settings for the new game and
               allOf:
                 - $ref: "#/components/schemas/GameSettings"
               properties:
+                player:
+                  $ref: "#/components/schemas/Player"
+                  description: |
+                    Player info of the person creating the game.
+                    Without special authorisation, this must not be omitted and the provided
+                    player will join the newly created game automatically.
+
+                    In the future, there might be a mechanism for technical users to create games without joining them,
+                    where this property is optional.
                 allowedGameModes:
                   type: array
                   items:
