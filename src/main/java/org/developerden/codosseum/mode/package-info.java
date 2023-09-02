@@ -16,7 +16,7 @@
  */
 
 /**
- * Game mode API/plugin interface
+ * Game mode API/plugin interface.
  */
 
 package org.developerden.codosseum.mode;

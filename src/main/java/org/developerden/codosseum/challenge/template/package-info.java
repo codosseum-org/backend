@@ -16,7 +16,7 @@
  */
 
 /**
- * Client for interacting with the code template generator
+ * Client for interacting with the code template generator.
  */
 
 package org.developerden.codosseum.challenge.template;
