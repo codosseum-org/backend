@@ -844,6 +844,9 @@ components:
         timeLeft:
           type: integer
           description: Time left on the clock for the current game state. If state is "gameOver", this value is absent
+        nextStateAt:
+          type: integer
+          description: Unix (seconds) timestamp for when the current timer runs out. Alternative to timeLeft.
         players:
           $ref: "#/components/schemas/Players"
         results:
