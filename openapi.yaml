@@ -415,11 +415,7 @@ paths:
           description: player has not submitted results in this round (yet)
 
 
-  # Server-sent events (SSE) are a crucial part of this API.
-  # In the path definition below, they're described using OAS but clients probably can't rely on tooling to implement this for them.
-  # The event stram is described as an array whose items are of "one of" the event types.
-  # (Inspiration taken from https://github.com/OAI/OpenAPI-Specification/issues/396#issuecomment-894718960)
-  # Event IDs may be sent as well, even though they're not specified here. The data section of the events is always encoded as JSON.
+
   /games/{id}/events:
     parameters:
       - $ref: "#/components/parameters/pathGameId"
@@ -431,6 +427,14 @@ paths:
         You should use a tool specifically for server-sent events for interacting with this endpoint.
         Authentication with a *game key* is optional - if a game key for the specified game is provided,
         the server will send events that are exclusive to the corresponding player, such as test results.
+
+        Server-sent events (SSE) are a crucial part of this API.
+        In the path definition below, they're described using OAS but clients probably can't rely on tooling to
+        implement this for them.
+        The event stram is described as an array whose items are of "one of" the event types.
+        (Inspiration taken from https://github.com/OAI/OpenAPI-Specification/issues/396#issuecomment-894718960)
+        Event IDs may be sent as well, even though they're not specified here.
+        The data section of the events is always encoded as JSON.
       security:
         - gameKey: []
         - {}
