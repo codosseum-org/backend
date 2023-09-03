@@ -17,6 +17,7 @@
 
 package org.developerden.codosseum.challenge;
 
+import io.micronaut.core.annotation.Introspected;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
@@ -24,16 +25,17 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.Set;
+import org.developerden.codosseum.challenge.validation.SpdxId;
 
+@Introspected
 public record Challenge(
     @Nullable
     Author author,
 
-    // Custom validator
+    @SpdxId
     @Nullable
     String license,
 
-    // Custom validator
     @Nullable
     String language,
 
