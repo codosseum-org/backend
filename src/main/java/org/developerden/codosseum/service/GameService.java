@@ -18,6 +18,7 @@
 package org.developerden.codosseum.service;
 
 import jakarta.inject.Singleton;
+import org.developerden.codosseum.dto.GameCreateRequest;
 import org.developerden.codosseum.dto.GameCreateResponse;
 import org.developerden.codosseum.dto.GameInfo;
 import org.developerden.codosseum.dto.GameSettings;
@@ -25,11 +26,15 @@ import org.developerden.codosseum.dto.GameSettings;
 @Singleton
 public class GameService {
 
-  public GameCreateResponse createGame(String creator) {
+  public GameCreateResponse createGame(GameCreateRequest request) {
     throw new UnsupportedOperationException();
   }
 
-  public GameInfo updateGame(GameSettings settings) {
+  public GameInfo updateGame(String gameId, GameSettings settings) {
+    throw new UnsupportedOperationException();
+  }
+
+  public void deleteGame(String gameId) {
     throw new UnsupportedOperationException();
   }
 
@@ -37,7 +42,20 @@ public class GameService {
     throw new UnsupportedOperationException();
   }
 
+  public void startGame(String gameId) {
+    // check before if game is in warmup state
+    initiateNextRound(gameId);
+  }
+
+  public String getTemplate(String gameId, String lang) {
+    throw new UnsupportedOperationException();
+  }
+
   public void initiateNextRound(String gameId) {
+    throw new UnsupportedOperationException();
+  }
+
+  public GameCreateResponse restartGame(String gameId) {
     throw new UnsupportedOperationException();
   }
 

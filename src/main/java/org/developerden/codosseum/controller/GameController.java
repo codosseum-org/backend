@@ -17,6 +17,7 @@
 
 package org.developerden.codosseum.controller;
 
+import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -36,6 +37,7 @@ import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import java.net.URI;
 import java.security.Principal;
 import org.developerden.codosseum.auth.GameAuthorized;
 import org.developerden.codosseum.auth.GameRole;
@@ -61,14 +63,14 @@ public class GameController {
   @Post
   @Secured(SecurityRule.IS_ANONYMOUS)
   public HttpResponse<GameCreateResponse> createGame(@Valid @Body GameCreateRequest request) {
-    return HttpResponse.ok(gameService.createGame(request));
+    GameCreateResponse response = gameService.createGame(request);
+    return HttpResponse.created(response, URI.create(response.id()));
   }
 
-  // typed argument binding for looking up games
   @Get("/{id}")
   @Secured(SecurityRule.IS_ANONYMOUS)
   public HttpResponse<GameInfo> getGame(@PathVariable("id") String gameId) {
-    throw new UnsupportedOperationException();
+    return HttpResponse.ok(gameService.getGame(gameId));
   }
 
   @Patch("/{id}")
@@ -78,19 +80,21 @@ public class GameController {
       @PathVariable("id") String gameId,
       @Valid @Body GameSettings settings
   ) {
-    throw new UnsupportedOperationException();
+    return HttpResponse.ok(gameService.updateGame(gameId, settings));
   }
 
   @Delete("/{id}")
   @GameAuthorized(GameRole.ADMIN)
   public HttpResponse<Void> deleteGame(Principal principal, @PathVariable("id") String gameId) {
-    throw new UnsupportedOperationException();
+    gameService.deleteGame(gameId);
+    return HttpResponse.noContent();
   }
 
   @Post("/{id}/start")
   @GameAuthorized(GameRole.ADMIN)
   public HttpResponse<Void> startGame(Principal principal, @PathVariable("id") String gameId) {
-    throw new UnsupportedOperationException();
+    gameService.startGame(gameId);
+    return HttpResponse.noContent();
   }
 
   @Get("/{id}/template")
@@ -99,17 +103,21 @@ public class GameController {
   public HttpResponse<String> getCodeTemplate(
       Principal principal,
       @PathVariable("id") String gameId,
+      // add custom validation annotation here
       @QueryValue("lang") String language
   ) {
-    throw new UnsupportedOperationException();
+    return HttpResponse.ok(gameService.getTemplate(gameId, language));
   }
 
   @Post("/{id}/restart")
   @GameAuthorized(GameRole.PLAYER)
   public HttpResponse<GameCreateResponse> restartGame(
-      Principal principal, @PathVariable("id") String gameId
+      Principal principal,
+      @PathVariable("id") String gameId,
+      @Valid @Body GameSettings settings
   ) {
-    throw new UnsupportedOperationException();
+    GameCreateResponse response = gameService.restartGame(gameId);
+    return HttpResponse.created(response, URI.create(response.id()));
   }
 
   @ExecuteOn(TaskExecutors.IO)
