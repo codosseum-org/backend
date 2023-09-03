@@ -27,6 +27,7 @@ module codosseum {
   requires io.micronaut.security.micronaut_security_annotations;
   requires io.micronaut.validation.micronaut_validation;
   requires io.micronaut.context;
+  requires io.micronaut.inject;
   requires io.micronaut.router;
   requires io.swagger.v3.oas.annotations;
   requires io.soabase.recordbuilder.core;
@@ -38,5 +39,6 @@ module codosseum {
   requires io.micronaut.http;
   requires org.reactivestreams;
   requires reactor.core;
-
+  requires human.readable.ids.java;
+  requires java.spdx.library;
 }

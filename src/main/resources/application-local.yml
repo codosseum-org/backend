@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 Alex Wood
+# SPDX-FileCopyrightText: 2023 JohnnyJayJay
 # SPDX-License-Identifier: AGPL-3.0-or-later
 #
 # This program is free software: you can redistribute it and/or modify it under the terms of
@@ -11,11 +11,13 @@
 #
 # You should have received a copy of the GNU Affero General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>.
-micronaut:
-  application:
-    name: codosseum
-  security:
-    enabled: true
-  caches:
-    templates:
-      expire-after-write: 5m
+codosseum:
+  challenge-source:
+    type: repo
+    url: https://github.com/codosseum-org/challenges.git
+    pull-interval: PT1M
+  game-retention: PT30S
+  enabled-languages:
+    - clojure
+    - java
+    - haskell
