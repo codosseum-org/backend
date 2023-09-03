@@ -22,6 +22,7 @@ module codosseum {
   requires io.micronaut.serde.micronaut_serde_api;
   requires io.micronaut.http_client;
   requires io.micronaut.http_server;
+  requires io.micronaut.cache.micronaut_cache_core;
   requires io.micronaut.security.micronaut_security;
   requires io.micronaut.security.micronaut_security_annotations;
   requires io.micronaut.validation.micronaut_validation;
