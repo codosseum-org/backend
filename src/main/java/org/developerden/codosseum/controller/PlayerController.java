@@ -24,6 +24,8 @@ import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import jakarta.validation.Valid;
 import java.security.Principal;
@@ -36,9 +38,11 @@ import org.developerden.codosseum.model.Game;
 
 @Validated
 @Controller("/games/{id}/players")
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class PlayerController {
 
   @Get
+  @Secured(SecurityRule.IS_ANONYMOUS)
   public HttpResponse<Players> getPlayers(@PathVariable("id") Game game) {
     throw new UnsupportedOperationException();
   }

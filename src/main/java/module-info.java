@@ -22,19 +22,20 @@ module codosseum {
   requires io.micronaut.serde.micronaut_serde_api;
   requires io.micronaut.http_client;
   requires io.micronaut.http_server;
+  requires io.micronaut.security.micronaut_security;
+  requires io.micronaut.security.micronaut_security_annotations;
+  requires io.micronaut.validation.micronaut_validation;
+  requires io.micronaut.context;
+  requires io.micronaut.router;
   requires io.swagger.v3.oas.annotations;
   requires io.soabase.recordbuilder.core;
   requires jakarta.annotation;
   requires jakarta.validation;
   requires com.fasterxml.jackson.annotation;
   requires jakarta.inject;
-  requires io.micronaut.security.micronaut_security;
   requires java.compiler;
   requires io.micronaut.http;
-  requires io.micronaut.validation.micronaut_validation;
   requires org.reactivestreams;
-  requires io.micronaut.context;
-  requires io.micronaut.router;
   requires reactor.core;
 
 }

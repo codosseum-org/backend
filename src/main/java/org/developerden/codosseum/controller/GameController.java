@@ -31,6 +31,8 @@ import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.sse.Event;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
@@ -47,6 +49,7 @@ import org.reactivestreams.Publisher;
 
 @Validated
 @Controller("/games")
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class GameController {
 
   private final GameService gameService;
@@ -56,12 +59,14 @@ public class GameController {
   }
 
   @Post
+  @Secured(SecurityRule.IS_ANONYMOUS)
   public HttpResponse<GameCreateResponse> createGame(@Valid @Body GameCreateRequest request) {
     return HttpResponse.ok(gameService.createGame(request));
   }
 
   // typed argument binding for looking up games
   @Get("/{id}")
+  @Secured(SecurityRule.IS_ANONYMOUS)
   public HttpResponse<GameInfo> getGame(@PathVariable("id") String gameId) {
     throw new UnsupportedOperationException();
   }
@@ -110,6 +115,7 @@ public class GameController {
   @ExecuteOn(TaskExecutors.IO)
   @Get("/{id}/events")
   @Produces(MediaType.TEXT_EVENT_STREAM)
+  @Secured(SecurityRule.IS_ANONYMOUS)
   public Publisher<Event<GameEvent>> subscribeToGameEvents(
       @Nullable Principal principal,
       @PathVariable("id") String gameId
