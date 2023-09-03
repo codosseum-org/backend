@@ -40,7 +40,7 @@ dependencies {
 
 
 application {
-    mainClass.set("org.developerden.codosseum.server.Application")
+    mainClass.set("org.developerden.codosseum.Application")
 }
 
 java {
