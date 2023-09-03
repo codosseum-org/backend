@@ -31,7 +31,6 @@ import org.developerden.codosseum.auth.GameAuthorized;
 import org.developerden.codosseum.auth.GameRole;
 import org.developerden.codosseum.dto.Submission;
 import org.developerden.codosseum.dto.TestResponse;
-import org.developerden.codosseum.model.Game;
 
 @Validated
 @Controller("/games/{id}/solutions")
@@ -40,7 +39,7 @@ public class SolutionController {
   @Post("/test")
   @GameAuthorized(GameRole.PLAYER)
   public HttpResponse<TestResponse> testSolution(
-      @PathVariable("id") Game game,
+      @PathVariable("id") String gameId,
       @Nullable @QueryValue List<Integer> testNumbers,
       @Valid @Body Submission submission
   ) {
@@ -50,7 +49,7 @@ public class SolutionController {
   @Post("/submit")
   @GameAuthorized(GameRole.PLAYER)
   public HttpResponse<Void> submitSolution(
-      @PathVariable("id") Game game,
+      @PathVariable("id") String gameId,
       @Valid @Body Submission submission
   ) {
     throw new UnsupportedOperationException();

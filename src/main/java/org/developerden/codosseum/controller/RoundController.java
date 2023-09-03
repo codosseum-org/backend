@@ -25,7 +25,6 @@ import io.micronaut.http.annotation.QueryValue;
 import java.security.Principal;
 import org.developerden.codosseum.dto.PlayerRoundResult;
 import org.developerden.codosseum.dto.Round;
-import org.developerden.codosseum.model.Game;
 
 @Controller("/games/{id}/rounds")
 public class RoundController {
@@ -33,7 +32,7 @@ public class RoundController {
   @Get("/{round}")
   public HttpResponse<Round> getRound(
       Principal principal,
-      @PathVariable("id") Game game,
+      @PathVariable("id") String gameId,
       @PathVariable int round,
       @QueryValue(defaultValue = "false") boolean withCode
   ) {
@@ -42,7 +41,7 @@ public class RoundController {
 
   @Get("/{round}/results/{player}")
   public HttpResponse<PlayerRoundResult> getRoundResults(
-      @PathVariable("id") Game game,
+      @PathVariable("id") String gameId,
       @PathVariable int round,
       @PathVariable String player
   ) {

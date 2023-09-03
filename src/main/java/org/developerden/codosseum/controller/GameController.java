@@ -37,25 +37,32 @@ import jakarta.validation.Valid;
 import java.security.Principal;
 import org.developerden.codosseum.auth.GameAuthorized;
 import org.developerden.codosseum.auth.GameRole;
+import org.developerden.codosseum.dto.GameCreateRequest;
 import org.developerden.codosseum.dto.GameCreateResponse;
 import org.developerden.codosseum.dto.GameInfo;
 import org.developerden.codosseum.dto.GameSettings;
 import org.developerden.codosseum.event.GameEvent;
-import org.developerden.codosseum.model.Game;
+import org.developerden.codosseum.service.GameService;
 import org.reactivestreams.Publisher;
 
 @Validated
 @Controller("/games")
 public class GameController {
 
+  private final GameService gameService;
+
+  public GameController(GameService gameService) {
+    this.gameService = gameService;
+  }
+
   @Post
-  public HttpResponse<GameCreateResponse> createGame(@Valid @Body GameSettings settings) {
-    throw new UnsupportedOperationException();
+  public HttpResponse<GameCreateResponse> createGame(@Valid @Body GameCreateRequest request) {
+    return HttpResponse.ok(gameService.createGame(request));
   }
 
   // typed argument binding for looking up games
   @Get("/{id}")
-  public HttpResponse<GameInfo> getGame(@PathVariable("id") Game game) {
+  public HttpResponse<GameInfo> getGame(@PathVariable("id") String gameId) {
     throw new UnsupportedOperationException();
   }
 
@@ -63,7 +70,7 @@ public class GameController {
   @GameAuthorized(GameRole.ADMIN)
   public HttpResponse<GameInfo> updateGame(
       Principal principal,
-      @PathVariable("id") Game game,
+      @PathVariable("id") String gameId,
       @Valid @Body GameSettings settings
   ) {
     throw new UnsupportedOperationException();
@@ -71,13 +78,13 @@ public class GameController {
 
   @Delete("/{id}")
   @GameAuthorized(GameRole.ADMIN)
-  public HttpResponse<Void> deleteGame(Principal principal, @PathVariable("id") Game game) {
+  public HttpResponse<Void> deleteGame(Principal principal, @PathVariable("id") String gameId) {
     throw new UnsupportedOperationException();
   }
 
   @Post("/{id}/start")
   @GameAuthorized(GameRole.ADMIN)
-  public HttpResponse<Void> startGame(Principal principal, @PathVariable("id") Game game) {
+  public HttpResponse<Void> startGame(Principal principal, @PathVariable("id") String gameId) {
     throw new UnsupportedOperationException();
   }
 
@@ -86,7 +93,7 @@ public class GameController {
   @Produces(MediaType.TEXT_PLAIN)
   public HttpResponse<String> getCodeTemplate(
       Principal principal,
-      @PathVariable("id") Game game,
+      @PathVariable("id") String gameId,
       @QueryValue("lang") String language
   ) {
     throw new UnsupportedOperationException();
@@ -95,7 +102,7 @@ public class GameController {
   @Post("/{id}/restart")
   @GameAuthorized(GameRole.PLAYER)
   public HttpResponse<GameCreateResponse> restartGame(
-      Principal principal, @PathVariable("id") Game game
+      Principal principal, @PathVariable("id") String gameId
   ) {
     throw new UnsupportedOperationException();
   }
@@ -105,8 +112,9 @@ public class GameController {
   @Produces(MediaType.TEXT_EVENT_STREAM)
   public Publisher<Event<GameEvent>> subscribeToGameEvents(
       @Nullable Principal principal,
-      @PathVariable("id") Game game
+      @PathVariable("id") String gameId
   ) {
     throw new UnsupportedOperationException();
   }
+
 }
