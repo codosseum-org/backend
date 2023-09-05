@@ -15,3 +15,10 @@ out/
 .settings
 .classpath
 .factorypath
+
+# Devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
