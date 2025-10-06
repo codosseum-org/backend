@@ -18,17 +18,16 @@
 package org.developerden.codosseum.dto;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
 import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotNull;
 
 @Introspected
+@Serdeable
 public record GameCreateRequest(
-    @Nonnull
-    @NotNull
-    GameSettings settings,
-
-    @Nonnull
-    @NotNull
-    Player player
-){
+        @NotNull
+        GameSettings settings,
+        @NotNull
+        Player player
+) {
 }

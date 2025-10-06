@@ -18,37 +18,41 @@
 package org.developerden.codosseum.dto;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+
 import java.util.List;
+
 import org.developerden.codosseum.mode.GameMode;
 
 
 @Introspected
 @RecordBuilder
+@Serdeable
 public record GameSettings(
-    // custom validator for elements
-    @Nullable
-    List<String> allowedLanguages,
+        // custom validator for elements
+        @Nullable
+        List<String> allowedLanguages,
 
-    @Nullable
-    GameMode gameMode,
+        @Nullable
+        GameMode gameMode,
 
-    @Nullable
-    @Min(2)
-    @Max(50)
-    Integer maxPlayers,
+        @Nullable
+        @Min(2)
+        @Max(50)
+        Integer maxPlayers,
 
-    @Nullable
-    @Min(60)
-    @Max(1800)
-    Integer timeLimit,
+        @Nullable
+        @Min(60)
+        @Max(1800)
+        Integer timeLimit,
 
-    @Nullable
-    @Min(0)
-    @Max(300)
-    Integer maxWarmupTime
+        @Nullable
+        @Min(0)
+        @Max(300)
+        Integer maxWarmupTime
 ) {
 }
