@@ -23,11 +23,13 @@ import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.token.validator.TokenValidator;
 import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 
 @Singleton
 public class GameKeyTokenValidator implements TokenValidator<HttpRequest<?>> {
-  @Override
-  public Publisher<Authentication> validateToken(String token, @Nullable HttpRequest<?> request) {
-    return null;
-  }
+    @Override
+    public Publisher<Authentication> validateToken(String token, @Nullable HttpRequest<?> request) {
+      return Mono.empty();
+
+    }
 }
