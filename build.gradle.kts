@@ -29,6 +29,8 @@ dependencies {
     implementation("io.micronaut.cache:micronaut-cache-caffeine")
     implementation("io.micronaut.security:micronaut-security")
     implementation("io.micronaut.validation:micronaut-validation")
+    implementation("io.micronaut.security:micronaut-security-oauth2")
+    implementation("io.micronaut.security:micronaut-security-jwt")
     implementation("io.soabase.record-builder:record-builder-core:37")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
     implementation("io.swagger.core.v3:swagger-annotations")
