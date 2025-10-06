@@ -17,10 +17,14 @@
 
 package org.developerden.codosseum.dto;
 
+import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
 
 @RecordBuilder
+@Introspected
+@Serdeable
 public record Player(
     @Nonnull
     String name

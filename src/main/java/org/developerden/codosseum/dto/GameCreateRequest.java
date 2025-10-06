@@ -27,7 +27,6 @@ import jakarta.validation.constraints.NotNull;
 @Schema(
         description = "Settings for the new game"
 )
-
 public record GameCreateRequest(
         @NotNull
         GameSettings settings,

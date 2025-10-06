@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import org.developerden.codosseum.mode.GameMode;
+import org.developerden.codosseum.mode.GameModeType;
 
 import java.util.List;
 
@@ -43,7 +43,7 @@ public record GameSettings(
 
         @Nullable
         @Schema(description = "Game modes from which the server will make a random selection. If omitted, all game modes are allowed")
-        GameMode gameMode,
+        List<GameModeType> allowedGameModes,
 
         @Nullable
         @Min(2)
