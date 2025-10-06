@@ -19,14 +19,27 @@ package org.developerden.codosseum.dto;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 @Introspected
 @Serdeable
+@Schema(
+        description = "Settings for the new game"
+)
+
 public record GameCreateRequest(
         @NotNull
         GameSettings settings,
         @NotNull
+        @Schema(description = """
+                Player info of the person creating the game.
+                Without special authorisation, this must not be omitted and the provided
+                player will join the newly created game automatically.
+                
+                In the future, there might be a mechanism for technical users to create games without joining them,
+                where this property is optional.
+                """)
         Player player
 ) {
 }
