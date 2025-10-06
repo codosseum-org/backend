@@ -19,7 +19,6 @@ package org.developerden.codosseum.dto;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
-import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotNull;
 
 @Introspected
