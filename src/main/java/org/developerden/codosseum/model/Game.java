@@ -19,6 +19,8 @@ package org.developerden.codosseum.model;
 
 import io.soabase.recordbuilder.core.RecordBuilder;
 import org.developerden.codosseum.dto.GameSettings;
+import org.developerden.codosseum.dto.Players;
+import org.developerden.codosseum.mode.GameMode;
 
 import java.util.UUID;
 
@@ -28,6 +30,7 @@ public record Game(
         UUID id,
         String adminKey,
         GameSettings settings,
-        GamePlayers players
+        Players players,
+        GameMode mode
 ) {
 }

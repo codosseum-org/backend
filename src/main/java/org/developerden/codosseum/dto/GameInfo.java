@@ -17,6 +17,7 @@
 
 package org.developerden.codosseum.dto;
 
+import io.micronaut.serde.annotation.Serdeable;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RecordBuilder
+@Serdeable
 public record GameInfo(
     @Nonnull
     GameSettings settings,

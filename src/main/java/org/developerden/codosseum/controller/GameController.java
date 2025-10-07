@@ -44,6 +44,7 @@ import org.reactivestreams.Publisher;
 
 import java.net.URI;
 import java.security.Principal;
+import java.util.Optional;
 import java.util.UUID;
 
 @Validated
@@ -80,8 +81,12 @@ public class GameController {
 
     @Get("/{id}")
     @Secured(SecurityRule.IS_ANONYMOUS)
-    public HttpResponse<GameInfo> getGame(@PathVariable("id") @Valid UUID gameId) {
-        return HttpResponse.ok(gameService.getGame(gameId));
+    public HttpResponse<GameInfo> getGame(@PathVariable("id") UUID gameId) {
+        Optional<GameInfo> game = gameService.getGame(gameId);
+        if (game.isEmpty()) {
+            return HttpResponse.notFound();
+        }
+        return HttpResponse.ok(game.get());
     }
 
     @Patch("/{id}")

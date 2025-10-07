@@ -17,16 +17,19 @@
 
 package org.developerden.codosseum.dto;
 
+import io.micronaut.serde.annotation.Serdeable;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
-import java.util.List;
+
+import java.util.Set;
 
 @RecordBuilder
+@Serdeable
 public record Players(
     @Nonnull
-    List<Player> players,
+    Set<Player> players,
 
     @Nonnull
-    String admin
+    Player admin
 ) {
 }

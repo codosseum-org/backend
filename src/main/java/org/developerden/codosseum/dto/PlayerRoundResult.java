@@ -23,30 +23,31 @@ import jakarta.annotation.Nullable;
 
 @RecordBuilder
 public record PlayerRoundResult(
-    @Nonnull
-    String name,
+        @Nonnull Player player,
+        @Nonnull
+        String name,
 
-    @Nonnull
-    String language,
+        @Nonnull
+        String language,
 
-    @Nullable
-    String code,
+        @Nullable
+        String code,
 
-    int byteCount,
+        int byteCount,
 
-    int timeLeft,
+        int timeLeft,
 
-    @Nullable
-    Score score
+        @Nullable
+        Score score
 ) {
 
-  @RecordBuilder
-  public record Score(
-      int testsRun,
-      int testsPassed,
-      double averageRuntime
-  ) {
+    @RecordBuilder
+    public record Score(
+            int testsRun,
+            int testsPassed,
+            double averageRuntime
+    ) {
 
-  }
+    }
 
 }

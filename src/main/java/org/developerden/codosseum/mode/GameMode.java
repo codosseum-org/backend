@@ -27,6 +27,13 @@ import java.util.List;
 public interface GameMode {
     GameModeType getType();
 
+    /**
+     * Compute the score for the given player and results.
+     * The results are all the player's results for the current round.
+     * @param player
+     * @param results
+     * @return a score between 0 and 100 (inclusive)
+     */
     double computeScore(Player player, List<PlayerRoundResult> results);
 
 }

@@ -19,24 +19,24 @@ package org.developerden.codosseum.service;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import org.developerden.codosseum.dto.GameCreateRequest;
-import org.developerden.codosseum.dto.GameCreateResponse;
-import org.developerden.codosseum.dto.GameInfo;
-import org.developerden.codosseum.dto.GameSettings;
+import org.developerden.codosseum.dto.*;
+import org.developerden.codosseum.mode.GameModeFactory;
+import org.developerden.codosseum.mode.GameModeType;
 import org.developerden.codosseum.model.Game;
-import org.developerden.codosseum.model.GamePlayers;
+import org.developerden.codosseum.model.GameState;
 import org.developerden.codosseum.repository.GameRepository;
+import org.developerden.codosseum.utils.CollectionUtils;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Singleton
 public class GameService {
     private final GameRepository gameRepository;
+    private final GameModeFactory gameModeFactory;
 
-    public @Inject GameService(GameRepository gameRepository) {
+    public @Inject GameService(GameRepository gameRepository, GameModeFactory gameModeFactory) {
         this.gameRepository = gameRepository;
+        this.gameModeFactory = gameModeFactory;
     }
 
     private String generateAdminKey() {
@@ -45,10 +45,18 @@ public class GameService {
 
     public GameCreateResponse createGame(GameCreateRequest request) {
 
-        var game = new Game(UUID.randomUUID(), generateAdminKey(), request.settings(), new GamePlayers(
-                request.player(),
-                new HashSet<>()
-        ));
+        var gameModeTypes = EnumSet.allOf(GameModeType.class);
+        if (Optional.ofNullable(request.settings().allowedGameModes()).map(modes -> !modes.isEmpty())
+                .orElse(false)) {
+            gameModeTypes.retainAll(request.settings().allowedGameModes());
+        }
+        var gameModeType = CollectionUtils.pickRandom(gameModeTypes);
+        var gameMode = gameModeFactory.fromType(gameModeType);
+
+        var game = new Game(UUID.randomUUID(), generateAdminKey(), request.settings(), new Players(
+                new HashSet<>(),
+                request.player()
+        ), gameMode);
 
         gameRepository.insertGame(game);
 
@@ -64,17 +72,24 @@ public class GameService {
     }
 
     public Optional<GameInfo> getGame(UUID id) {
-        var game = gameRepository.findGameById(id);
+        var gameOpt = gameRepository.findGameById(id);
 
-        if(game == null) {
+        if (gameOpt == null) {
             return Optional.empty();
         }
 
-        return Optional.of(game)
+        return Optional.of(gameOpt)
                 .map(game -> new GameInfo(
                         game.settings(),
                         game.id(),
-                ))
+                        game.mode(),
+                        game.players(),
+                        GameState.WAITING_FOR_PLAYERS,
+                        0,
+                        0,
+                        1,
+                        new ArrayList<>()
+                ));
     }
 
     public void startGame(String gameId) {
