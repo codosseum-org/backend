@@ -23,8 +23,13 @@ import org.developerden.codosseum.dto.*;
 import org.developerden.codosseum.mode.GameModeFactory;
 import org.developerden.codosseum.mode.GameModeType;
 import org.developerden.codosseum.model.Game;
+import org.developerden.codosseum.model.GamePhase;
 import org.developerden.codosseum.model.GameState;
 import org.developerden.codosseum.repository.GameRepository;
+import org.developerden.codosseum.service.game.GameCommand;
+import org.developerden.codosseum.service.game.GameRunner;
+import org.developerden.codosseum.service.game.GameRunnerRegistry;
+import org.developerden.codosseum.service.game.state.SnapshotStore;
 import org.developerden.codosseum.utils.CollectionUtils;
 
 import java.util.*;
@@ -33,10 +38,14 @@ import java.util.*;
 public class GameService {
     private final GameRepository gameRepository;
     private final GameModeFactory gameModeFactory;
+    private final GameRunnerRegistry gameRunnerRegistry;
+    private final SnapshotStore snapshotStore;
 
-    public @Inject GameService(GameRepository gameRepository, GameModeFactory gameModeFactory) {
+    public @Inject GameService(GameRepository gameRepository, GameModeFactory gameModeFactory, GameRunnerRegistry gameRunnerRegistry, SnapshotStore snapshotStore) {
         this.gameRepository = gameRepository;
         this.gameModeFactory = gameModeFactory;
+        this.gameRunnerRegistry = gameRunnerRegistry;
+        this.snapshotStore = snapshotStore;
     }
 
     private String generateAdminKey() {
@@ -78,13 +87,21 @@ public class GameService {
             return Optional.empty();
         }
 
+        var stateOpt = gameRunnerRegistry
+                .find(id)
+                .map(GameRunner::getCurrentState)
+                .or(() -> snapshotStore.load(id));
+
+        var phase = stateOpt.map(GameState::phase)
+                .orElse(GamePhase.UNDEFINED);
+
         return Optional.of(gameOpt)
                 .map(game -> new GameInfo(
                         game.settings(),
                         game.id(),
                         game.mode(),
                         game.players(),
-                        GameState.WAITING_FOR_PLAYERS,
+                        phase,
                         0,
                         0,
                         1,
@@ -92,9 +109,8 @@ public class GameService {
                 ));
     }
 
-    public void startGame(String gameId) {
-        // check before if game is in warmup state
-        initiateNextRound(gameId);
+    public void startGame(UUID gameId) {
+        gameRunnerRegistry.getOrCreate(gameId).tell(new GameCommand.StartGame(gameId));
     }
 
     public String getTemplate(String gameId, String lang) {

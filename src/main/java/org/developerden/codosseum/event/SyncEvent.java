@@ -19,12 +19,12 @@ package org.developerden.codosseum.event;
 
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
-import org.developerden.codosseum.model.GameState;
+import org.developerden.codosseum.model.GamePhase;
 
 @RecordBuilder
 public record SyncEvent(
     @Nonnull
-    GameState state,
+    GamePhase state,
 
     int timeLeft
 ) implements GameEvent {

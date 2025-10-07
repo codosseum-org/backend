@@ -19,13 +19,14 @@ package org.developerden.codosseum.exception;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.developerden.codosseum.model.GameState;
+
+import org.developerden.codosseum.model.GamePhase;
 
 public class IllegalGameStateException extends RuntimeException {
 
-  public IllegalGameStateException(String gameId, GameState state, Set<GameState> expected) {
+  public IllegalGameStateException(String gameId, GamePhase state, Set<GamePhase> expected) {
     super("Game '" + gameId + "' is in state '" + state + "' but this action can only be "
         + "taken while in one of the following states: "
-        + expected.stream().map(GameState::name).collect(Collectors.joining(", ")));
+        + expected.stream().map(GamePhase::name).collect(Collectors.joining(", ")));
   }
 }
