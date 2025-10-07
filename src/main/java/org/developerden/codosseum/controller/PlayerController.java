@@ -18,48 +18,57 @@
 package org.developerden.codosseum.controller;
 
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Delete;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.PathVariable;
-import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import jakarta.validation.Valid;
-import java.security.Principal;
 import org.developerden.codosseum.auth.GameAuthorized;
 import org.developerden.codosseum.auth.GameRole;
+import org.developerden.codosseum.controller.binder.GameParam;
 import org.developerden.codosseum.dto.GameJoinResponse;
 import org.developerden.codosseum.dto.Player;
 import org.developerden.codosseum.dto.Players;
 import org.developerden.codosseum.model.Game;
+import org.developerden.codosseum.service.GameService;
+
+import java.security.Principal;
+import java.util.UUID;
 
 @Validated
 @Controller("/games/{id}/players")
+
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class PlayerController {
 
-  @Get
-  @Secured(SecurityRule.IS_ANONYMOUS)
-  public HttpResponse<Players> getPlayers(@PathVariable("id") Game game) {
-    throw new UnsupportedOperationException();
-  }
+    private final GameService gameService;
 
-  @Post
-  public HttpResponse<GameJoinResponse> joinGame(
-      @PathVariable("id") Game game,
-      @Valid @Body Player player
-  ) {
-    throw new UnsupportedOperationException();
-  }
+    public PlayerController(GameService gameService) {
+        this.gameService = gameService;
+    }
+
+    @Get
+    @Secured(SecurityRule.IS_ANONYMOUS)
+    public HttpResponse<Players> getPlayers(@PathVariable("id") UUID id, @GameParam Game game) {
+        // TODO this route seems very redundant and unhelpful
+        return gameService.getGame(game.id())
+                .map(g -> HttpResponse.ok(g.players()))
+                .orElse(HttpResponse.notFound());
+    }
+
+    @Post
+    public HttpResponse<GameJoinResponse> joinGame(
+            @PathVariable("id") UUID id, @GameParam Game game,
+            @Valid @Body Player player
+    ) {
+        throw new UnsupportedOperationException();
+    }
 
 
-  @Delete("/@self")
-  @GameAuthorized(GameRole.PLAYER)
-  public HttpResponse<Void> leaveGame(Principal principal, @PathVariable("id") Game game) {
-    throw new UnsupportedOperationException();
-  }
+    @Delete("/@self")
+    @GameAuthorized(GameRole.PLAYER)
+    public HttpResponse<Void> leaveGame(Principal principal, @PathVariable("id") Game game) {
+        throw new UnsupportedOperationException();
+    }
 
 }

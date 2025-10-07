@@ -89,7 +89,7 @@ public class GameService {
     public Optional<GameInfo> getGame(UUID id) {
         var gameOpt = gameRepository.findGameById(id);
 
-        if (gameOpt == null) {
+        if (gameOpt.isEmpty()) {
             return Optional.empty();
         }
 
@@ -101,7 +101,7 @@ public class GameService {
         var phase = stateOpt.map(GameState::phase)
                 .orElseThrow(() -> new IllegalStateException("No game state found for game " + id));
 
-        return Optional.of(gameOpt)
+        return gameOpt
                 .map(game -> new GameInfo(
                         game.settings(),
                         game.id(),

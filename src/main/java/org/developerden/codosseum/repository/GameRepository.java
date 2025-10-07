@@ -19,11 +19,12 @@ package org.developerden.codosseum.repository;
 
 import org.developerden.codosseum.model.Game;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface GameRepository {
 
-    Game findGameById(UUID id);
+    Optional<Game> findGameById(UUID id);
 
     void insertGame(Game game);
 

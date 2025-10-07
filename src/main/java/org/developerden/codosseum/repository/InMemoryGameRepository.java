@@ -4,6 +4,7 @@ import jakarta.inject.Singleton;
 import org.developerden.codosseum.model.Game;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,8 +13,8 @@ public class InMemoryGameRepository implements GameRepository {
     private final Map<UUID, Game> games = new ConcurrentHashMap<>();
 
     @Override
-    public Game findGameById(UUID id) {
-        return games.get(id);
+    public Optional<Game> findGameById(UUID id) {
+        return Optional.ofNullable(games.get(id));
     }
 
     @Override
