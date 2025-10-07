@@ -22,6 +22,7 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.developerden.codosseum.auth.GameAuthorized;
 import org.developerden.codosseum.auth.GameRole;
@@ -37,7 +38,6 @@ import java.util.UUID;
 
 @Validated
 @Controller("/games/{id}/players")
-
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class PlayerController {
 
@@ -49,7 +49,7 @@ public class PlayerController {
 
     @Get
     @Secured(SecurityRule.IS_ANONYMOUS)
-    public HttpResponse<Players> getPlayers(@PathVariable("id") UUID id, @GameParam Game game) {
+    public HttpResponse<Players> getPlayers(@PathVariable("id") UUID id, @Parameter(hidden = true) @GameParam Game game) {
         // TODO this route seems very redundant and unhelpful
         return gameService.getGame(game.id())
                 .map(g -> HttpResponse.ok(g.players()))
@@ -58,7 +58,7 @@ public class PlayerController {
 
     @Post
     public HttpResponse<GameJoinResponse> joinGame(
-            @PathVariable("id") UUID id, @GameParam Game game,
+            @PathVariable("id") UUID id, @Parameter(hidden = true) @GameParam Game game,
             @Valid @Body Player player
     ) {
         throw new UnsupportedOperationException();
