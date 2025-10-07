@@ -17,7 +17,9 @@
 
 package org.developerden.codosseum.controller;
 
+import io.micronaut.http.HttpMethod;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.sse.Event;
@@ -26,6 +28,7 @@ import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -108,8 +111,23 @@ public class GameController {
 
     @Post("/{id}/start")
     @GameAuthorized(GameRole.ADMIN)
-    public HttpResponse<Void> startGame(Principal principal, @PathVariable("id") String gameId) {
-        gameService.startGame(gameId);
+    @Operation(operationId = "startGame", summary = "Start a game", description = "Forcefully start a game, regardless of player-count and warmup time")
+    @ApiResponse(
+            responseCode = "204",
+            description = "Successfully started the game. Further info will be received via server-sent events."
+    )
+    @ApiResponse(
+            responseCode = "409",
+            description = "Game is already running or finished"
+    )
+
+    public HttpResponse<Void> startGame(Principal principal, @PathVariable("id") UUID gameId) {
+        try {
+            gameService.startGame(gameId);
+        } catch (IllegalStateException e) {
+            return HttpResponse.status(HttpStatus.CONFLICT);
+        }
+
         return HttpResponse.noContent();
     }
 

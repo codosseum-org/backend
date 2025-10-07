@@ -110,7 +110,12 @@ public class GameService {
     }
 
     public void startGame(UUID gameId) {
-        gameRunnerRegistry.getOrCreate(gameId).tell(new GameCommand.StartGame(gameId));
+        GameRunner runner = gameRunnerRegistry.getOrCreate(gameId);
+        if (runner.getCurrentState().phase() != GamePhase.WAITING_FOR_PLAYERS) {
+            throw new IllegalStateException("Game is already running or finished");
+        }
+
+        runner.tell(new GameCommand.StartGame(gameId));
     }
 
     public String getTemplate(String gameId, String lang) {
