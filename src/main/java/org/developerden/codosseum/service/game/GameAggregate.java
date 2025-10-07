@@ -1,8 +1,10 @@
 package org.developerden.codosseum.service.game;
 
+import org.developerden.codosseum.dto.PlayersBuilder;
 import org.developerden.codosseum.model.GamePhase;
 import org.developerden.codosseum.model.GameState;
 import org.developerden.codosseum.model.GameStateBuilder;
+import org.developerden.codosseum.service.game.event.InternalGameEvent;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,25 +32,39 @@ public class GameAggregate {
         return new Result(events, next);
     }
 
-    private List<GameEvent> decide(GameCommand cmd) {
+    private List<InternalGameEvent> decide(GameCommand cmd) {
         if (!cmd.gameId().equals(gameId)) {
             throw new IllegalArgumentException("Command gameId does not match aggregate gameId");
         }
 
         return switch (cmd) {
+            case GameCommand.CreateGame(var id) -> {
+                if (gameState.phase() != GamePhase.WAITING_FOR_PLAYERS) {
+                    throw new IllegalStateException("Cannot create game that is not in WAITING_FOR_PLAYERS phase");
+                } else {
+                    yield List.of(new InternalGameEvent.GameCreated(gameId));
+                }
+            }
             case GameCommand.StartGame(var id) -> {
                 if (gameState.phase() != GamePhase.WAITING_FOR_PLAYERS) {
                     throw new IllegalStateException("Cannot start game that is not in WAITING_FOR_PLAYERS phase");
                 } else {
-                    // TODO check if enough players
-                    yield List.of(new GameEvent.GameStarted(id));
+                    // TODO check if enough players and actually do something
+                    yield List.of();
+                }
+            }
+            case GameCommand.AddPlayer(var id, var player) -> {
+                if (gameState.phase() != GamePhase.WAITING_FOR_PLAYERS) {
+                    throw new IllegalStateException("Cannot join game that is not in WAITING_FOR_PLAYERS phase");
+                } else {
+                    yield List.of(new InternalGameEvent.PlayerJoined(gameId, player));
                 }
             }
 
         };
     }
 
-    private  GameState applyAll(GameState state, List<GameEvent> events) {
+    private GameState applyAll(GameState state, List<InternalGameEvent> events) {
         var newState = state;
         for (var event : events) {
             newState = apply(newState, event);
@@ -56,15 +72,24 @@ public class GameAggregate {
         return newState;
     }
 
-    private  GameState apply(GameState state, GameEvent event) {
+    private GameState apply(GameState state, InternalGameEvent event) {
+        if (!event.gameId().equals(gameId)) {
+            throw new IllegalArgumentException("Event gameId does not match aggregate gameId");
+        }
         return switch (event) {
-            case GameEvent.GameStarted(var id) -> GameStateBuilder.builder(state).phase(GamePhase.WARMUP).build();
+            case InternalGameEvent.PlayerJoined(var gameId, var player) -> GameStateBuilder.from(state)
+                    .withPlayers(
+                            PlayersBuilder.builder(state.players())
+                                    .addPlayers(player)
+                                    .build()
+                    );
+            case InternalGameEvent.GameCreated(var gameId) -> state; // no-op for now
         };
 
     }
 
 
-    public record Result(List<GameEvent> events, GameAggregate next) {
+    public record Result(List<InternalGameEvent> events, GameAggregate next) {
     }
 
 }

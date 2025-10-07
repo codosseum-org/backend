@@ -23,13 +23,18 @@ import jakarta.annotation.Nonnull;
 
 import java.util.Set;
 
-@RecordBuilder
+@RecordBuilder()
+@RecordBuilder.Options(
+        useImmutableCollections = true,
+        addSingleItemCollectionBuilders = true
+)
 @Serdeable
 public record Players(
-    @Nonnull
-    Set<Player> players,
+        @Nonnull
+        Set<Player> players,
 
-    @Nonnull
-    Player admin
+        @Nonnull
+        Player admin
 ) {
+
 }

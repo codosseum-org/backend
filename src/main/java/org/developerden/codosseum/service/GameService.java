@@ -29,6 +29,7 @@ import org.developerden.codosseum.repository.GameRepository;
 import org.developerden.codosseum.service.game.GameCommand;
 import org.developerden.codosseum.service.game.GameRunner;
 import org.developerden.codosseum.service.game.GameRunnerRegistry;
+import org.developerden.codosseum.service.game.event.EventSink;
 import org.developerden.codosseum.service.game.state.SnapshotStore;
 import org.developerden.codosseum.utils.CollectionUtils;
 
@@ -41,11 +42,14 @@ public class GameService {
     private final GameRunnerRegistry gameRunnerRegistry;
     private final SnapshotStore snapshotStore;
 
-    public @Inject GameService(GameRepository gameRepository, GameModeFactory gameModeFactory, GameRunnerRegistry gameRunnerRegistry, SnapshotStore snapshotStore) {
+    private final EventSink eventSink;
+
+    public @Inject GameService(GameRepository gameRepository, GameModeFactory gameModeFactory, GameRunnerRegistry gameRunnerRegistry, SnapshotStore snapshotStore, EventSink eventSink) {
         this.gameRepository = gameRepository;
         this.gameModeFactory = gameModeFactory;
         this.gameRunnerRegistry = gameRunnerRegistry;
         this.snapshotStore = snapshotStore;
+        this.eventSink = eventSink;
     }
 
     private String generateAdminKey() {
@@ -53,7 +57,6 @@ public class GameService {
     }
 
     public GameCreateResponse createGame(GameCreateRequest request) {
-
         var gameModeTypes = EnumSet.allOf(GameModeType.class);
         if (Optional.ofNullable(request.settings().allowedGameModes()).map(modes -> !modes.isEmpty())
                 .orElse(false)) {
@@ -68,6 +71,9 @@ public class GameService {
         ), gameMode);
 
         gameRepository.insertGame(game);
+
+        gameRunnerRegistry.getOrCreate(game.id())
+                .tell(new GameCommand.CreateGame(game.id()));
 
         return new GameCreateResponse(game.adminKey(), game.id());
     }
@@ -93,7 +99,7 @@ public class GameService {
                 .or(() -> snapshotStore.load(id));
 
         var phase = stateOpt.map(GameState::phase)
-                .orElse(GamePhase.UNDEFINED);
+                .orElseThrow(() -> new IllegalStateException("No game state found for game " + id));
 
         return Optional.of(gameOpt)
                 .map(game -> new GameInfo(

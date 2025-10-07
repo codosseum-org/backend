@@ -2,6 +2,7 @@ package org.developerden.codosseum.service.game;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import org.developerden.codosseum.service.game.event.EventSink;
 import org.developerden.codosseum.service.game.state.SnapshotStore;
 
 import java.util.UUID;

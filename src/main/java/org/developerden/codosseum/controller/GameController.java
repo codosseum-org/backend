@@ -17,7 +17,6 @@
 
 package org.developerden.codosseum.controller;
 
-import io.micronaut.http.HttpMethod;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
@@ -43,6 +42,7 @@ import org.developerden.codosseum.dto.GameInfo;
 import org.developerden.codosseum.dto.GameSettings;
 import org.developerden.codosseum.event.GameEvent;
 import org.developerden.codosseum.service.GameService;
+import org.developerden.codosseum.service.game.event.SseEventSink;
 import org.reactivestreams.Publisher;
 
 import java.net.URI;
@@ -57,8 +57,11 @@ public class GameController {
 
     private final GameService gameService;
 
-    public GameController(GameService gameService) {
+    private final SseEventSink eventSink;
+
+    public GameController(GameService gameService, SseEventSink eventSink) {
         this.gameService = gameService;
+        this.eventSink = eventSink;
     }
 
     @Post
@@ -160,9 +163,9 @@ public class GameController {
     @Secured(SecurityRule.IS_ANONYMOUS)
     public Publisher<Event<GameEvent>> subscribeToGameEvents(
             @Nullable Principal principal,
-            @PathVariable("id") String gameId
+            @PathVariable("id") UUID gameId
     ) {
-        throw new UnsupportedOperationException();
+        return eventSink.subscribeToPublicSSE(gameId);
     }
 
 }

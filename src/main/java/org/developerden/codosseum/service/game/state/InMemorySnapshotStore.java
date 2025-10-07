@@ -12,9 +12,9 @@ import java.util.function.Function;
 @Singleton
 public final class InMemorySnapshotStore implements SnapshotStore {
     private final ConcurrentMap<UUID, GameState> store = new ConcurrentHashMap<>();
-    private final Function<UUID, GameState> initialProvider;
+    private final InitialGameStateProvider initialProvider;
 
-    public InMemorySnapshotStore(Function<UUID, GameState> initialProvider) {
+    public InMemorySnapshotStore(InitialGameStateProvider initialProvider) {
         this.initialProvider = initialProvider;
     }
 
@@ -30,7 +30,7 @@ public final class InMemorySnapshotStore implements SnapshotStore {
 
     @Override
     public GameState createInitial(UUID gameId) {
-        var state = initialProvider.apply(gameId);
+        var state = initialProvider.create(gameId);
         store.put(gameId, state);
         return state;
     }

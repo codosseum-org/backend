@@ -1,7 +1,7 @@
 package org.developerden.codosseum.service.game;
 
-import org.developerden.codosseum.model.Game;
 import org.developerden.codosseum.model.GameState;
+import org.developerden.codosseum.service.game.event.EventSink;
 import org.developerden.codosseum.service.game.state.SnapshotStore;
 
 import java.util.UUID;
