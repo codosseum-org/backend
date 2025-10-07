@@ -18,14 +18,16 @@
 package org.developerden.codosseum.model;
 
 import io.soabase.recordbuilder.core.RecordBuilder;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-import java.util.List;
-import org.developerden.codosseum.mode.GameMode;
+import org.developerden.codosseum.dto.GameSettings;
+
+import java.util.UUID;
 
 // TODO: 19/08/23 internal model
 @RecordBuilder
 public record Game(
-
+        UUID id,
+        String adminKey,
+        GameSettings settings,
+        GamePlayers players
 ) {
 }

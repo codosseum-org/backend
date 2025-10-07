@@ -19,15 +19,20 @@ package org.developerden.codosseum.dto;
 
 import io.micronaut.serde.annotation.Serdeable;
 import io.soabase.recordbuilder.core.RecordBuilder;
-import jakarta.annotation.Nonnull;
+import jakarta.validation.constraints.NotNull;
+
+import javax.annotation.Nonnull;
+import java.util.UUID;
 
 @RecordBuilder
 @Serdeable
 public record GameCreateResponse(
+    @NotNull
     @Nonnull
     String adminKey,
 
+    @NotNull
     @Nonnull
-    String id
+    UUID id
 ) {
 }

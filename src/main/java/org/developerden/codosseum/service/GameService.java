@@ -17,46 +17,81 @@
 
 package org.developerden.codosseum.service;
 
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.developerden.codosseum.dto.GameCreateRequest;
 import org.developerden.codosseum.dto.GameCreateResponse;
 import org.developerden.codosseum.dto.GameInfo;
 import org.developerden.codosseum.dto.GameSettings;
+import org.developerden.codosseum.model.Game;
+import org.developerden.codosseum.model.GamePlayers;
+import org.developerden.codosseum.repository.GameRepository;
+
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.UUID;
 
 @Singleton
 public class GameService {
+    private final GameRepository gameRepository;
 
-  public GameCreateResponse createGame(GameCreateRequest request) {
-    throw new UnsupportedOperationException();
-  }
+    public @Inject GameService(GameRepository gameRepository) {
+        this.gameRepository = gameRepository;
+    }
 
-  public GameInfo updateGame(String gameId, GameSettings settings) {
-    throw new UnsupportedOperationException();
-  }
+    private String generateAdminKey() {
+        return UUID.randomUUID().toString();
+    }
 
-  public void deleteGame(String gameId) {
-    throw new UnsupportedOperationException();
-  }
+    public GameCreateResponse createGame(GameCreateRequest request) {
 
-  public GameInfo getGame(String id) {
-    throw new UnsupportedOperationException();
-  }
+        var game = new Game(UUID.randomUUID(), generateAdminKey(), request.settings(), new GamePlayers(
+                request.player(),
+                new HashSet<>()
+        ));
 
-  public void startGame(String gameId) {
-    // check before if game is in warmup state
-    initiateNextRound(gameId);
-  }
+        gameRepository.insertGame(game);
 
-  public String getTemplate(String gameId, String lang) {
-    throw new UnsupportedOperationException();
-  }
+        return new GameCreateResponse(game.adminKey(), game.id());
+    }
 
-  public void initiateNextRound(String gameId) {
-    throw new UnsupportedOperationException();
-  }
+    public GameInfo updateGame(String gameId, GameSettings settings) {
+        throw new UnsupportedOperationException();
+    }
 
-  public GameCreateResponse restartGame(String gameId) {
-    throw new UnsupportedOperationException();
-  }
+    public void deleteGame(String gameId) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Optional<GameInfo> getGame(UUID id) {
+        var game = gameRepository.findGameById(id);
+
+        if(game == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(game)
+                .map(game -> new GameInfo(
+                        game.settings(),
+                        game.id(),
+                ))
+    }
+
+    public void startGame(String gameId) {
+        // check before if game is in warmup state
+        initiateNextRound(gameId);
+    }
+
+    public String getTemplate(String gameId, String lang) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void initiateNextRound(String gameId) {
+        throw new UnsupportedOperationException();
+    }
+
+    public GameCreateResponse restartGame(String gameId) {
+        throw new UnsupportedOperationException();
+    }
 
 }

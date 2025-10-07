@@ -17,28 +17,21 @@
 
 package org.developerden.codosseum.controller;
 
-import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Delete;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Patch;
-import io.micronaut.http.annotation.PathVariable;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.http.annotation.*;
 import io.micronaut.http.sse.Event;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
-import java.net.URI;
-import java.security.Principal;
 import org.developerden.codosseum.auth.GameAuthorized;
 import org.developerden.codosseum.auth.GameRole;
 import org.developerden.codosseum.dto.GameCreateRequest;
@@ -49,86 +42,104 @@ import org.developerden.codosseum.event.GameEvent;
 import org.developerden.codosseum.service.GameService;
 import org.reactivestreams.Publisher;
 
+import java.net.URI;
+import java.security.Principal;
+import java.util.UUID;
+
 @Validated
 @Controller("/games")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class GameController {
 
-  private final GameService gameService;
+    private final GameService gameService;
 
-  public GameController(GameService gameService) {
-    this.gameService = gameService;
-  }
+    public GameController(GameService gameService) {
+        this.gameService = gameService;
+    }
 
-  @Post
-  @Secured(SecurityRule.IS_ANONYMOUS)
-  public HttpResponse<GameCreateResponse> createGame(@Valid @Body GameCreateRequest request) {
-    GameCreateResponse response = gameService.createGame(request);
-    return HttpResponse.created(response, URI.create(response.id()));
-  }
+    @Post
+    @Secured(SecurityRule.IS_ANONYMOUS)
+    @ApiResponse(
+            responseCode = "201",
+            description = "new game created",
+            content = @Content(),
+            headers = {@Header(
+                    name = "Location",
+                    description = "URL of the newly created game",
+                    required = true,
+                    schema = @Schema(
+                            type = "string",
+                            format = "uri-reference"
+                    )
+            )}
+    )
+    public HttpResponse<GameCreateResponse> createGame(@Valid @Body GameCreateRequest request) {
+        GameCreateResponse response = gameService.createGame(request);
+        return HttpResponse.created(response, URI.create(response.id().toString()));
+    }
 
-  @Get("/{id}")
-  @Secured(SecurityRule.IS_ANONYMOUS)
-  public HttpResponse<GameInfo> getGame(@PathVariable("id") String gameId) {
-    return HttpResponse.ok(gameService.getGame(gameId));
-  }
+    @Get("/{id}")
+    @Secured(SecurityRule.IS_ANONYMOUS)
+    public HttpResponse<GameInfo> getGame(@PathVariable("id") @Valid UUID gameId) {
+        return HttpResponse.ok(gameService.getGame(gameId));
+    }
 
-  @Patch("/{id}")
-  @GameAuthorized(GameRole.ADMIN)
-  public HttpResponse<GameInfo> updateGame(
-      Principal principal,
-      @PathVariable("id") String gameId,
-      @Valid @Body GameSettings settings
-  ) {
-    return HttpResponse.ok(gameService.updateGame(gameId, settings));
-  }
+    @Patch("/{id}")
+    @GameAuthorized(GameRole.ADMIN)
+    public HttpResponse<GameInfo> updateGame(
+            Principal principal,
+            @PathVariable("id") String gameId,
+            @Valid @Body GameSettings settings
+    ) {
+        return HttpResponse.ok(gameService.updateGame(gameId, settings));
+    }
 
-  @Delete("/{id}")
-  @GameAuthorized(GameRole.ADMIN)
-  public HttpResponse<Void> deleteGame(Principal principal, @PathVariable("id") String gameId) {
-    gameService.deleteGame(gameId);
-    return HttpResponse.noContent();
-  }
+    @Delete("/{id}")
+    @GameAuthorized(GameRole.ADMIN)
+    public HttpResponse<Void> deleteGame(Principal principal, @PathVariable("id") String gameId) {
+        gameService.deleteGame(gameId);
+        return HttpResponse.noContent();
+    }
 
-  @Post("/{id}/start")
-  @GameAuthorized(GameRole.ADMIN)
-  public HttpResponse<Void> startGame(Principal principal, @PathVariable("id") String gameId) {
-    gameService.startGame(gameId);
-    return HttpResponse.noContent();
-  }
+    @Post("/{id}/start")
+    @GameAuthorized(GameRole.ADMIN)
+    public HttpResponse<Void> startGame(Principal principal, @PathVariable("id") String gameId) {
+        gameService.startGame(gameId);
+        return HttpResponse.noContent();
+    }
 
-  @Get("/{id}/template")
-  @GameAuthorized(GameRole.PLAYER)
-  @Produces(MediaType.TEXT_PLAIN)
-  public HttpResponse<String> getCodeTemplate(
-      Principal principal,
-      @PathVariable("id") String gameId,
-      // add custom validation annotation here
-      @QueryValue("lang") String language
-  ) {
-    return HttpResponse.ok(gameService.getTemplate(gameId, language));
-  }
+    @Get("/{id}/template")
+    @GameAuthorized(GameRole.PLAYER)
+    @Produces(MediaType.TEXT_PLAIN)
+    public HttpResponse<String> getCodeTemplate(
+            Principal principal,
+            @PathVariable("id") String gameId,
+            // add custom validation annotation here
+            @QueryValue("lang") String language
+    ) {
+        return HttpResponse.ok(gameService.getTemplate(gameId, language));
+    }
 
-  @Post("/{id}/restart")
-  @GameAuthorized(GameRole.PLAYER)
-  public HttpResponse<GameCreateResponse> restartGame(
-      Principal principal,
-      @PathVariable("id") String gameId,
-      @Valid @Body GameSettings settings
-  ) {
-    GameCreateResponse response = gameService.restartGame(gameId);
-    return HttpResponse.created(response, URI.create(response.id()));
-  }
+    @Post("/{id}/restart")
+    @GameAuthorized(GameRole.PLAYER)
+    public HttpResponse<GameCreateResponse> restartGame(
+            Principal principal,
+            @PathVariable("id") String gameId,
+            @Valid @Body GameSettings settings
+    ) {
+        GameCreateResponse response = gameService.restartGame(gameId);
+        return HttpResponse.created(response, URI.create(response.id().toString()));
+    }
 
-  @ExecuteOn(TaskExecutors.IO)
-  @Get("/{id}/events")
-  @Produces(MediaType.TEXT_EVENT_STREAM)
-  @Secured(SecurityRule.IS_ANONYMOUS)
-  public Publisher<Event<GameEvent>> subscribeToGameEvents(
-      @Nullable Principal principal,
-      @PathVariable("id") String gameId
-  ) {
-    throw new UnsupportedOperationException();
-  }
+    @ExecuteOn(TaskExecutors.IO)
+    @Get("/{id}/events")
+    @Produces(MediaType.TEXT_EVENT_STREAM)
+    @Secured(SecurityRule.IS_ANONYMOUS)
+    public Publisher<Event<GameEvent>> subscribeToGameEvents(
+            @Nullable Principal principal,
+            @PathVariable("id") String gameId
+    ) {
+        throw new UnsupportedOperationException();
+    }
 
 }

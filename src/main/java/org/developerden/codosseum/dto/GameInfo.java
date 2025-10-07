@@ -20,9 +20,11 @@ package org.developerden.codosseum.dto;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
-import java.util.List;
 import org.developerden.codosseum.mode.GameMode;
 import org.developerden.codosseum.model.GameState;
+
+import java.util.List;
+import java.util.UUID;
 
 @RecordBuilder
 public record GameInfo(
@@ -30,7 +32,7 @@ public record GameInfo(
     GameSettings settings,
 
     @Nonnull
-    String id,
+    UUID id,
 
     @Nonnull
     GameMode gameMode,

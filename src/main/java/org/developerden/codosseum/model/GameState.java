@@ -17,11 +17,18 @@
 
 package org.developerden.codosseum.model;
 
-public enum GameState {
+import io.swagger.v3.oas.annotations.media.Schema;
 
-  WARMUP,
-  IN_PROGRESS,
-  ROUND_OVER,
-  GAME_OVER
+public enum GameState {
+    @Schema(description = "The game has not yet started and is waiting for more players before it can begin")
+    WAITING_FOR_PLAYERS,
+    @Schema(description = "The game is in a warmup phase and is ready to begin")
+    WARMUP,
+    @Schema(description = "The game is currently in progress")
+    IN_PROGRESS,
+    @Schema(description = "The current round of the game is over")
+    ROUND_OVER,
+    @Schema(description = "The game has ended")
+    GAME_OVER
 
 }
