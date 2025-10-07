@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.micronaut.application") version "4.0.1"
-    id("io.micronaut.aot") version "4.0.1"
-    id("io.micronaut.openapi") version "4.0.1"
+    id("io.micronaut.application") version "4.5.5"
+    id("io.micronaut.aot") version "4.5.5"
+    id("io.micronaut.openapi") version "4.5.5"
     checkstyle
 }
 
@@ -38,7 +38,7 @@ dependencies {
     implementation("io.micronaut:micronaut-http-client")
     implementation("com.github.kkuegler:human-readable-ids-java:0.1.1")
     implementation("com.networknt:json-schema-validator:1.0.86")
-    implementation("org.spdx:java-spdx-library:1.1.7") {
+    implementation("org.spdx:java-spdx-library:(,2.0]") {
         exclude("org.apache.logging.log4j")
     }
     runtimeOnly("ch.qos.logback:logback-classic")

@@ -25,21 +25,22 @@ import io.micronaut.validation.validator.constraints.ConstraintValidatorContext;
 import org.spdx.library.model.license.InvalidLicenseStringException;
 import org.spdx.library.model.license.LicenseInfoFactory;
 
+
 public class SpdxIdConstraintValidator implements ConstraintValidator<SpdxId, String> {
 
-  @Override
-  public boolean isValid(@Nullable String value,
-                         @NonNull AnnotationValue<SpdxId> annotationMetadata,
-                         @NonNull ConstraintValidatorContext context) {
-    if (value == null) {
-      return true;
-    }
+    @Override
+    public boolean isValid(@Nullable String value,
+                           @NonNull AnnotationValue<SpdxId> annotationMetadata,
+                           @NonNull ConstraintValidatorContext context) {
+        if (value == null) {
+            return true;
+        }
 
-    try {
-      LicenseInfoFactory.parseSPDXLicenseString(value);
-    } catch (InvalidLicenseStringException e) {
-      return false;
+        try {
+            LicenseInfoFactory.parseSPDXLicenseString(value);
+        } catch (InvalidLicenseStringException e) {
+            return false;
+        }
+        return true;
     }
-    return true;
-  }
 }
