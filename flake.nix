@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Alexander Wood (BristerMitten)
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 {
   description = "Codosseum Backend Development Flake";
 
