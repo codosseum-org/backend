@@ -1,7 +1,7 @@
 package org.developerden.codosseum.service.game;
 
-import org.developerden.codosseum.dto.PlayersBuilder;
 import org.developerden.codosseum.model.GamePhase;
+import org.developerden.codosseum.model.GamePlayersBuilder;
 import org.developerden.codosseum.model.GameState;
 import org.developerden.codosseum.model.GameStateBuilder;
 import org.developerden.codosseum.service.game.event.InternalGameEvent;
@@ -79,8 +79,8 @@ public class GameAggregate {
         return switch (event) {
             case InternalGameEvent.PlayerJoined(var gameId, var player) -> GameStateBuilder.from(state)
                     .withPlayers(
-                            PlayersBuilder.builder(state.players())
-                                    .addPlayers(player)
+                            GamePlayersBuilder.builder(state.players())
+                                    .addOthers(player)
                                     .build()
                     );
             case InternalGameEvent.GameCreated(var gameId) -> state; // no-op for now

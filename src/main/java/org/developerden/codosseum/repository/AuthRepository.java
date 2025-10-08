@@ -17,7 +17,7 @@
 
 package org.developerden.codosseum.repository;
 
-import org.developerden.codosseum.model.EphemeralPlayer;
+import org.developerden.codosseum.model.player.EphemeralPlayer;
 
 public interface AuthRepository {
 

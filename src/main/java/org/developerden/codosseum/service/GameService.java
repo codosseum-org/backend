@@ -19,6 +19,7 @@ package org.developerden.codosseum.service;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import jakarta.validation.Valid;
 import org.developerden.codosseum.dto.*;
 import org.developerden.codosseum.mode.GameModeFactory;
 import org.developerden.codosseum.mode.GameModeType;
@@ -33,6 +34,7 @@ import org.developerden.codosseum.service.game.event.EventSink;
 import org.developerden.codosseum.service.game.state.SnapshotStore;
 import org.developerden.codosseum.utils.CollectionUtils;
 
+import java.nio.channels.FileChannel;
 import java.util.*;
 
 @Singleton
@@ -124,6 +126,7 @@ public class GameService {
         runner.tell(new GameCommand.StartGame(gameId));
     }
 
+
     public String getTemplate(String gameId, String lang) {
         throw new UnsupportedOperationException();
     }
@@ -136,4 +139,7 @@ public class GameService {
         throw new UnsupportedOperationException();
     }
 
+    public Optional addPlayer(UUID id, @Valid Player player) {
+        return null;
+    }
 }

@@ -1,8 +1,20 @@
 package org.developerden.codosseum.model;
 
-import org.developerden.codosseum.dto.Player;
+import io.soabase.recordbuilder.core.RecordBuilder;
+import org.developerden.codosseum.model.player.GamePlayer;
 
 import java.util.Set;
 
-public record GamePlayers(Player admin, Set<Player> others) {
+/**
+ * Internal model representing the players in a game.
+ *
+ * @param admin  the admin player
+ * @param others the other players
+ */
+@RecordBuilder()
+@RecordBuilder.Options(
+        useImmutableCollections = true,
+        addSingleItemCollectionBuilders = true
+)
+public record GamePlayers(GamePlayer admin, Set<GamePlayer> others) {
 }

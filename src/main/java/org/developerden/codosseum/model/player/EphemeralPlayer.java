@@ -15,7 +15,7 @@
  *
  */
 
-package org.developerden.codosseum.model;
+package org.developerden.codosseum.model.player;
 
-public record EphemeralPlayer(String name, String key, boolean admin) {
+public record EphemeralPlayer(String name, String key, boolean admin) implements GamePlayer {
 }

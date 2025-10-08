@@ -3,6 +3,8 @@ package org.developerden.codosseum.service.game.event;
 import org.developerden.codosseum.dto.Player;
 import org.developerden.codosseum.event.GameEvent;
 import org.developerden.codosseum.model.Game;
+import org.developerden.codosseum.model.GamePlayers;
+import org.developerden.codosseum.model.player.GamePlayer;
 import org.developerden.codosseum.service.game.GameCommand;
 
 import java.util.UUID;
@@ -20,6 +22,6 @@ public sealed interface InternalGameEvent {
     record GameCreated(UUID gameId) implements InternalGameEvent {
     }
 
-    record PlayerJoined(UUID gameId, Player player) implements InternalGameEvent {
+    record PlayerJoined(UUID gameId, GamePlayer player) implements InternalGameEvent {
     }
 }

@@ -17,6 +17,7 @@
 
 package org.developerden.codosseum.controller;
 
+import io.micronaut.context.ApplicationContext;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
@@ -61,7 +62,10 @@ public class PlayerController {
             @PathVariable("id") UUID id, @Parameter(hidden = true) @GameParam Game game,
             @Valid @Body Player player
     ) {
-        throw new UnsupportedOperationException();
+
+        return gameService.addPlayer(game.id(), player)
+                .map(response -> HttpResponse.ok(new GameJoinResponse(response.game(), response.player())))
+                .orElse(HttpResponse.notFound());
     }
 
 

@@ -1,6 +1,7 @@
 package org.developerden.codosseum.service.game;
 
 import org.developerden.codosseum.dto.Player;
+import org.developerden.codosseum.model.player.GamePlayer;
 
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ public sealed interface GameCommand {
     record StartGame(UUID gameId) implements GameCommand {
     }
 
-    record AddPlayer(UUID gameId, Player player) implements GameCommand {
+    record AddPlayer(UUID gameId, GamePlayer player) implements GameCommand {
     }
 
 
