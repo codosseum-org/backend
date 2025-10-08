@@ -1,0 +1,16 @@
+version = 1
+SPDX-PackageName = "codosseum-backend"
+SPDX-PackageSupplier = "JohnnyJayJay <johnnyjayjay02@gmail.com>"
+SPDX-PackageDownloadLocation = "https://github.com/codosseum-org/backend"
+
+[[annotations]]
+path = ".github/workflows/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "JohnnyJayJay"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["gradle/**", "gradlew", "gradlew.bat"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Gradle, Inc."
+SPDX-License-Identifier = "Apache-2.0"
