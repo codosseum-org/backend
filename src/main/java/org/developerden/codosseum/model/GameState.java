@@ -15,6 +15,7 @@
 package org.developerden.codosseum.model;
 
 import io.soabase.recordbuilder.core.RecordBuilder;
+import jakarta.annotation.Nonnull;
 import java.util.UUID;
 
 /**
@@ -25,8 +26,9 @@ import java.util.UUID;
  * @param players the players involved in the game
  */
 @RecordBuilder
-public record GameState(UUID gameId,
-                        GamePhase phase,
-                        GamePlayers players
-) {
+@RecordBuilder.Options(defaultNotNull = true)
+public record GameState(@Nonnull UUID gameId,
+                        @Nonnull GamePhase phase,
+                        @Nonnull GamePlayers players
+) implements GameStateBuilder.With {
 }

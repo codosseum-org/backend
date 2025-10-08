@@ -19,3 +19,5 @@ repos:
     rev: v6.1.2
     hooks:
       - id: reuse-lint-file
+        additional_dependencies:
+          - click

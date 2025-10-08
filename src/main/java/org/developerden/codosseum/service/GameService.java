@@ -25,6 +25,7 @@ import java.util.UUID;
 import org.developerden.codosseum.dto.GameCreateRequest;
 import org.developerden.codosseum.dto.GameCreateResponse;
 import org.developerden.codosseum.dto.GameInfo;
+import org.developerden.codosseum.dto.GameJoinResponse;
 import org.developerden.codosseum.dto.GameSettings;
 import org.developerden.codosseum.dto.Player;
 import org.developerden.codosseum.dto.Players;
@@ -33,6 +34,7 @@ import org.developerden.codosseum.mode.GameModeType;
 import org.developerden.codosseum.model.Game;
 import org.developerden.codosseum.model.GamePhase;
 import org.developerden.codosseum.model.GameState;
+import org.developerden.codosseum.model.player.EphemeralPlayer;
 import org.developerden.codosseum.repository.GameRepository;
 import org.developerden.codosseum.service.game.GameCommand;
 import org.developerden.codosseum.service.game.GameRunner;
@@ -145,7 +147,39 @@ public class GameService {
     throw new UnsupportedOperationException();
   }
 
-  public Optional addPlayer(UUID id, @Valid Player player) {
-    return null;
+  public Optional<GameJoinResponse> addPlayer(UUID id, @Valid Player player) {
+    var gameOpt = gameRepository.findGameById(id);
+    if (gameOpt.isEmpty()) {
+      return Optional.empty();
+    }
+
+    var game = gameOpt.get();
+
+    if (game.players().allPlayers().anyMatch(p -> p.name().equals(player.name()))) {
+      throw new IllegalStateException(
+          "Player with name " + player.name() + " already exists in game");
+    }
+//
+//    if (game.players().players().size() >= game.settings().maxPlayers()) {
+//      throw new IllegalStateException("Game is full");
+//    }
+
+    var runner = gameRunnerRegistry
+        .getOrCreate(id);
+    var state = runner
+        .getCurrentState();
+    if (state.phase() != GamePhase.WAITING_FOR_PLAYERS) {
+        throw new IllegalStateException("Game is already running or finished");
+    }
+
+    var playerKey = generateAdminKey();
+    runner.tell(new GameCommand.AddPlayer(game.id(), new EphemeralPlayer(
+        player.name(),
+        playerKey,
+     false
+    )));
+
+    return Optional.of(new GameJoinResponse(playerKey));
+
   }
 }

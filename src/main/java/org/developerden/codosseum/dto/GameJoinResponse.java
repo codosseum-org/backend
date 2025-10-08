@@ -14,10 +14,12 @@
 
 package org.developerden.codosseum.dto;
 
+import io.micronaut.serde.annotation.Serdeable;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
 
 @RecordBuilder
+@Serdeable
 public record GameJoinResponse(
     @Nonnull
     String key

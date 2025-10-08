@@ -18,6 +18,7 @@ import io.micronaut.serde.annotation.Serdeable;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @RecordBuilder()
 @RecordBuilder.Options(
@@ -32,5 +33,9 @@ public record Players(
     @Nonnull
     Player admin
 ) {
+
+  public Stream<Player> allPlayers() {
+    return Stream.concat(players.stream(), Stream.of(admin));
+  }
 
 }

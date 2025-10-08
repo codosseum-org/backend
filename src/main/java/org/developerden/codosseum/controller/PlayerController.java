@@ -59,12 +59,18 @@ public class PlayerController {
   }
 
   @Post
+  @Secured(SecurityRule.IS_ANONYMOUS)
   public HttpResponse<GameJoinResponse> joinGame(
       @PathVariable("id") UUID id, @Parameter(hidden = true) @GameParam Game game,
       @Valid @Body Player player
   ) {
-
-    return HttpResponse.notFound();
+    try {
+      return gameService.addPlayer(game.id(), player)
+          .map(HttpResponse::ok)
+          .orElse(HttpResponse.notFound());
+    } catch (IllegalStateException e) {
+      return HttpResponse.status(409, e.getMessage());
+    }
   }
 
 
