@@ -15,8 +15,10 @@
 package org.developerden.codosseum.service.game.state;
 
 import jakarta.inject.Singleton;
+import java.util.HashSet;
 import java.util.UUID;
 import org.developerden.codosseum.model.GamePhase;
+import org.developerden.codosseum.model.GamePlayers;
 import org.developerden.codosseum.model.GameState;
 import org.developerden.codosseum.model.GameStateBuilder;
 
@@ -30,6 +32,7 @@ public class DefaultInitialGameStateProvider implements InitialGameStateProvider
     return GameStateBuilder.builder()
         .gameId(gameId)
         .phase(GamePhase.WAITING_FOR_PLAYERS)
+        .players(new GamePlayers(null, new HashSet<>()))
         .build();
   }
 }
