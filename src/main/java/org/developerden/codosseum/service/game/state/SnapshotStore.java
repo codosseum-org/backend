@@ -1,16 +1,31 @@
-package org.developerden.codosseum.service.game.state;
+/*
+ * # SPDX-FileCopyrightText: 2025 Alexander Wood (BristerMitten)
+ * # SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import org.developerden.codosseum.model.GameState;
+package org.developerden.codosseum.service.game.state;
 
 import java.util.Optional;
 import java.util.UUID;
+import org.developerden.codosseum.model.GameState;
 
 /**
  * Persistence boundary for GameState snapshots.
  * Pure IO: load/save by gameId. No domain logic or timers here.
  */
 public interface SnapshotStore {
-    Optional<GameState> load(UUID gameId);
-    void save(UUID gameId, GameState state);
-    GameState createInitial(UUID gameId);
+  Optional<GameState> load(UUID gameId);
+
+  void save(UUID gameId, GameState state);
+
+  GameState createInitial(UUID gameId);
 }
