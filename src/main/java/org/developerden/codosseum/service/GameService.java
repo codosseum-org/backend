@@ -169,14 +169,14 @@ public class GameService {
     var state = runner
         .getCurrentState();
     if (state.phase() != GamePhase.WAITING_FOR_PLAYERS) {
-        throw new IllegalStateException("Game is already running or finished");
+      throw new IllegalStateException("Game is already running or finished");
     }
 
     var playerKey = generateAdminKey();
     runner.tell(new GameCommand.AddPlayer(game.id(), new EphemeralPlayer(
         player.name(),
         playerKey,
-     false
+        false
     )));
 
     return Optional.of(new GameJoinResponse(playerKey));

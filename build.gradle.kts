@@ -4,6 +4,7 @@ plugins {
     id("io.micronaut.application") version "4.5.5"
     id("io.micronaut.aot") version "4.5.5"
     id("io.micronaut.openapi") version "4.5.5"
+    id("groovy")
     checkstyle
 }
 
@@ -43,8 +44,14 @@ dependencies {
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("org.yaml:snakeyaml")
 
+    testAnnotationProcessor("io.micronaut:micronaut-inject-java")
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
+    testImplementation("io.micronaut.test:micronaut-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("io.micronaut.test:micronaut-test-spock")
+    testImplementation(platform("org.spockframework:spock-bom:+"))
+    testImplementation("org.spockframework:spock-core")
+
 }
 
 
@@ -53,8 +60,9 @@ application {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_25
-    targetCompatibility = JavaVersion.VERSION_25
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 checkstyle {
@@ -102,4 +110,5 @@ micronaut {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
+    outputs.upToDateWhen { false }
 }
