@@ -16,6 +16,8 @@ package org.developerden.codosseum.model;
 
 import io.soabase.recordbuilder.core.RecordBuilder;
 import java.util.Set;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.developerden.codosseum.model.player.GamePlayer;
 
 /**
@@ -29,5 +31,5 @@ import org.developerden.codosseum.model.player.GamePlayer;
     useImmutableCollections = true,
     addSingleItemCollectionBuilders = true
 )
-public record GamePlayers(GamePlayer admin, Set<GamePlayer> others) {
+public record GamePlayers(@Nullable GamePlayer admin, @Nonnull Set<GamePlayer> others) {
 }
