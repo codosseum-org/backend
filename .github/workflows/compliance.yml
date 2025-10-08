@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: REUSE Compliance check
-        uses: fsfe/reuse-action@v2
+        uses: fsfe/reuse-action@v6.0.0
   openapi:
     runs-on: ubuntu-latest
     steps:
