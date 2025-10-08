@@ -63,9 +63,7 @@ public class PlayerController {
             @Valid @Body Player player
     ) {
 
-        return gameService.addPlayer(game.id(), player)
-                .map(response -> HttpResponse.ok(new GameJoinResponse(response.game(), response.player())))
-                .orElse(HttpResponse.notFound());
+       return HttpResponse.notFound();
     }
 
 

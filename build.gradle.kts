@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Alex Wood
 // SPDX-License-Identifier: AGPL-3.0-or-later
 plugins {
-    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.5.5"
     id("io.micronaut.aot") version "4.5.5"
     id("io.micronaut.openapi") version "4.5.5"
@@ -43,6 +42,9 @@ dependencies {
     }
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("org.yaml:snakeyaml")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 
@@ -51,8 +53,8 @@ application {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 checkstyle {
@@ -95,4 +97,9 @@ micronaut {
     openapi {
 
     }
+}
+
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
 }
