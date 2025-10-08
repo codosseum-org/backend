@@ -23,7 +23,7 @@ dependencies {
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     annotationProcessor("io.micronaut.validation:micronaut-validation-processor")
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
-    annotationProcessor("io.soabase.record-builder:record-builder-processor:37")
+    annotationProcessor("io.soabase.record-builder:record-builder-processor:49")
 
     implementation("io.micronaut.reactor:micronaut-reactor")
     implementation("io.micronaut.cache:micronaut-cache-caffeine")
@@ -31,7 +31,7 @@ dependencies {
     implementation("io.micronaut.validation:micronaut-validation")
     implementation("io.micronaut.security:micronaut-security-oauth2")
     implementation("io.micronaut.security:micronaut-security-jwt")
-    implementation("io.soabase.record-builder:record-builder-core:37")
+    implementation("io.soabase.record-builder:record-builder-core:49")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
     implementation("io.swagger.core.v3:swagger-annotations")
     implementation("io.micronaut:micronaut-http-client")
