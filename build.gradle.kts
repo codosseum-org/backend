@@ -58,7 +58,7 @@ java {
 }
 
 checkstyle {
-    toolVersion = "10.12.2"
+    toolVersion = "11.1.0"
     configFile = configDirectory.file("google_checks.xml").get().asFile
     sourceSets = emptySet()
 }
