@@ -14,15 +14,21 @@
 
 package org.developerden.codosseum.service.game;
 
+import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import org.developerden.codosseum.model.GamePhase;
 import org.developerden.codosseum.model.GamePlayersBuilder;
 import org.developerden.codosseum.model.GameState;
 import org.developerden.codosseum.model.GameStateBuilder;
+import org.developerden.codosseum.service.game.effect.SideEffect;
 import org.developerden.codosseum.service.game.event.InternalGameEvent;
 
 public class GameAggregate {
+  private static final Duration DEFAULT_WARMUP_DURATION = Duration.ofSeconds(5);
+  private static final String KEY_WARMUP_TO_START = "warmup->start";
+
   private final UUID gameId;
 
   private final GameState gameState;
@@ -37,46 +43,59 @@ public class GameAggregate {
   }
 
   public Result handle(GameCommand cmd) {
-    var events = decide(cmd);
-    var newState = applyAll(gameState, events);
+    var decision = decide(cmd);
+    var newState = applyAll(gameState, decision.events());
 
     var next = new GameAggregate(gameId, newState);
 
-    return new Result(events, next);
+    return new Result(decision.events(), decision.effects(), next);
   }
 
-  private List<InternalGameEvent> decide(GameCommand cmd) {
+  private void requirePhase(GamePhase gamePhase) {
+    if (gameState.phase() != gamePhase) {
+      throw new IllegalStateException(
+          "Game is not in required phase: " + gamePhase + ", current phase: " + gameState.phase());
+    }
+  }
+
+  private Decision decide(GameCommand cmd) {
     if (!cmd.gameId().equals(gameId)) {
       throw new IllegalArgumentException("Command gameId does not match aggregate gameId");
     }
 
     return switch (cmd) {
       case GameCommand.CreateGame(var id, var creator) -> {
-        if (gameState.phase() != GamePhase.WAITING_FOR_PLAYERS) {
-          throw new IllegalStateException(
-              "Cannot create game that is not in WAITING_FOR_PLAYERS phase");
-        } else {
-          yield List.of(new InternalGameEvent.GameCreated(gameId, creator));
-        }
+        requirePhase(GamePhase.WAITING_FOR_PLAYERS);
+        yield Decision.pure(
+            new InternalGameEvent.GameCreated(gameId, creator)
+        );
+
       }
       case GameCommand.StartGame(var id) -> {
-        if (gameState.phase() != GamePhase.WAITING_FOR_PLAYERS) {
-          throw new IllegalStateException(
-              "Cannot start game that is not in WAITING_FOR_PLAYERS phase");
-        } else {
-          // TODO: check if enough players and actually do something
-          yield List.of();
-        }
+        requirePhase(GamePhase.WARMUP);
+
+        yield Decision.pure(
+            new InternalGameEvent.GameStarted(gameId)
+        ).withEffects(new SideEffect.CancelScheduled(KEY_WARMUP_TO_START));
       }
       case GameCommand.AddPlayer(var id, var player) -> {
-        if (gameState.phase() != GamePhase.WAITING_FOR_PLAYERS) {
-          throw new IllegalStateException(
-              "Cannot join game that is not in WAITING_FOR_PLAYERS phase");
-        } else {
-          yield List.of(new InternalGameEvent.PlayerJoined(gameId, player));
-        }
+        requirePhase(GamePhase.WAITING_FOR_PLAYERS);
+        yield Decision.pure(new InternalGameEvent.PlayerJoined(gameId, player));
       }
 
+      case GameCommand.StartWarmup(var id) -> {
+        requirePhase(GamePhase.WAITING_FOR_PLAYERS);
+        // Emit warmup started and schedule transition to start after countdown
+        yield Decision.pure(
+            new InternalGameEvent.WarmupStarted(gameId, DEFAULT_WARMUP_DURATION)
+        ).withEffects(
+            new SideEffect.ScheduleAfter(
+                KEY_WARMUP_TO_START,
+                DEFAULT_WARMUP_DURATION,
+                new GameCommand.StartGame(gameId)
+            )
+        );
+      }
     };
   }
 
@@ -106,12 +125,51 @@ public class GameAggregate {
                   .addOthers(player)
                   .build()
           );
+      case InternalGameEvent.WarmupStarted(var gameId, var duration) -> GameStateBuilder.from(state)
+          .withPhase(GamePhase.WARMUP);
+      case InternalGameEvent.GameStarted(var gameId) -> GameStateBuilder.from(state)
+          .withPhase(GamePhase.IN_PROGRESS);
     };
 
   }
 
+  /**
+   * The result of deciding how to handle a command.
+   *
+   * @param events  the events that were produced.
+   * @param effects the side effects that should be executed.
+   */
+  private record Decision(List<InternalGameEvent> events, List<SideEffect> effects) {
+    static Decision empty() {
+      return new Decision(List.of(), List.of());
+    }
 
-  public record Result(List<InternalGameEvent> events, GameAggregate next) {
+    static Decision pure(List<InternalGameEvent> events) {
+      return new Decision(events, List.of());
+    }
+
+    static Decision pure(InternalGameEvent... events) {
+      return new Decision(Arrays.asList(events), List.of());
+    }
+
+    public Decision withEffects(List<SideEffect> effects) {
+      return new Decision(events, effects);
+    }
+
+    public Decision withEffects(SideEffect... effects) {
+      return new Decision(events, Arrays.asList(effects));
+    }
+  }
+
+  /**
+   * The result of handling a command.
+   *
+   * @param events  the events that were produced
+   * @param effects the side effects that should be executed
+   * @param next    the next state of the aggregate
+   */
+  public record Result(List<InternalGameEvent> events, List<SideEffect> effects,
+                       GameAggregate next) {
   }
 
 }

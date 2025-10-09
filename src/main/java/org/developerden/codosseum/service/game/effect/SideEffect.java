@@ -12,39 +12,25 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.developerden.codosseum.service.game;
+package org.developerden.codosseum.service.game.effect;
 
-import java.util.UUID;
-import org.developerden.codosseum.model.player.GamePlayer;
+import java.time.Duration;
+import org.developerden.codosseum.service.game.GameCommand;
 
 /**
- * A command that can be executed on a {@link org.developerden.codosseum.model.Game}.
+ * Side effects that a GameAggregate requests the runner to perform.
+ * Effects are executed by the {@code GameRunner} and are not part of state mutation.
  */
-public sealed interface GameCommand {
-  UUID gameId();
-
-
-  record CreateGame(UUID gameId, GamePlayer creator) implements GameCommand {
-  }
+public sealed interface SideEffect permits SideEffect.ScheduleAfter, SideEffect.CancelScheduled {
 
   /**
-   * Command to start the warmup phase of a game.
-   *
-   * @param gameId the id of the game to start the warmup for
+   * Schedule a command to be sent to this game after the given delay.
+   * The key is used for idempotency and cancellation/replacement.
    */
-  record StartWarmup(UUID gameId) implements GameCommand {
-  }
+  record ScheduleAfter(String key, Duration delay, GameCommand command) implements SideEffect {}
 
   /**
-   * Command to start a game.
-   *
-   * @param gameId the id of the game to start
+   * Cancel a previously scheduled command by key.
    */
-  record StartGame(UUID gameId) implements GameCommand {
-  }
-
-  record AddPlayer(UUID gameId, GamePlayer player) implements GameCommand {
-  }
-
-
+  record CancelScheduled(String key) implements SideEffect {}
 }

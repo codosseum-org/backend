@@ -20,7 +20,7 @@ import org.developerden.codosseum.model.GameState;
 
 /**
  * Persistence boundary for GameState snapshots.
- * Pure IO: load/save by gameId. No domain logic or timers here.
+ * Implementations must be thread-safe.
  */
 public interface SnapshotStore {
   Optional<GameState> load(UUID gameId);

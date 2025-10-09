@@ -20,6 +20,8 @@ import java.util.Optional;
 import org.developerden.codosseum.dto.PlayersMapper;
 import org.developerden.codosseum.event.GameEvent;
 import org.developerden.codosseum.event.PlayerJoinEvent;
+import org.developerden.codosseum.event.SyncEvent;
+import org.developerden.codosseum.model.GamePhase;
 
 @Singleton
 public class EventMapper {
@@ -37,6 +39,15 @@ public class EventMapper {
       case InternalGameEvent.PlayerJoined playerJoined -> Optional.of(
           new PlayerJoinEvent(playerJoined.gameId(), playersMapper.toDto(playerJoined.player()))
       );
+
+      case InternalGameEvent.WarmupStarted(var ignored, var warmupLength) -> Optional.of(
+          new SyncEvent(GamePhase.WARMUP,
+              // how long until warmup ends
+              Math.toIntExact(warmupLength.toSeconds())
+          )
+      );
+
+      case InternalGameEvent.GameStarted ignored -> Optional.empty();
     };
   }
 }

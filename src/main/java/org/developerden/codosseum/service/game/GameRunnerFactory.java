@@ -14,6 +14,7 @@
 
 package org.developerden.codosseum.service.game;
 
+import io.micronaut.scheduling.TaskScheduler;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.util.UUID;
@@ -26,16 +27,18 @@ public class GameRunnerFactory {
   private final EventSink eventSink;
   private final SnapshotStore snapshotStore;
   private final GameAggregateFactory aggregateFactory;
+  private final TaskScheduler taskScheduler;
 
   @Inject
   public GameRunnerFactory(EventSink eventSink, SnapshotStore snapshotStore,
-                           GameAggregateFactory aggregateFactory) {
+                           GameAggregateFactory aggregateFactory, TaskScheduler taskScheduler) {
     this.eventSink = eventSink;
     this.snapshotStore = snapshotStore;
     this.aggregateFactory = aggregateFactory;
+    this.taskScheduler = taskScheduler;
   }
 
   public GameRunner create(UUID gameId) {
-    return new GameRunner(gameId, eventSink, snapshotStore, aggregateFactory);
+    return new GameRunner(gameId, taskScheduler, eventSink, snapshotStore, aggregateFactory);
   }
 }

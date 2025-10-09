@@ -14,6 +14,7 @@
 
 package org.developerden.codosseum.service.game.event;
 
+import java.time.Duration;
 import java.util.UUID;
 import org.developerden.codosseum.event.GameEvent;
 import org.developerden.codosseum.model.Game;
@@ -35,4 +36,10 @@ public sealed interface InternalGameEvent {
 
   record PlayerJoined(UUID gameId, GamePlayer player) implements InternalGameEvent {
   }
+
+  /** Emitted when the warmup countdown begins. */
+  record WarmupStarted(UUID gameId, Duration warmupLength) implements InternalGameEvent {}
+
+  /** Emitted when the game transitions to in-progress. */
+  record GameStarted(UUID gameId) implements InternalGameEvent {}
 }

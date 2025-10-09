@@ -33,6 +33,7 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -45,11 +46,13 @@ import java.util.Optional;
 import java.util.UUID;
 import org.developerden.codosseum.auth.GameAuthorized;
 import org.developerden.codosseum.auth.GameRole;
+import org.developerden.codosseum.controller.binder.GameParam;
 import org.developerden.codosseum.dto.GameCreateRequest;
 import org.developerden.codosseum.dto.GameCreateResponse;
 import org.developerden.codosseum.dto.GameInfo;
 import org.developerden.codosseum.dto.GameSettings;
 import org.developerden.codosseum.event.GameEvent;
+import org.developerden.codosseum.model.Game;
 import org.developerden.codosseum.service.GameService;
 import org.developerden.codosseum.service.game.event.SseEventSink;
 import org.reactivestreams.Publisher;
@@ -115,6 +118,32 @@ public class GameController {
     gameService.deleteGame(gameId);
     return HttpResponse.noContent();
   }
+
+  @Post("/{id}/warmup")
+  @GameAuthorized(GameRole.ADMIN)
+  @Operation(operationId = "beginWarmup",
+      summary = "Force the warmup phase of a game to begin",
+      description = "Starts the warmup phase of a game, regardless of player-count"
+  )
+  @ApiResponse(
+      responseCode = "204",
+      description = "Successfully started the warmup phase. "
+          + "Further info will be received via server-sent events."
+  )
+  @ApiResponse(
+      responseCode = "409",
+      description = "Game is already running or finished")
+  public HttpResponse<Void> beginWarmup(Principal principal,
+                                        @PathVariable("id") UUID id,
+                                        @Parameter(hidden = true) @GameParam Game game) {
+    try {
+      gameService.beginWarmup(game);
+      return HttpResponse.noContent();
+    } catch (IllegalStateException e) {
+      return HttpResponse.status(HttpStatus.CONFLICT);
+    }
+  }
+
 
   @Post("/{id}/start")
   @GameAuthorized(GameRole.ADMIN)

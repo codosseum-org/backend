@@ -182,4 +182,11 @@ public class GameService {
     return Optional.of(new GameJoinResponse(playerKey));
 
   }
+
+  public void beginWarmup(Game game) {
+    var runner = gameRunnerRegistry
+        .getOrCreate(game.id());
+
+    runner.tell(new GameCommand.StartWarmup(game.id()));
+  }
 }
