@@ -13,4 +13,6 @@
 # If not, see <https://www.gnu.org/licenses/>.
 micronaut:
   security:
-    enabled: false
+    authentication: bearer
+    oauth2:
+      enabled: false
