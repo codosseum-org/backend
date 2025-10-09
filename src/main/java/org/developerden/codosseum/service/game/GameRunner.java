@@ -106,7 +106,10 @@ public class GameRunner {
           log.info("Cancelling existing scheduled task with key {} in game {}", key, gameId);
           existing.cancel(false);
         }
-        var future = scheduler.schedule(delay, () -> tell(command));
+        var future = scheduler.schedule(delay, () -> {
+          scheduled.remove(key);
+          tell(command);
+        });
         scheduled.put(key, future);
         log.info("Scheduled task with key {} in game {} to run after {}", key, gameId, delay);
       }

@@ -15,6 +15,7 @@
 package org.developerden.codosseum.service.game.event;
 
 import io.micronaut.http.sse.Event;
+import io.micronaut.runtime.event.annotation.EventListener;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.util.Map;
@@ -27,35 +28,42 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 
+/**
+ * Publishes {@link InternalGameEvent}s to subscribed SSE clients.
+ */
 @Singleton
-public class SseEventSink implements EventSink {
+public class SseEventSink {
   private final Map<UUID, Sinks.Many<InternalGameEvent>> sinks = new ConcurrentHashMap<>();
   private final EventMapper eventMapper;
   private final Logger logger = LoggerFactory.getLogger(SseEventSink.class);
+
 
   @Inject
   public SseEventSink(EventMapper eventMapper) {
     this.eventMapper = eventMapper;
   }
 
-  @Override
-  public void publish(InternalGameEvent event) {
+
+  @EventListener
+  public void on(InternalGameEvent event) {
     UUID gameId = event.gameId();
     logger.info("Publishing event {} for game {}", event, gameId);
-    var sink = sinks.computeIfAbsent(gameId,
-        ignored -> Sinks.many().multicast().onBackpressureBuffer());
+    var sink = sink(gameId);
     sink.tryEmitNext(event);
   }
 
-  public Publisher<Event<InternalGameEvent>> subscribeToSse(UUID gameId) {
-    var sink = sinks.computeIfAbsent(gameId,
+  private Sinks.Many<InternalGameEvent> sink(UUID gameId) {
+    return sinks.computeIfAbsent(gameId,
         ignored -> Sinks.many().multicast().onBackpressureBuffer());
+  }
+
+  public Publisher<Event<InternalGameEvent>> subscribeToSse(UUID gameId) {
+    var sink = sink(gameId);
     return sink.asFlux().map(event -> Event.of(event).name(event.getClass().getSimpleName()));
   }
 
   public Publisher<Event<GameEvent>> subscribeToPublicSse(UUID gameId) {
-    var sink = sinks.computeIfAbsent(gameId,
-        ignored -> Sinks.many().multicast().onBackpressureBuffer());
+    var sink = sink(gameId);
     return sink.asFlux()
         .flatMap(e -> eventMapper.fromInternal(e)
             .map(publicEvent -> Event.of(publicEvent).name(publicEvent.getClass().getSimpleName()))

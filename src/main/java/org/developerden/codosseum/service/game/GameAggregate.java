@@ -25,6 +25,15 @@ import org.developerden.codosseum.model.GameStateBuilder;
 import org.developerden.codosseum.service.game.effect.SideEffect;
 import org.developerden.codosseum.service.game.event.InternalGameEvent;
 
+/**
+ * Handles commands, produces events, and applies events to the game state.
+ *
+ * <p>There should be one instance of this class per game.
+ *
+ * @see GameState
+ * @see GameCommand
+ * @see InternalGameEvent
+ */
 public class GameAggregate {
   private static final Duration DEFAULT_WARMUP_DURATION = Duration.ofSeconds(5);
   private static final String KEY_WARMUP_TO_START = "warmup->start";
@@ -42,6 +51,12 @@ public class GameAggregate {
     return gameState;
   }
 
+  /**
+   * Handle a command, producing events and side effects, and returning the next state of the aggregate.
+   *
+   * @param cmd the command to handle.
+   * @return a result containing the events, side effects, and next state.
+   */
   public Result handle(GameCommand cmd) {
     var decision = decide(cmd);
     var newState = applyAll(gameState, decision.events());
@@ -51,6 +66,11 @@ public class GameAggregate {
     return new Result(decision.events(), decision.effects(), next);
   }
 
+  /**
+   * Require that the game is in the given phase, throwing an exception if not.
+   *
+   * @param gamePhase the required phase.
+   */
   private void requirePhase(GamePhase gamePhase) {
     if (gameState.phase() != gamePhase) {
       throw new IllegalStateException(
@@ -76,7 +96,7 @@ public class GameAggregate {
 
         yield Decision.pure(
             new InternalGameEvent.GameStarted(gameId)
-        ).withEffects(new SideEffect.CancelScheduled(KEY_WARMUP_TO_START));
+        );
       }
       case GameCommand.AddPlayer(var id, var player) -> {
         requirePhase(GamePhase.WAITING_FOR_PLAYERS);
