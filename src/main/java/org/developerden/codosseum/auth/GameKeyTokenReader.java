@@ -21,7 +21,7 @@ import jakarta.inject.Singleton;
 public class GameKeyTokenReader extends HttpHeaderTokenReader {
   @Override
   protected String getPrefix() {
-    return "Game ";
+    return "Game";
   }
 
   @Override
