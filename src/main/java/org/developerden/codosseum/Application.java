@@ -25,8 +25,7 @@ import io.swagger.v3.oas.annotations.info.Info;
     )
 )
 public class Application {
-
-  static void main(String[] args) {
+  public static void main(String[] args) {
     Micronaut.run(Application.class, args);
   }
 }
