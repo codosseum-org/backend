@@ -19,11 +19,9 @@ import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
-import org.developerden.codosseum.dto.GameCreateRequest
-import org.developerden.codosseum.dto.GameCreateResponse
-import org.developerden.codosseum.dto.GameSettingsBuilder
-import org.developerden.codosseum.dto.Player
+import org.developerden.codosseum.dto.*
 import org.developerden.codosseum.mode.GameModeType
+import org.developerden.codosseum.model.GamePhase
 import spock.lang.Specification
 
 @MicronautTest
@@ -56,6 +54,15 @@ class GameFlowSpec extends Specification {
         then:
         getResponse.status.code == 204
 
+        when:
+        sleep(5000)
 
+        def infoResponse = http.toBlocking().exchange("/games/${gameId}", GameInfo)
+        then:
+        infoResponse.status.code == 200
+        def info = infoResponse.body()
+        info.id() == gameId
+        info.state() == GamePhase.IN_PROGRESS
+        info.players().allPlayers().count() == 1
     }
 }
