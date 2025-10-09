@@ -38,6 +38,4 @@ public interface PlayersMapper {
   @Mapping(target = "players", source = "others")
   Players toDto(GamePlayers gamePlayers);
 
-  EphemeralPlayer toEphemeral(GamePlayer player);
-
 }

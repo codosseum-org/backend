@@ -14,44 +14,29 @@
 
 package org.developerden.codosseum.service.game.event;
 
-import jakarta.annotation.Nonnull;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import org.developerden.codosseum.dto.Player;
-import org.developerden.codosseum.dto.Players;
+import org.developerden.codosseum.dto.PlayersMapper;
 import org.developerden.codosseum.event.GameEvent;
 import org.developerden.codosseum.event.PlayerJoinEvent;
-import org.developerden.codosseum.model.GamePlayers;
-import org.developerden.codosseum.model.player.EphemeralPlayer;
-import org.developerden.codosseum.model.player.GamePlayer;
 
 @Singleton
 public class EventMapper {
+  private final PlayersMapper playersMapper;
+
+  @Inject
+  public EventMapper(PlayersMapper playersMapper) {
+    this.playersMapper = playersMapper;
+  }
 
   public Optional<GameEvent> fromInternal(InternalGameEvent internalEvent) {
     return switch (internalEvent) {
       case InternalGameEvent.GameCreated ignored -> Optional.empty();
 
       case InternalGameEvent.PlayerJoined playerJoined -> Optional.of(
-          new PlayerJoinEvent(playerJoined.gameId(), fromGamePlayer(playerJoined.player()))
+          new PlayerJoinEvent(playerJoined.gameId(), playersMapper.toDto(playerJoined.player()))
       );
-    };
-  }
-
-  public Optional<Players> fromGamePlayers(@Nonnull GamePlayers gamePlayers) {
-    var players = new Players(
-        gamePlayers.others().stream()
-            .map(this::fromGamePlayer)
-            .collect(Collectors.toSet()),
-        gamePlayers.admin() == null ? null : fromGamePlayer(gamePlayers.admin())
-    );
-    return Optional.of(players);
-  }
-
-  public Player fromGamePlayer(@Nonnull GamePlayer player) {
-    return switch (player) {
-      case EphemeralPlayer(var name, var ignored, var ignored2) -> (new Player(name));
     };
   }
 }
