@@ -51,7 +51,7 @@ class GameFlowSpec extends Specification {
         when:
         def getResponse = http.toBlocking()
                 .exchange(HttpRequest.POST("/games/${gameId}/warmup", null)
-                        .header("Authorization", key), Void)
+                        .header("Authorization", "Game $key"), Void)
 
         then:
         getResponse.status.code == 204

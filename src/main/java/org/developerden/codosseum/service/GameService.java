@@ -33,6 +33,7 @@ import org.developerden.codosseum.mode.GameModeType;
 import org.developerden.codosseum.model.Game;
 import org.developerden.codosseum.model.GamePhase;
 import org.developerden.codosseum.model.player.EphemeralPlayer;
+import org.developerden.codosseum.repository.AuthRepository;
 import org.developerden.codosseum.repository.GameRepository;
 import org.developerden.codosseum.service.game.GameCommand;
 import org.developerden.codosseum.service.game.GameRunner;
@@ -49,16 +50,19 @@ public class GameService {
   private final SnapshotStore snapshotStore;
 
   private final EventSink eventSink;
+  private final AuthRepository authRepository;
   private final PlayersMapper playersMapper;
 
   public @Inject GameService(GameRepository gameRepository, GameModeFactory gameModeFactory,
                              GameRunnerRegistry gameRunnerRegistry, SnapshotStore snapshotStore,
-                             EventSink eventSink, PlayersMapper playersMapper) {
+                             EventSink eventSink, AuthRepository authRepository,
+                             PlayersMapper playersMapper) {
     this.gameRepository = gameRepository;
     this.gameModeFactory = gameModeFactory;
     this.gameRunnerRegistry = gameRunnerRegistry;
     this.snapshotStore = snapshotStore;
     this.eventSink = eventSink;
+    this.authRepository = authRepository;
     this.playersMapper = playersMapper;
   }
 
@@ -79,12 +83,13 @@ public class GameService {
 
     gameRepository.insertGame(game);
 
+    var ephemeralPlayer =
+        new EphemeralPlayer(request.player().name(), game.id(), generateFreshKey(), true);
+    authRepository.save(game, ephemeralPlayer);
     gameRunnerRegistry.getOrCreate(game.id())
-        .tell(new GameCommand.CreateGame(game.id(), new EphemeralPlayer(request.player().name(),
-            generateFreshKey(), true
-        )));
+        .tell(new GameCommand.CreateGame(game.id(), ephemeralPlayer));
 
-    return new GameCreateResponse(game.adminKey(), game.id());
+    return new GameCreateResponse(ephemeralPlayer.key(), game.id());
   }
 
   public GameInfo updateGame(String gameId, GameSettings settings) {
@@ -154,15 +159,11 @@ public class GameService {
     }
 
     var game = gameOpt.get();
-//    if (game.players().allPlayers().anyMatch(p -> p.name().equals(player.name()))) {
-//      throw new IllegalStateException(
-//          "Player with name " + player.name() + " already exists in game");
-//    }
-//
-//
-//    if (game.players().players().size() >= game.settings().maxPlayers()) {
-//      throw new IllegalStateException("Game is full");
-//    }
+    authRepository.findPlayerByNameAndGameId(player.name(), game.id())
+        .ifPresent(p -> {
+          throw new IllegalStateException(
+              "Player with name " + player.name() + " already exists in game");
+        });
 
     var runner = gameRunnerRegistry
         .getOrCreate(id);
@@ -173,11 +174,10 @@ public class GameService {
     }
 
     var playerKey = generateFreshKey();
-    runner.tell(new GameCommand.AddPlayer(game.id(), new EphemeralPlayer(
-        player.name(),
-        playerKey,
-        false
-    )));
+    var ephemeralPlayer = new EphemeralPlayer(player.name(), game.id(), playerKey, false);
+    authRepository.save(game, ephemeralPlayer);
+
+    runner.tell(new GameCommand.AddPlayer(game.id(), ephemeralPlayer));
 
     return Optional.of(new GameJoinResponse(playerKey));
 

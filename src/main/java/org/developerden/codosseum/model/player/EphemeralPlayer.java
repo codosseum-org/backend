@@ -14,15 +14,21 @@
 
 package org.developerden.codosseum.model.player;
 
+import java.util.UUID;
 import javax.annotation.Nonnull;
+import org.checkerframework.common.aliasing.qual.Unique;
 
 /**
  * An ephemeral player, not tied to any persistent identity.
  *
- * @param name  the name of the player.
- * @param key   a unique key for the player, used to identify them in the game.
- * @param admin whether the player is an admin - if this is true, the {@link #key} can be also used to authenticate admin actions.
+ * @param name   the name of the player, must be unique within a game.
+ * @param gameId the ID of the game the player is in.
+ * @param key    a unique key for the player, used to identify them in the game.
+ * @param admin  whether the player is an admin - if this is true, the {@link #key} can be also used to authenticate admin actions.
  */
-public record EphemeralPlayer(@Nonnull String name, @Nonnull String key, boolean admin)
+public record EphemeralPlayer(@Nonnull @Unique String name,
+                              @Nonnull UUID gameId,
+                              @Nonnull String key, boolean admin)
     implements GamePlayer {
+
 }

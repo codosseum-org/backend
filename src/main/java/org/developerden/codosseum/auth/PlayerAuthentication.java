@@ -16,18 +16,29 @@ package org.developerden.codosseum.auth;
 
 import io.micronaut.security.authentication.Authentication;
 import jakarta.annotation.Nonnull;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
+import org.developerden.codosseum.model.player.EphemeralPlayer;
 
 public final class PlayerAuthentication {
 
   public static Authentication build(
-      @Nonnull String name, @Nonnull String activeGameId, @Nonnull Set<GameRole> roles) {
+      @Nonnull String name, @Nonnull UUID activeGameId, @Nonnull Set<GameRole> roles) {
     return Authentication.build(
         name,
         roles.stream().map(Enum::name).collect(Collectors.toSet()),
         Map.of("activeGameId", activeGameId)
+    );
+  }
+
+  public static Authentication buildFrom(EphemeralPlayer ephemeralPlayer) {
+    return build(
+        ephemeralPlayer.name(),
+        ephemeralPlayer.gameId(),
+        ephemeralPlayer.admin() ? EnumSet.of(GameRole.ADMIN, GameRole.PLAYER) : EnumSet.of(GameRole.PLAYER)
     );
   }
 

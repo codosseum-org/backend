@@ -22,6 +22,7 @@ public interface GameRepository {
 
   Optional<Game> findGameById(UUID id);
 
+
   void insertGame(Game game);
 
 }

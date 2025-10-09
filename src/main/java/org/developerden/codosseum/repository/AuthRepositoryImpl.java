@@ -14,27 +14,43 @@
 
 package org.developerden.codosseum.repository;
 
+import jakarta.inject.Singleton;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import org.developerden.codosseum.model.Game;
 import org.developerden.codosseum.model.player.EphemeralPlayer;
 import org.developerden.codosseum.model.player.GamePlayer;
 
-public interface AuthRepository {
+@Singleton
+public class AuthRepositoryImpl implements AuthRepository {
 
-  /**
-   * Find a player by its game/admin key.
-   *
-   * @param gameKey The game/admin key.
-   * @return The player, or null if not found.
-   */
-  Optional<EphemeralPlayer> findPlayerByGameKey(String gameKey);
+  private final ConcurrentMap<PlayerKey, EphemeralPlayer> players = new ConcurrentHashMap<>();
 
+  @Override
+  public Optional<EphemeralPlayer> findPlayerByGameKey(String gameKey) {
+    return players.values().stream()
+        .filter(player -> player.key().equals(gameKey))
+        .findFirst(); // TODO: not very efficient
+  }
 
-  Collection<EphemeralPlayer> allPlayers();
+  @Override
+  public Collection<EphemeralPlayer> allPlayers() {
+    return players.values();
+  }
 
-  void save(Game game, EphemeralPlayer player);
+  @Override
+  public void save(Game game, EphemeralPlayer player) {
+    players.put(new PlayerKey(game.id(), player.name()), player);
+  }
 
-  Optional<GamePlayer> findPlayerByNameAndGameId(String name, UUID id);
+  @Override
+  public Optional<GamePlayer> findPlayerByNameAndGameId(String name, UUID id) {
+    return Optional.ofNullable(players.get(new PlayerKey(id, name)));
+  }
+
+  private record PlayerKey(UUID gameId, String playerName) {
+  }
 }

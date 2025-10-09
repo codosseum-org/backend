@@ -19,14 +19,25 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.token.validator.TokenValidator;
 import jakarta.inject.Singleton;
+import java.util.Optional;
+import org.developerden.codosseum.model.player.EphemeralPlayer;
+import org.developerden.codosseum.repository.AuthRepository;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
 @Singleton
 public class GameKeyTokenValidator implements TokenValidator<HttpRequest<?>> {
+  private final AuthRepository authRepository;
+
+  public GameKeyTokenValidator(AuthRepository authRepository) {
+    this.authRepository = authRepository;
+  }
+
   @Override
   public Publisher<Authentication> validateToken(String token, @Nullable HttpRequest<?> request) {
-    return Mono.empty();
+    Optional<EphemeralPlayer> playerByGameKey = authRepository.findPlayerByGameKey(token);
+    return Mono.justOrEmpty(playerByGameKey)
+        .map(PlayerAuthentication::buildFrom);
 
   }
 }

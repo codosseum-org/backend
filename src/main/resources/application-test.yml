@@ -13,6 +13,6 @@
 # If not, see <https://www.gnu.org/licenses/>.
 micronaut:
   security:
-    authentication: bearer
+    authentication: idtoken
     oauth2:
       enabled: false
