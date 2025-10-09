@@ -19,7 +19,6 @@ import jakarta.inject.Singleton;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
 import org.developerden.codosseum.dto.GameCreateRequest;
@@ -28,12 +27,11 @@ import org.developerden.codosseum.dto.GameInfo;
 import org.developerden.codosseum.dto.GameJoinResponse;
 import org.developerden.codosseum.dto.GameSettings;
 import org.developerden.codosseum.dto.Player;
-import org.developerden.codosseum.dto.Players;
+import org.developerden.codosseum.dto.PlayersMapper;
 import org.developerden.codosseum.mode.GameModeFactory;
 import org.developerden.codosseum.mode.GameModeType;
 import org.developerden.codosseum.model.Game;
 import org.developerden.codosseum.model.GamePhase;
-import org.developerden.codosseum.model.GameState;
 import org.developerden.codosseum.model.player.EphemeralPlayer;
 import org.developerden.codosseum.repository.GameRepository;
 import org.developerden.codosseum.service.game.GameCommand;
@@ -51,18 +49,20 @@ public class GameService {
   private final SnapshotStore snapshotStore;
 
   private final EventSink eventSink;
+  private final PlayersMapper playersMapper;
 
   public @Inject GameService(GameRepository gameRepository, GameModeFactory gameModeFactory,
                              GameRunnerRegistry gameRunnerRegistry, SnapshotStore snapshotStore,
-                             EventSink eventSink) {
+                             EventSink eventSink, PlayersMapper playersMapper) {
     this.gameRepository = gameRepository;
     this.gameModeFactory = gameModeFactory;
     this.gameRunnerRegistry = gameRunnerRegistry;
     this.snapshotStore = snapshotStore;
     this.eventSink = eventSink;
+    this.playersMapper = playersMapper;
   }
 
-  private String generateAdminKey() {
+  private String generateFreshKey() {
     return UUID.randomUUID().toString();
   }
 
@@ -75,15 +75,14 @@ public class GameService {
     var gameModeType = CollectionUtils.pickRandom(gameModeTypes);
     var gameMode = gameModeFactory.fromType(gameModeType);
 
-    var game = new Game(UUID.randomUUID(), generateAdminKey(), request.settings(), new Players(
-        new HashSet<>(),
-        request.player()
-    ), gameMode);
+    var game = new Game(UUID.randomUUID(), generateFreshKey(), request.settings(), gameMode);
 
     gameRepository.insertGame(game);
 
     gameRunnerRegistry.getOrCreate(game.id())
-        .tell(new GameCommand.CreateGame(game.id()));
+        .tell(new GameCommand.CreateGame(game.id(), new EphemeralPlayer(request.player().name(),
+            generateFreshKey(), true
+        )));
 
     return new GameCreateResponse(game.adminKey(), game.id());
   }
@@ -106,17 +105,18 @@ public class GameService {
     var stateOpt = gameRunnerRegistry
         .find(id)
         .map(GameRunner::getCurrentState)
-        .or(() -> snapshotStore.load(id));
-
-    var phase = stateOpt.map(GameState::phase)
+        .or(() -> snapshotStore.load(id))
         .orElseThrow(() -> new IllegalStateException("No game state found for game " + id));
+
+    var phase = stateOpt.phase();
+
 
     return gameOpt
         .map(game -> new GameInfo(
             game.settings(),
             game.id(),
             game.mode(),
-            game.players(),
+            playersMapper.toDto(stateOpt.players()),
             phase,
             0,
             0,
@@ -154,11 +154,11 @@ public class GameService {
     }
 
     var game = gameOpt.get();
-
-    if (game.players().allPlayers().anyMatch(p -> p.name().equals(player.name()))) {
-      throw new IllegalStateException(
-          "Player with name " + player.name() + " already exists in game");
-    }
+//    if (game.players().allPlayers().anyMatch(p -> p.name().equals(player.name()))) {
+//      throw new IllegalStateException(
+//          "Player with name " + player.name() + " already exists in game");
+//    }
+//
 //
 //    if (game.players().players().size() >= game.settings().maxPlayers()) {
 //      throw new IllegalStateException("Game is full");
@@ -172,7 +172,7 @@ public class GameService {
       throw new IllegalStateException("Game is already running or finished");
     }
 
-    var playerKey = generateAdminKey();
+    var playerKey = generateFreshKey();
     runner.tell(new GameCommand.AddPlayer(game.id(), new EphemeralPlayer(
         player.name(),
         playerKey,

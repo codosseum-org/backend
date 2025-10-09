@@ -17,16 +17,23 @@ package org.developerden.codosseum.model;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import java.util.UUID;
 import org.developerden.codosseum.dto.GameSettings;
-import org.developerden.codosseum.dto.Players;
 import org.developerden.codosseum.mode.GameMode;
 
-// TODO: 19/08/23 internal model
+/**
+ * Internal model representing the immutable <i>only</i> data about a game.
+ * All mutable data is held in {@link GameState}.
+ *
+ * @param id       the unique identifier of the game.
+ * @param adminKey the admin key for the game, used to authenticate admin actions.
+ * @param settings the settings for the game.
+ * @param mode     the game mode.
+ */
 @RecordBuilder
 public record Game(
     UUID id,
-    String adminKey,
+    // TODO: this should be removed and handled via players' individual keys + {@link EphemeralPlayer#admin()}
+    @Deprecated String adminKey,
     GameSettings settings,
-    Players players,
     GameMode mode
 ) {
 }

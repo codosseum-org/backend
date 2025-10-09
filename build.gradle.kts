@@ -25,6 +25,7 @@ dependencies {
     annotationProcessor("io.micronaut.validation:micronaut-validation-processor")
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
     annotationProcessor("io.soabase.record-builder:record-builder-processor:49")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
 
     implementation("io.micronaut.reactor:micronaut-reactor")
     implementation("io.micronaut.cache:micronaut-cache-caffeine")
@@ -41,8 +42,10 @@ dependencies {
     implementation("org.spdx:java-spdx-library:(,2.0]") {
         exclude("org.apache.logging.log4j")
     }
+    implementation("org.mapstruct:mapstruct:1.6.3")
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("org.yaml:snakeyaml")
+
 
     testAnnotationProcessor("io.micronaut:micronaut-inject-java")
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")

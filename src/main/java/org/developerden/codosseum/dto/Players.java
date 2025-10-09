@@ -17,6 +17,8 @@ package org.developerden.codosseum.dto;
 import io.micronaut.serde.annotation.Serdeable;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -26,16 +28,18 @@ import java.util.stream.Stream;
     addSingleItemCollectionBuilders = true
 )
 @Serdeable
+
 public record Players(
     @Nonnull
     Set<Player> players,
 
-    @Nonnull
+    @Nullable
     Player admin
 ) {
 
   public Stream<Player> allPlayers() {
-    return Stream.concat(players.stream(), Stream.of(admin));
+    return Stream.concat(players.stream(), Stream.of(admin).filter(Objects::nonNull))
+        .distinct();
   }
 
 }

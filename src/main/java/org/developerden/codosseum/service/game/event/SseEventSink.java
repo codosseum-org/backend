@@ -41,7 +41,7 @@ public class SseEventSink implements EventSink {
   @Override
   public void publish(InternalGameEvent event) {
     UUID gameId = event.gameId();
-    logger.atInfo().log("Publishing event {} for game {}", event, gameId);
+    logger.info("Publishing event {} for game {}", event, gameId);
     var sink = sinks.computeIfAbsent(gameId,
         ignored -> Sinks.many().multicast().onBackpressureBuffer());
     sink.tryEmitNext(event);

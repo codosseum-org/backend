@@ -19,9 +19,15 @@ import io.micronaut.serde.annotation.Serdeable;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
 
+/**
+ * A player in a game.
+ *
+ * @param name the chosen name of the player.
+ */
 @RecordBuilder
 @Introspected
 @Serdeable
+// TODO: Store whether the player is an admin
 public record Player(
     @Nonnull
     String name

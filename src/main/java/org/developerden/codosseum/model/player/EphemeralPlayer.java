@@ -14,5 +14,12 @@
 
 package org.developerden.codosseum.model.player;
 
+/**
+ * An ephemeral player, not tied to any persistent identity.
+ *
+ * @param name  the name of the player.
+ * @param key   a unique key for the player, used to identify them in the game.
+ * @param admin whether the player is an admin - if this is true, the {@link #key} can be also used to authenticate admin actions.
+ */
 public record EphemeralPlayer(String name, String key, boolean admin) implements GamePlayer {
 }

@@ -51,12 +51,12 @@ public class GameAggregate {
     }
 
     return switch (cmd) {
-      case GameCommand.CreateGame(var id) -> {
+      case GameCommand.CreateGame(var id, var creator) -> {
         if (gameState.phase() != GamePhase.WAITING_FOR_PLAYERS) {
           throw new IllegalStateException(
               "Cannot create game that is not in WAITING_FOR_PLAYERS phase");
         } else {
-          yield List.of(new InternalGameEvent.GameCreated(gameId));
+          yield List.of(new InternalGameEvent.GameCreated(gameId, creator));
         }
       }
       case GameCommand.StartGame(var id) -> {
@@ -99,7 +99,13 @@ public class GameAggregate {
                   .addOthers(player)
                   .build()
           );
-      case InternalGameEvent.GameCreated(var gameId) -> state; // no-op for now
+      case InternalGameEvent.GameCreated(var gameId, var player) -> GameStateBuilder.from(state)
+          .withPlayers(
+              GamePlayersBuilder.builder(state.players())
+                  .admin(player)
+                  .addOthers(player)
+                  .build()
+          );
     };
 
   }

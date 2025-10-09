@@ -12,24 +12,32 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.developerden.codosseum.model;
+package org.developerden.codosseum.dto;
 
-import io.soabase.recordbuilder.core.RecordBuilder;
-import java.util.Set;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.developerden.codosseum.model.GamePlayers;
+import org.developerden.codosseum.model.player.EphemeralPlayer;
 import org.developerden.codosseum.model.player.GamePlayer;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.SubclassExhaustiveStrategy;
+import org.mapstruct.SubclassMapping;
 
-/**
- * Internal model representing the players in a game.
- *
- * @param admin  the admin player
- * @param others the other players. For future proofing in the case of multi-admin games, this will also include the {@link #admin}
- */
-@RecordBuilder()
-@RecordBuilder.Options(
-    useImmutableCollections = true,
-    addSingleItemCollectionBuilders = true
+@Mapper(
+    componentModel = "jsr330"
 )
-public record GamePlayers(@Nullable GamePlayer admin, @Nonnull Set<GamePlayer> others) {
+public interface PlayersMapper {
+
+  @Mapping(target = "name", source = "player.name")
+  Player toDto(EphemeralPlayer player);
+
+  @BeanMapping(subclassExhaustiveStrategy = SubclassExhaustiveStrategy.COMPILE_ERROR)
+  @SubclassMapping(target = Player.class, source = EphemeralPlayer.class)
+  Player toDto(GamePlayer player);
+
+  @Mapping(target = "players", source = "others")
+  Players toDto(GamePlayers gamePlayers);
+
+  EphemeralPlayer toEphemeral(GamePlayer player);
+
 }

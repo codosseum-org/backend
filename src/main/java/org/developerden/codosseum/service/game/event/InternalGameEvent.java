@@ -30,7 +30,7 @@ public sealed interface InternalGameEvent {
   UUID gameId();
 
   ///  Emitted when a new game is created and the lobby is opened
-  record GameCreated(UUID gameId) implements InternalGameEvent {
+  record GameCreated(UUID gameId, GamePlayer creator) implements InternalGameEvent {
   }
 
   record PlayerJoined(UUID gameId, GamePlayer player) implements InternalGameEvent {

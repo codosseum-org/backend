@@ -17,7 +17,6 @@ package org.developerden.codosseum
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
-import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import org.developerden.codosseum.dto.*
@@ -25,63 +24,39 @@ import org.developerden.codosseum.mode.GameModeType
 import spock.lang.Specification
 
 @MicronautTest
-class GameControllerSpec extends Specification {
-
+class PlayerControllerSpec extends Specification {
     @Inject
     @Client("/")
     HttpClient http
 
-    def "GET /games/{id} not found returns 404"() {
+    def "Players can join game"() {
         given:
-        def id = UUID.randomUUID()
-
-        when:
-        http.toBlocking().exchange("/games/${id}", String)
-
-        then:
-        def e = thrown(HttpClientResponseException)
-        e.status.code == 404
-    }
-
-    def "POST /games returns 201 and has a valid body"() {
-        when:
-        def response = http.toBlocking().exchange(HttpRequest.POST("/games",
+        def createResponse = http.toBlocking().exchange(HttpRequest.POST("/games",
                 new GameCreateRequest(
                         GameSettingsBuilder.builder().allowedGameModes(List.of(GameModeType.FASTEST)).build(),
                         new Player("test player")
                 )
         ), GameCreateResponse)
-
-        then:
-        response.status.code == 201
-        response.body().id() != null
-    }
-
-    def "POST /games returns 201 and GET /games/{id} returns 200"() {
-        when:
-        def response = http.toBlocking().exchange(HttpRequest.POST("/games",
-                new GameCreateRequest(
-                        GameSettingsBuilder.builder().allowedGameModes(List.of(GameModeType.FASTEST)).build(),
-                        new Player("test player")
-                )
-        ), GameCreateResponse)
-
-        then:
-        response.status.code == 201
-        def body = response.body()
-
-        body.id() != null
-        def id = body.id()
+        def gameId = createResponse.body().id()
 
         when:
-        def getResponse = http.toBlocking().exchange("/games/${id}", GameInfo)
+        def joinResponse = http.toBlocking().exchange(HttpRequest.POST("/games/${gameId}/players",
+                new Player("second player")), GameJoinResponse)
+
+        then:
+        joinResponse.status.code == 200
+        def joinBody = joinResponse.body()
+        joinBody.key() != null
+
+        when:
+        def getResponse = http.toBlocking().exchange("/games/${gameId}", GameInfo)
         then:
         getResponse.status.code == 200
         def info = getResponse.body()
-        info.id() == id
-        info.players().allPlayers().count() == 1
+        info.id() == gameId
+        info.players().allPlayers().count() == 2
+        info.players().allPlayers().find { it.name() == "second player" } != null
         info.settings().allowedGameModes() == [GameModeType.FASTEST]
+
     }
-
-
 }

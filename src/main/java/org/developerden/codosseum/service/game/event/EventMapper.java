@@ -39,17 +39,17 @@ public class EventMapper {
     };
   }
 
-  private Optional<Players> fromGamePlayers(@Nonnull GamePlayers gamePlayers) {
+  public Optional<Players> fromGamePlayers(@Nonnull GamePlayers gamePlayers) {
     var players = new Players(
         gamePlayers.others().stream()
             .map(this::fromGamePlayer)
             .collect(Collectors.toSet()),
-        fromGamePlayer(gamePlayers.admin())
+        gamePlayers.admin() == null ? null : fromGamePlayer(gamePlayers.admin())
     );
     return Optional.of(players);
   }
 
-  private Player fromGamePlayer(@Nonnull GamePlayer player) {
+  public Player fromGamePlayer(@Nonnull GamePlayer player) {
     return switch (player) {
       case EphemeralPlayer(var name, var ignored, var ignored2) -> (new Player(name));
     };
