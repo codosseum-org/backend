@@ -116,6 +116,9 @@ public class GameAggregate {
             )
         );
       }
+      case GameCommand.SetChallengeInfo(var id, var challenge) -> Decision.pure(
+          new InternalGameEvent.ChallengeSet(gameId, challenge)
+      );
     };
   }
 
@@ -149,6 +152,8 @@ public class GameAggregate {
           .withPhase(GamePhase.WARMUP);
       case InternalGameEvent.GameStarted(var gameId) -> GameStateBuilder.from(state)
           .withPhase(GamePhase.IN_PROGRESS);
+      case InternalGameEvent.ChallengeSet challengeSet -> GameStateBuilder.from(state)
+          .withCurrentChallengeInfo(challengeSet.challengeInfo());
     };
 
   }

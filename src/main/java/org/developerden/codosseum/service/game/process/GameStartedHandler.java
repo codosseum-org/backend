@@ -15,18 +15,53 @@
 package org.developerden.codosseum.service.game.process;
 
 import io.micronaut.context.event.ApplicationEventListener;
-import io.micronaut.runtime.event.annotation.EventListener;
+import io.micronaut.scheduling.annotation.Async;
 import jakarta.inject.Singleton;
+import java.util.List;
+import org.developerden.codosseum.challenges.client.api.DefaultApi;
+import org.developerden.codosseum.challenges.client.model.Info;
+import org.developerden.codosseum.repository.GameRepository;
+import org.developerden.codosseum.service.game.GameCommand;
+import org.developerden.codosseum.service.game.GameRunnerRegistry;
 import org.developerden.codosseum.service.game.event.InternalGameEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class GameStartedHandler implements ApplicationEventListener<InternalGameEvent> {
 
+  private final DefaultApi defaultApi;
+  private final GameRepository gameRepository;
+  private final GameRunnerRegistry gameRunnerRegistry;
+  private final Logger log = LoggerFactory.getLogger(GameStartedHandler.class);
+
+  public GameStartedHandler(DefaultApi defaultApi, GameRepository gameRepository,
+                            GameRunnerRegistry gameRunnerRegistry) {
+    this.defaultApi = defaultApi;
+    this.gameRepository = gameRepository;
+    this.gameRunnerRegistry = gameRunnerRegistry;
+  }
+
   @Override
+  @Async
   public void onApplicationEvent(InternalGameEvent event) {
     var gameStarted = (InternalGameEvent.GameStarted) event;
 
-    System.out.println("Game " + gameStarted.gameId() + " has started!");
+    var game = gameRepository.findGameById(gameStarted.gameId())
+        .orElseThrow();
+
+
+    Info info = defaultApi.challengesRandomGet(
+        List.of(),
+        List.of()
+    ).block();
+
+    gameRunnerRegistry.find(game.id())
+        .ifPresentOrElse(
+            runner -> // use ifPresent in case of race condition where the game has ended
+                runner.tell(new GameCommand.SetChallengeInfo(game.id(), info)),
+            () -> log.warn("Game runner does not exist for game {}", game.id()));
+
   }
 
   @Override

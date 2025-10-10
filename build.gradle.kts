@@ -1,3 +1,6 @@
+import de.undercouch.gradle.tasks.download.Download
+
+
 // SPDX-FileCopyrightText: 2023 Alex Wood
 // SPDX-License-Identifier: AGPL-3.0-or-later
 plugins {
@@ -5,6 +8,7 @@ plugins {
     id("io.micronaut.aot") version "4.5.5"
     id("io.micronaut.openapi") version "4.5.5"
     id("groovy")
+    id("de.undercouch.download") version "5.6.0"
     checkstyle
 }
 
@@ -87,6 +91,7 @@ tasks {
 
 graalvmNative.toolchainDetection.set(false)
 micronaut {
+
     runtime("netty")
     testRuntime("junit5")
     processing {
@@ -105,11 +110,37 @@ micronaut {
         optimizeNetty.set(true)
     }
 
-    openapi {
+    val provider: Provider<RegularFile> = project.provider {
 
+        RegularFile { downloadChallengesServiceOpenApi.get().outputFiles[0] }
+    }
+
+    openapi {
+        client(
+            "challenges-service",
+            provider
+        ) {
+            apiPackageName = "org.developerden.codosseum.challenges.client.api"
+            modelPackageName = "org.developerden.codosseum.challenges.client.model"
+            useOptional = true
+        }
     }
 }
 
+val downloadChallengesServiceOpenApi by tasks.registering(Download::class) {
+    src("https://raw.githubusercontent.com/codosseum-org/challenges-service/refs/heads/openapi/openapi.yaml")
+    dest(layout.buildDirectory.dir("openapi"))
+    overwrite(true)
+    onlyIfModified(false)
+}
+
+tasks.named("generateChallenges-serviceOpenApiModels") { // task created by micronaut-openapi plugin
+    dependsOn(downloadChallengesServiceOpenApi)
+}
+
+tasks.named("generateChallenges-serviceOpenApiApis") { // task created by micronaut-openapi plugin
+    dependsOn(downloadChallengesServiceOpenApi)
+}
 
 tasks.named<Test>("test") {
     useJUnitPlatform()

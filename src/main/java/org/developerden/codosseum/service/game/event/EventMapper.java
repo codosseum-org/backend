@@ -48,6 +48,7 @@ public class EventMapper {
       );
 
       case InternalGameEvent.GameStarted ignored -> Optional.empty();
+      case InternalGameEvent.ChallengeSet challengeSet -> Optional.empty();
     };
   }
 }

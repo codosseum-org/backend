@@ -16,7 +16,9 @@ package org.developerden.codosseum.model;
 
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.UUID;
+import org.developerden.codosseum.challenges.client.model.Info;
 
 /**
  * Internal model representing the current state of a game.
@@ -29,6 +31,7 @@ import java.util.UUID;
 @RecordBuilder.Options(defaultNotNull = true)
 public record GameState(@Nonnull UUID gameId,
                         @Nonnull GamePhase phase,
-                        @Nonnull GamePlayers players
+                        @Nonnull GamePlayers players,
+                        @Nullable Info currentChallengeInfo
 ) implements GameStateBuilder.With {
 }
