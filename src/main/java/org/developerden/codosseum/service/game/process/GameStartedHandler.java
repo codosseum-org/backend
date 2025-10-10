@@ -44,7 +44,6 @@ public class GameStartedHandler implements ApplicationEventListener<InternalGame
   }
 
   @Override
-  @Async
   public void onApplicationEvent(InternalGameEvent event) {
     var gameStarted = (InternalGameEvent.GameStarted) event;
 
@@ -53,8 +52,8 @@ public class GameStartedHandler implements ApplicationEventListener<InternalGame
 
 
     ChallengeInfo info = defaultApi.challengesRandomGet(
-        List.of(),
-        List.of()
+        null,
+        null
     ).block();
 
     gameRunnerRegistry.find(game.id())
