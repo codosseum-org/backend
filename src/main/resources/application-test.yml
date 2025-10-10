@@ -16,3 +16,6 @@ micronaut:
     authentication: idtoken
     oauth2:
       enabled: false
+
+openapi-micronaut-client:
+  base-path: http://localhost:8081
