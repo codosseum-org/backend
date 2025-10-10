@@ -16,6 +16,7 @@ package org.developerden.codosseum.service.game.event;
 
 import java.time.Duration;
 import java.util.UUID;
+import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
 import org.developerden.codosseum.challenges.client.model.Info;
 import org.developerden.codosseum.event.GameEvent;
 import org.developerden.codosseum.model.Game;
@@ -44,7 +45,7 @@ public sealed interface InternalGameEvent {
   /** Emitted when the game transitions to in-progress. */
   record GameStarted(UUID gameId) implements InternalGameEvent {}
 
-  record ChallengeSet(UUID gameId, Info challengeInfo) implements InternalGameEvent {
+  record ChallengeSet(UUID gameId, ChallengeInfo challengeInfo) implements InternalGameEvent {
 
   }
 }

@@ -19,6 +19,7 @@ import io.micronaut.scheduling.annotation.Async;
 import jakarta.inject.Singleton;
 import java.util.List;
 import org.developerden.codosseum.challenges.client.api.DefaultApi;
+import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
 import org.developerden.codosseum.challenges.client.model.Info;
 import org.developerden.codosseum.repository.GameRepository;
 import org.developerden.codosseum.service.game.GameCommand;
@@ -51,7 +52,7 @@ public class GameStartedHandler implements ApplicationEventListener<InternalGame
         .orElseThrow();
 
 
-    Info info = defaultApi.challengesRandomGet(
+    ChallengeInfo info = defaultApi.challengesRandomGet(
         List.of(),
         List.of()
     ).block();

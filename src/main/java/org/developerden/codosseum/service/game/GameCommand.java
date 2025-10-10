@@ -15,6 +15,7 @@
 package org.developerden.codosseum.service.game;
 
 import java.util.UUID;
+import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
 import org.developerden.codosseum.challenges.client.model.Info;
 import org.developerden.codosseum.model.player.GamePlayer;
 
@@ -47,7 +48,7 @@ public sealed interface GameCommand {
   record AddPlayer(UUID gameId, GamePlayer player) implements GameCommand {
   }
 
-  record SetChallengeInfo(UUID gameId, Info info) implements GameCommand {
+  record SetChallengeInfo(UUID gameId, ChallengeInfo info) implements GameCommand {
   }
 
 
