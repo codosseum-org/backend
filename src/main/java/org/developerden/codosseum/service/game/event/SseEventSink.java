@@ -18,9 +18,7 @@ import io.micronaut.http.sse.Event;
 import io.micronaut.runtime.event.annotation.EventListener;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import org.developerden.codosseum.event.GameEvent;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -33,7 +31,8 @@ import reactor.core.publisher.Sinks;
  */
 @Singleton
 public class SseEventSink {
-  private final Map<UUID, Sinks.Many<InternalGameEvent>> sinks = new ConcurrentHashMap<>();
+  private final Sinks.Many<InternalGameEvent> eventSink =
+      Sinks.many().multicast().onBackpressureBuffer();
   private final EventMapper eventMapper;
   private final Logger logger = LoggerFactory.getLogger(SseEventSink.class);
 
@@ -48,34 +47,30 @@ public class SseEventSink {
   public void on(InternalGameEvent event) {
     UUID gameId = event.gameId();
     logger.info("Publishing event {} for game {}", event, gameId);
-    var sink = sink(gameId);
-    sink.tryEmitNext(event);
+
+    eventSink.tryEmitNext(event);
   }
 
-  private Sinks.Many<InternalGameEvent> sink(UUID gameId) {
-    return sinks.computeIfAbsent(gameId,
-        ignored -> Sinks.many().multicast().onBackpressureBuffer());
+  /**
+   * Subscribe to all events across all games.
+   * This is primarily for testing or logging purposes.
+   */
+  public Publisher<Event<GameEvent>> allEvents() {
+    return eventSink.asFlux()
+        .flatMap(this::fromInternal);
   }
 
-  public Publisher<Event<InternalGameEvent>> subscribeToSse(UUID gameId) {
-    var sink = sink(gameId);
-    return sink.asFlux().map(event -> Event.of(event).name(event.getClass().getSimpleName()));
-  }
 
   public Publisher<Event<GameEvent>> subscribeToPublicSse(UUID gameId) {
-    var sink = sink(gameId);
-    return sink.asFlux()
-        .flatMap(e -> eventMapper.fromInternal(e)
-            .map(publicEvent -> Event.of(publicEvent).name(publicEvent.getClass().getSimpleName()))
-            .map(Mono::just)
-            .orElse(Mono.empty())
-        );
+    return eventSink.asFlux()
+        .filter(e -> e.gameId().equals(gameId))
+        .flatMap(this::fromInternal);
   }
 
-  public void close(UUID gameId) {
-    var sink = sinks.remove(gameId);
-    if (sink != null) {
-      sink.tryEmitComplete();
-    }
+  private Mono<Event<GameEvent>> fromInternal(InternalGameEvent internalEvent) {
+    return eventMapper.fromInternal(internalEvent)
+        .map(publicEvent -> Event.of(publicEvent).name(publicEvent.getClass().getSimpleName()))
+        .map(Mono::just)
+        .orElse(Mono.empty());
   }
 }
