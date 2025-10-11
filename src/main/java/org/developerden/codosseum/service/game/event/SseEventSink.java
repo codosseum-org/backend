@@ -48,7 +48,20 @@ public class SseEventSink {
     UUID gameId = event.gameId();
     logger.info("Publishing event {} for game {}", event, gameId);
 
-    eventSink.tryEmitNext(event);
+    eventSink.emitNext(event, (signalType, emitResult) ->
+        switch (emitResult) {
+          case FAIL_NON_SERIALIZED -> true; // retry until serialized
+          case FAIL_OVERFLOW -> {
+            logger.warn("Dropping event {} due to overflow", event);
+            yield false;
+          }
+          default -> {
+            if (emitResult.isFailure()) {
+              logger.debug("Emit failed: {}", emitResult);
+            }
+            yield false;
+          }
+        });
   }
 
   /**
