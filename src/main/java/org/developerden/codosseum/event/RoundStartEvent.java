@@ -16,7 +16,7 @@ package org.developerden.codosseum.event;
 
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
-import org.developerden.codosseum.dto.ChallengeInfo;
+import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
 
 @RecordBuilder
 public record RoundStartEvent(

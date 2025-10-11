@@ -20,6 +20,7 @@ import java.util.Optional;
 import org.developerden.codosseum.dto.PlayersMapper;
 import org.developerden.codosseum.event.GameEvent;
 import org.developerden.codosseum.event.PlayerJoinEvent;
+import org.developerden.codosseum.event.RoundStartEvent;
 import org.developerden.codosseum.event.SyncEvent;
 import org.developerden.codosseum.model.GamePhase;
 
@@ -48,7 +49,12 @@ public class EventMapper {
       );
 
       case InternalGameEvent.GameStarted ignored -> Optional.empty();
-      case InternalGameEvent.ChallengeSet challengeSet -> Optional.empty();
+      case InternalGameEvent.ChallengeSet challengeSet -> Optional.of(
+          new RoundStartEvent(
+              challengeSet.challengeInfo(),
+              1
+          )
+      );
     };
   }
 }

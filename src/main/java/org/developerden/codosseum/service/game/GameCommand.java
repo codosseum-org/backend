@@ -16,7 +16,6 @@ package org.developerden.codosseum.service.game;
 
 import java.util.UUID;
 import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
-import org.developerden.codosseum.challenges.client.model.Info;
 import org.developerden.codosseum.model.player.GamePlayer;
 
 /**
