@@ -15,13 +15,13 @@
 package org.developerden.codosseum.auth;
 
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.AbstractSecurityRule;
 import io.micronaut.security.rules.SecurityRuleResult;
 import io.micronaut.security.token.RolesFinder;
 import io.micronaut.web.router.MethodBasedRouteMatch;
+import io.micronaut.web.router.RouteAttributes;
 import io.micronaut.web.router.RouteMatch;
 import jakarta.inject.Singleton;
 import java.util.Arrays;
@@ -38,7 +38,8 @@ public class GameAuthorizationRule extends AbstractSecurityRule<HttpRequest<?>> 
   @Override
   public Publisher<SecurityRuleResult> check(@Nullable HttpRequest<?> request,
                                              @Nullable Authentication authentication) {
-    RouteMatch<?> routeMatch = request.getAttribute(HttpAttributes.ROUTE_MATCH, RouteMatch.class)
+
+    RouteMatch<?> routeMatch = RouteAttributes.getRouteMatch(request)
         .orElse(null);
     if (routeMatch instanceof MethodBasedRouteMatch<?, ?> methodMatch
         && methodMatch.hasAnnotation(GameAuthorized.class)) {
