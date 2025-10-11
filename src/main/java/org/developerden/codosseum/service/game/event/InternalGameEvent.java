@@ -17,7 +17,6 @@ package org.developerden.codosseum.service.game.event;
 import java.time.Duration;
 import java.util.UUID;
 import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
-import org.developerden.codosseum.challenges.client.model.Info;
 import org.developerden.codosseum.event.GameEvent;
 import org.developerden.codosseum.model.Game;
 import org.developerden.codosseum.model.player.GamePlayer;

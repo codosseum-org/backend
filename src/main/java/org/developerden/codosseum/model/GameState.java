@@ -19,7 +19,6 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import java.util.UUID;
 import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
-import org.developerden.codosseum.challenges.client.model.Info;
 
 /**
  * Internal model representing the current state of a game.
