@@ -17,10 +17,8 @@ package org.developerden.codosseum.service.game.process;
 import io.micronaut.context.event.ApplicationEventListener;
 import io.micronaut.scheduling.annotation.Async;
 import jakarta.inject.Singleton;
-import java.util.List;
 import org.developerden.codosseum.challenges.client.api.DefaultApi;
 import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
-import org.developerden.codosseum.challenges.client.model.Info;
 import org.developerden.codosseum.repository.GameRepository;
 import org.developerden.codosseum.service.game.GameCommand;
 import org.developerden.codosseum.service.game.GameRunnerRegistry;
@@ -44,6 +42,7 @@ public class GameStartedHandler implements ApplicationEventListener<InternalGame
   }
 
   @Override
+  @Async
   public void onApplicationEvent(InternalGameEvent event) {
     var gameStarted = (InternalGameEvent.GameStarted) event;
 
