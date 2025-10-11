@@ -75,7 +75,13 @@ java {
 checkstyle {
     toolVersion = "11.1.0"
     configFile = configDirectory.file("google_checks.xml").get().asFile
-    sourceSets = emptySet()
+    sourceSets = listOf(project.sourceSets.main.get())
+}
+
+tasks.withType<Checkstyle> {
+    exclude {
+        it.file.path.contains("generated/openapi") // TODO: this could be slow?
+    }
 }
 
 tasks {
