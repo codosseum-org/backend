@@ -33,7 +33,7 @@ public interface PlayersMapper {
 
   @BeanMapping(subclassExhaustiveStrategy = SubclassExhaustiveStrategy.COMPILE_ERROR)
   @SubclassMapping(target = Player.class, source = EphemeralPlayer.class)
-
+  @Mapping(target = "name", ignore = true) // Handled in EphemeralPlayer mapping
   Player toDto(GamePlayer player);
 
   @Mapping(target = "players", source = "others")
