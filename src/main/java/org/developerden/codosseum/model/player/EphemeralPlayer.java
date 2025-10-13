@@ -28,7 +28,8 @@ import javax.annotation.Nonnull;
  */
 public record EphemeralPlayer(@Nonnull String name,
                               @Nonnull UUID gameId,
-                              @Nonnull String key, boolean admin)
+                              @Nonnull String key,
+                              boolean admin)
     implements GamePlayer {
 
 }

@@ -103,6 +103,7 @@ public class GameService {
     if (gameOpt.isEmpty()) {
       return Optional.empty();
     }
+    var game = gameOpt.get();
 
     var stateOpt = gameRunnerRegistry
         .find(id)
@@ -110,21 +111,17 @@ public class GameService {
         .or(() -> snapshotStore.load(id))
         .orElseThrow(() -> new IllegalStateException("No game state found for game " + id));
 
-    var phase = stateOpt.phase();
 
-
-    return gameOpt
-        .map(game -> new GameInfo(
-            game.settings(),
-            game.id(),
-            game.mode(),
-            playersMapper.toDto(stateOpt.players()),
-            phase,
-            0,
-            0,
-            1,
-            new ArrayList<>()
-        ));
+    return Optional.of(new GameInfo(
+        game.settings(),
+        game.id(),
+        game.mode(),
+        playersMapper.toDto(stateOpt.players()),
+        stateOpt.phase(),
+        0,
+        stateOpt.currentRound() == -1 ? null : stateOpt.currentRound() + 1,
+        new ArrayList<>()
+    ));
   }
 
   public void startGame(UUID gameId) {

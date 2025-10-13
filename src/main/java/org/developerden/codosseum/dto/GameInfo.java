@@ -16,6 +16,7 @@ package org.developerden.codosseum.dto;
 
 import io.micronaut.serde.annotation.Serdeable;
 import io.soabase.recordbuilder.core.RecordBuilder;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import java.util.List;
@@ -23,8 +24,22 @@ import java.util.UUID;
 import org.developerden.codosseum.mode.GameMode;
 import org.developerden.codosseum.model.GamePhase;
 
+/**
+ * Public information about a game.
+ *
+ * @param timeLeft A generic countdown timer, in seconds. Meaning depends on the game phase:
+ *                 <ul>
+ *                 <li>{@link GamePhase#WARMUP}: Time until game starts</li>
+ *                 <li>{@link GamePhase#IN_PROGRESS}: Time until current round ends</li>
+ *                 <li>Other phases are undefined and the value should be ignored</li>
+ *                 </ul>
+ */
 @RecordBuilder
 @Serdeable
+@Schema(
+    description = "Public information about a game",
+    title = "GameInfo"
+)
 public record GameInfo(
     @Nonnull
     GameSettings settings,
@@ -41,10 +56,23 @@ public record GameInfo(
     @Nonnull
     GamePhase state,
 
+    @Schema(
+        description = """
+            A generic countdown timer, in seconds. Meaning depends on the game phase:
+            - *WARMUP*: Time until game starts
+            - *IN_PROGRESS*: Time until current round ends
+            - Other phases are undefined and the value should be ignored
+            """,
+        example = "120",
+        minimum = "0"
+    )
     int timeLeft,
 
-    long nextStateAt,
-
+    @Schema(
+        description = "The current round number, or null if the game hasn't started yet",
+        example = "1",
+        minimum = "1"
+    )
     @Nullable
     Integer round,
 
