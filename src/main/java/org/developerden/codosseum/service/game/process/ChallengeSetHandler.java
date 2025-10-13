@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Listens for challenges being set and
+ * Listens for challenges being set for a game, and starts the round when they are.
  */
 @Singleton
 public class ChallengeSetHandler implements ApplicationEventListener<InternalGameEvent> {

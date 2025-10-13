@@ -67,6 +67,7 @@ public sealed interface GameCommand {
   /**
    * Command to start a new round in a game.
    * The game phase should be {@link GamePhase#IN_PROGRESS} for this to have any effect.
+   *
    * @param gameId the id of the game to start the round for
    */
   record StartRound(UUID gameId) implements GameCommand {
