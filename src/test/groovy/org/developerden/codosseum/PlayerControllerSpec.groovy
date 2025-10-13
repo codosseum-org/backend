@@ -59,4 +59,6 @@ class PlayerControllerSpec extends Specification {
         info.settings().allowedGameModes() == [GameModeType.FASTEST]
 
     }
+
+
 }

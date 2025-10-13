@@ -125,6 +125,7 @@ micronaut {
             apiPackageName = "org.developerden.codosseum.challenges.client.api"
             modelPackageName = "org.developerden.codosseum.challenges.client.model"
             useOptional = true
+            useSealed = true
         }
     }
 }

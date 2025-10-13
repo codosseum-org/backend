@@ -14,13 +14,15 @@
 
 package org.developerden.codosseum
 
-
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.sse.Event
+import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
+import org.developerden.codosseum.challenges.client.api.DefaultApi
+import org.developerden.codosseum.challenges.client.model.Difficulty
 import org.developerden.codosseum.dto.*
 import org.developerden.codosseum.event.GameEvent
 import org.developerden.codosseum.event.RoundStartEvent
@@ -28,8 +30,10 @@ import org.developerden.codosseum.event.SyncEvent
 import org.developerden.codosseum.mode.GameModeType
 import org.developerden.codosseum.model.GamePhase
 import org.developerden.codosseum.service.game.event.SseEventSink
+import org.developerden.codosseum.stubs.Stubs
 import org.reactivestreams.Subscription
 import reactor.core.publisher.BaseSubscriber
+import reactor.core.publisher.Mono
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -43,6 +47,8 @@ class GameFlowSpec extends Specification {
 
     @Inject
     SseEventSink eventSink
+    @Inject
+    DefaultApi defaultApi
 
     // has to be thread safe as events come from another thread
     List<GameEvent> eventsReceived = new CopyOnWriteArrayList<>()
@@ -64,6 +70,10 @@ class GameFlowSpec extends Specification {
     }
 
     def "Warmup phase starts correctly"() {
+        given:
+        def challenge = Stubs.fakeChallengeInfo()
+        1 * defaultApi.challengesRandomGet(_, _) >> Mono.just(challenge)
+
         when:
         def response = http.toBlocking().exchange(HttpRequest.POST("/games",
                 new GameCreateRequest(
@@ -79,16 +89,17 @@ class GameFlowSpec extends Specification {
         def gameId = response.body().id()
         def key = response.body().adminKey()
 
+
         when:
-        def getResponse = http.toBlocking()
+        def warmupResponse = http.toBlocking()
                 .exchange(HttpRequest.POST("/games/${gameId}/warmup", null)
                         .header("Authorization", "Game $key"), Void)
 
         then:
-        getResponse.status.code == 204
+        warmupResponse.status.code == 204
 
         and: "wait until both events arrive"
-        def conditions = new PollingConditions(timeout: 6, initialDelay: 0.1, delay: 0.1)
+        def conditions = new PollingConditions(timeout: 7, initialDelay: 0.1, delay: 0.1)
         conditions.eventually {
             assert eventsReceived.size() == 2
             assert eventsReceived[0] instanceof SyncEvent
@@ -107,5 +118,10 @@ class GameFlowSpec extends Specification {
         info.state() == GamePhase.IN_PROGRESS
         info.players().allPlayers().count() == 1
 
+    }
+
+    @MockBean(DefaultApi)
+    DefaultApi defaultApi() {
+        Mock(DefaultApi)
     }
 }
