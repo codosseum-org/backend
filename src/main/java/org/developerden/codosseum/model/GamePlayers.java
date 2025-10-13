@@ -14,6 +14,7 @@
 
 package org.developerden.codosseum.model;
 
+import io.micronaut.serde.annotation.Serdeable;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import java.util.Set;
 import javax.annotation.Nonnull;
@@ -32,4 +33,8 @@ import org.developerden.codosseum.model.player.GamePlayer;
     addSingleItemCollectionBuilders = true
 )
 public record GamePlayers(@Nullable GamePlayer admin, @Nonnull Set<GamePlayer> others) {
+
+  public GamePlayersBuilder builder() {
+    return GamePlayersBuilder.builder(this);
+  }
 }

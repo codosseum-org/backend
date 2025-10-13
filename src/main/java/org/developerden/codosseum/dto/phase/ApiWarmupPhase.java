@@ -11,42 +11,16 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package org.developerden.codosseum.dto.phase;
 
-package org.developerden.codosseum.dto;
-
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.micronaut.serde.annotation.Serdeable;
-import io.soabase.recordbuilder.core.RecordBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.annotation.Nonnull;
-import java.util.List;
-import java.util.UUID;
-import org.developerden.codosseum.mode.GameMode;
-import org.developerden.codosseum.dto.phase.ApiGamePhase;
+import java.time.Instant;
+import org.developerden.codosseum.model.phase.GamePhaseKind;
 
-
-@RecordBuilder
 @Serdeable
-@Schema(
-    description = "Public information about a game",
-    title = "GameInfo"
-)
-public record GameInfo(
-    @Nonnull
-    GameSettings settings,
-
-    @Nonnull
-    UUID id,
-
-    @Nonnull
-    GameMode gameMode,
-
-    @Nonnull
-    Players players,
-
-    @Nonnull
-    ApiGamePhase phase,
-
-    @Nonnull
-    List<PlayerGameResult> results
-) {
+@Schema(description = "Warmup countdown before the game starts")
+@JsonTypeName("WARMUP")
+public record ApiWarmupPhase(Instant warmupEndsAt) implements ApiGamePhase {
 }

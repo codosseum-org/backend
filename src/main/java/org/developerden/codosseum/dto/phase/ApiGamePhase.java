@@ -12,41 +12,18 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.developerden.codosseum.dto;
+package org.developerden.codosseum.dto.phase;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
-import io.soabase.recordbuilder.core.RecordBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.annotation.Nonnull;
-import java.util.List;
-import java.util.UUID;
-import org.developerden.codosseum.mode.GameMode;
-import org.developerden.codosseum.dto.phase.ApiGamePhase;
 
-
-@RecordBuilder
 @Serdeable
-@Schema(
-    description = "Public information about a game",
-    title = "GameInfo"
-)
-public record GameInfo(
-    @Nonnull
-    GameSettings settings,
-
-    @Nonnull
-    UUID id,
-
-    @Nonnull
-    GameMode gameMode,
-
-    @Nonnull
-    Players players,
-
-    @Nonnull
-    ApiGamePhase phase,
-
-    @Nonnull
-    List<PlayerGameResult> results
-) {
+@Introspected
+@Schema(description = "The current phase of the game and any associated data.",
+    discriminatorProperty = "kind")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "kind", visible = true)
+public sealed interface ApiGamePhase
+    permits ApiUndefinedPhase, ApiWaitingForPlayersPhase, ApiWarmupPhase, ApiInProgressPhase {
 }

@@ -17,25 +17,47 @@ package org.developerden.codosseum.model;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.Positive;
 import java.util.UUID;
+import java.util.function.UnaryOperator;
 import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
+import org.developerden.codosseum.model.phase.GamePhase;
+import org.developerden.codosseum.model.phase.WithPlayersPhase;
 
 /**
  * Internal model representing the current mutable state of a game.
  *
  * @param gameId               the unique identifier of the game
  * @param phase                the current phase of the game
- * @param players              the players involved in the game
  * @param currentChallengeInfo the current challenge information, if a challenge is active
- * @param currentRound         the current round number of the game, or -1 if the game hasn't started yet
+ * @param currentRound         the current round number of the game
  */
 @RecordBuilder
 @RecordBuilder.Options(defaultNotNull = true)
 public record GameState(@Nonnull UUID gameId,
                         @Nonnull GamePhase phase,
-                        @Nonnull GamePlayers players,
                         @Nullable ChallengeInfo currentChallengeInfo,
-                        int currentRound,
-                        boolean acceptingSolutions
+                        boolean acceptingSolutions,
+                        @Nullable @Positive Integer currentRound
 ) implements GameStateBuilder.With {
+
+  public GameState updatePlayers(UnaryOperator<GamePlayers> mutate) {
+    var phase = phase();
+    if (phase instanceof WithPlayersPhase wp) {
+      var newPlayers = mutate.apply(wp.players());
+      var newPhase = (GamePhase) wp.withPlayers(newPlayers);
+      return GameStateBuilder.from(this).withPhase(newPhase);
+    }
+    throw new IllegalStateException(
+        "Phase does not contain players: " + phase.getClass().getSimpleName());
+  }
+
+  public GamePlayers players() {
+    var phase = phase();
+    if (phase instanceof WithPlayersPhase wp) {
+      return wp.players();
+    }
+    throw new IllegalStateException(
+        "Phase does not contain players: " + phase.getClass().getSimpleName());
+  }
 }

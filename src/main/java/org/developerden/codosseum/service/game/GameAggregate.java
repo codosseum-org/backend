@@ -15,15 +15,17 @@
 package org.developerden.codosseum.service.game;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
-import org.developerden.codosseum.model.GamePhase;
-import org.developerden.codosseum.model.GamePlayersBuilder;
 import org.developerden.codosseum.model.GameState;
 import org.developerden.codosseum.model.GameStateBuilder;
+import org.developerden.codosseum.model.phase.GamePhaseKind;
+import org.developerden.codosseum.model.phase.InProgressPhase;
+import org.developerden.codosseum.model.phase.WarmupPhase;
 import org.developerden.codosseum.service.game.effect.SideEffect;
 import org.developerden.codosseum.service.game.event.InternalGameEvent;
 
@@ -73,11 +75,21 @@ public class GameAggregate {
    *
    * @param gamePhase the required phase.
    */
-  private void requirePhase(GamePhase gamePhase) {
-    if (gameState.phase() != gamePhase) {
+  private void requirePhase(GamePhaseKind gamePhase) {
+    if (gameState.phase().getKind() != gamePhase) {
       throw new IllegalStateException(
           "Game is not in required phase: " + gamePhase + ", current phase: " + gameState.phase());
     }
+  }
+
+  private <P extends org.developerden.codosseum.model.phase.GamePhase> P requirePhase(
+      Class<P> phaseClass) {
+    if (!phaseClass.isInstance(gameState.phase())) {
+      throw new IllegalStateException(
+          "Game is not in required phase: " + phaseClass.getSimpleName() + ", current phase: " +
+              gameState.phase());
+    }
+    return phaseClass.cast(gameState.phase());
   }
 
   private Decision decide(GameCommand cmd) {
@@ -87,26 +99,26 @@ public class GameAggregate {
 
     return switch (cmd) {
       case GameCommand.CreateGame(var id, var creator) -> {
-        requirePhase(GamePhase.WAITING_FOR_PLAYERS);
+        requirePhase(GamePhaseKind.WAITING_FOR_PLAYERS);
         yield Decision.pure(
             new InternalGameEvent.GameCreated(gameId, creator)
         );
 
       }
       case GameCommand.StartGame(var id) -> {
-        requirePhase(GamePhase.WARMUP);
+        requirePhase(GamePhaseKind.WARMUP);
 
         yield Decision.pure(
             new InternalGameEvent.GameStarted(gameId)
         );
       }
       case GameCommand.AddPlayer(var id, var player) -> {
-        requirePhase(GamePhase.WAITING_FOR_PLAYERS);
+        requirePhase(GamePhaseKind.WAITING_FOR_PLAYERS);
         yield Decision.pure(new InternalGameEvent.PlayerJoined(gameId, player));
       }
 
       case GameCommand.StartWarmup(var id) -> {
-        requirePhase(GamePhase.WAITING_FOR_PLAYERS);
+        requirePhase(GamePhaseKind.WAITING_FOR_PLAYERS);
         // Emit warmup started and schedule transition to start after countdown
         yield Decision.pure(
             new InternalGameEvent.WarmupStarted(gameId, DEFAULT_WARMUP_DURATION)
@@ -122,9 +134,9 @@ public class GameAggregate {
           new InternalGameEvent.ChallengeSet(gameId, challenge)
       );
       case GameCommand.StartRound(var id) -> {
-        requirePhase(GamePhase.IN_PROGRESS);
+        var phase = requirePhase(InProgressPhase.class);
 
-        var nextRound = Math.max(gameState.currentRound() + 1, 1);
+        var nextRound = phase.currentRound() + 1;
         var roundLength = Duration.ofMinutes(5); // TODO: make configurable / dynamic
         ChallengeInfo challenge = Objects.requireNonNull(getGameState().currentChallengeInfo(),
             "Cannot start round without a challenge set");
@@ -139,10 +151,10 @@ public class GameAggregate {
             ));
       }
       case GameCommand.EndRound endRound -> {
-        requirePhase(GamePhase.IN_PROGRESS);
+        var phase = requirePhase(InProgressPhase.class);
         // For now, ending a round is a no-op
         yield Decision.pure(
-            new InternalGameEvent.RoundEnded(gameId, gameState.currentRound())
+            new InternalGameEvent.RoundEnded(gameId, phase.currentRound())
         );
       }
     };
@@ -161,23 +173,27 @@ public class GameAggregate {
       throw new IllegalArgumentException("Event gameId does not match aggregate gameId");
     }
     return switch (event) {
-      case InternalGameEvent.PlayerJoined(var gameId, var player) -> GameStateBuilder.from(state)
-          .withPlayers(
-              GamePlayersBuilder.builder(state.players())
-                  .addOthers(player)
-                  .build()
-          );
-      case InternalGameEvent.GameCreated(var gameId, var player) -> GameStateBuilder.from(state)
-          .withPlayers(
-              GamePlayersBuilder.builder(state.players())
-                  .admin(player)
-                  .addOthers(player)
-                  .build()
-          );
+      case InternalGameEvent.PlayerJoined(var gameId, var player) ->
+          state.updatePlayers(players -> players
+              .builder()
+              .addOthers(player).build());
+      case InternalGameEvent.GameCreated(var gameId, var player) -> state.updatePlayers(players ->
+          players.builder()
+              .admin(player)
+              .addOthers(player)
+              .build()
+      );
       case InternalGameEvent.WarmupStarted(var gameId, var duration) -> GameStateBuilder.from(state)
-          .withPhase(GamePhase.WARMUP);
+          .withPhase(new WarmupPhase(
+              state.players(),
+              Instant.now().plus(duration)
+          ));
       case InternalGameEvent.GameStarted(var gameId) -> GameStateBuilder.from(state)
-          .withPhase(GamePhase.IN_PROGRESS);
+          .withPhase(new InProgressPhase(
+              state.players(),
+              state.currentChallengeInfo(),
+              0
+          ));
       case InternalGameEvent.ChallengeSet challengeSet -> GameStateBuilder.from(state)
           .withCurrentChallengeInfo(challengeSet.challengeInfo());
       case InternalGameEvent.RoundEnded roundEnded -> state; // TODO: implement round end logic

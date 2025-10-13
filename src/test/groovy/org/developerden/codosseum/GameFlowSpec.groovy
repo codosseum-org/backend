@@ -22,8 +22,8 @@ import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import org.developerden.codosseum.challenges.client.api.DefaultApi
-import org.developerden.codosseum.challenges.client.model.Difficulty
 import org.developerden.codosseum.dto.*
+import org.developerden.codosseum.dto.phase.ApiInProgressPhase
 import org.developerden.codosseum.event.GameEvent
 import org.developerden.codosseum.event.RoundStartEvent
 import org.developerden.codosseum.event.SyncEvent
@@ -115,7 +115,7 @@ class GameFlowSpec extends Specification {
         infoResponse.status.code == 200
         def info = infoResponse.body()
         info.id() == gameId
-        info.state() == GamePhase.IN_PROGRESS
+        info.phase() instanceof ApiInProgressPhase
         info.players().allPlayers().count() == 1
 
     }

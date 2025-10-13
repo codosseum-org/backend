@@ -12,29 +12,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.developerden.codosseum.service.game.state;
+package org.developerden.codosseum.model.phase;
 
-import jakarta.inject.Singleton;
-import java.util.HashSet;
-import java.util.UUID;
-import org.developerden.codosseum.model.GamePlayers;
-import org.developerden.codosseum.model.GameState;
-import org.developerden.codosseum.model.GameStateBuilder;
-import org.developerden.codosseum.model.phase.WaitingForPlayersPhase;
+import io.micronaut.serde.annotation.Serdeable;
 
-/**
- * Default initial state: lobby waiting for players.
- */
-@Singleton
-public class DefaultInitialGameStateProvider implements InitialGameStateProvider {
+@Serdeable
+public record UndefinedPhase() implements GamePhase {
   @Override
-  public GameState create(UUID gameId) {
-    return GameStateBuilder.builder()
-        .gameId(gameId)
-        .phase(new WaitingForPlayersPhase(
-            new GamePlayers(null, new HashSet<>())
-        ))
-        .currentRound(null)
-        .build();
+  public GamePhaseKind getKind() {
+    return GamePhaseKind.UNDEFINED;
   }
 }

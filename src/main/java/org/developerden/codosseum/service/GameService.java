@@ -28,10 +28,12 @@ import org.developerden.codosseum.dto.GameJoinResponse;
 import org.developerden.codosseum.dto.GameSettings;
 import org.developerden.codosseum.dto.Player;
 import org.developerden.codosseum.dto.PlayersMapper;
+import org.developerden.codosseum.dto.phase.PhaseMapper;
 import org.developerden.codosseum.mode.GameModeFactory;
 import org.developerden.codosseum.mode.GameModeType;
 import org.developerden.codosseum.model.Game;
-import org.developerden.codosseum.model.GamePhase;
+import org.developerden.codosseum.model.phase.GamePhaseKind;
+import org.developerden.codosseum.model.phase.WithPlayersPhase;
 import org.developerden.codosseum.model.player.EphemeralPlayer;
 import org.developerden.codosseum.repository.AuthRepository;
 import org.developerden.codosseum.repository.GameRepository;
@@ -50,17 +52,20 @@ public class GameService {
 
   private final AuthRepository authRepository;
   private final PlayersMapper playersMapper;
+  private final PhaseMapper phaseMapper;
 
   public @Inject GameService(GameRepository gameRepository, GameModeFactory gameModeFactory,
                              GameRunnerRegistry gameRunnerRegistry, SnapshotStore snapshotStore,
                              AuthRepository authRepository,
-                             PlayersMapper playersMapper) {
+                             PlayersMapper playersMapper,
+                             PhaseMapper phaseMapper) {
     this.gameRepository = gameRepository;
     this.gameModeFactory = gameModeFactory;
     this.gameRunnerRegistry = gameRunnerRegistry;
     this.snapshotStore = snapshotStore;
     this.authRepository = authRepository;
     this.playersMapper = playersMapper;
+    this.phaseMapper = phaseMapper;
   }
 
   private String generateFreshKey() {
@@ -105,28 +110,30 @@ public class GameService {
     }
     var game = gameOpt.get();
 
-    var stateOpt = gameRunnerRegistry
+    var state = gameRunnerRegistry
         .find(id)
         .map(GameRunner::getCurrentState)
         .or(() -> snapshotStore.load(id))
         .orElseThrow(() -> new IllegalStateException("No game state found for game " + id));
 
+    var phase = state.phase();
+    if (!(phase instanceof WithPlayersPhase playersPhase)) {
+      throw new IllegalStateException("Game phase does not have players: " + phase);
+    }
 
     return Optional.of(new GameInfo(
         game.settings(),
         game.id(),
         game.mode(),
-        playersMapper.toDto(stateOpt.players()),
-        stateOpt.phase(),
-        0,
-        stateOpt.currentRound() == -1 ? null : stateOpt.currentRound() + 1,
+        playersMapper.toDto(playersPhase.players()),
+        phaseMapper.toDto(state.phase()),
         new ArrayList<>()
     ));
   }
 
   public void startGame(UUID gameId) {
     GameRunner runner = gameRunnerRegistry.getOrCreate(gameId);
-    if (runner.getCurrentState().phase() != GamePhase.WAITING_FOR_PLAYERS) {
+    if (runner.getCurrentState().phase().getKind() != GamePhaseKind.WAITING_FOR_PLAYERS) {
       throw new IllegalStateException("Game is already running or finished");
     }
 
@@ -163,7 +170,7 @@ public class GameService {
         .getOrCreate(id);
     var state = runner
         .getCurrentState();
-    if (state.phase() != GamePhase.WAITING_FOR_PLAYERS) {
+    if (state.phase().getKind() != GamePhaseKind.WAITING_FOR_PLAYERS) {
       throw new IllegalStateException("Game is already running or finished");
     }
 

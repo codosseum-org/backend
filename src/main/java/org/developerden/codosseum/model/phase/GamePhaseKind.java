@@ -12,41 +12,23 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.developerden.codosseum.dto;
+package org.developerden.codosseum.model.phase;
 
-import io.micronaut.serde.annotation.Serdeable;
-import io.soabase.recordbuilder.core.RecordBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.annotation.Nonnull;
-import java.util.List;
-import java.util.UUID;
-import org.developerden.codosseum.mode.GameMode;
-import org.developerden.codosseum.dto.phase.ApiGamePhase;
 
-
-@RecordBuilder
-@Serdeable
-@Schema(
-    description = "Public information about a game",
-    title = "GameInfo"
-)
-public record GameInfo(
-    @Nonnull
-    GameSettings settings,
-
-    @Nonnull
-    UUID id,
-
-    @Nonnull
-    GameMode gameMode,
-
-    @Nonnull
-    Players players,
-
-    @Nonnull
-    ApiGamePhase phase,
-
-    @Nonnull
-    List<PlayerGameResult> results
-) {
+public enum GamePhaseKind {
+  @Schema(description = """
+      The game phase is not defined, usually indicating an error state.
+       Clients should generally not have to handle this state.""")
+  UNDEFINED,
+  @Schema(description = "The game has not yet started and is waiting for more players before it can begin")
+  WAITING_FOR_PLAYERS,
+  @Schema(description = "The game is in a warmup phase and is ready to begin")
+  WARMUP,
+  @Schema(description = "The game is currently in progress")
+  IN_PROGRESS,
+  @Schema(description = "The current round of the game is over")
+  ROUND_OVER,
+  @Schema(description = "The game has ended")
+  GAME_OVER
 }

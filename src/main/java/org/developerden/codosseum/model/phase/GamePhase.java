@@ -12,41 +12,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.developerden.codosseum.dto;
+package org.developerden.codosseum.model.phase;
 
 import io.micronaut.serde.annotation.Serdeable;
-import io.soabase.recordbuilder.core.RecordBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.annotation.Nonnull;
-import java.util.List;
-import java.util.UUID;
-import org.developerden.codosseum.mode.GameMode;
-import org.developerden.codosseum.dto.phase.ApiGamePhase;
 
-
-@RecordBuilder
 @Serdeable
-@Schema(
-    description = "Public information about a game",
-    title = "GameInfo"
-)
-public record GameInfo(
-    @Nonnull
-    GameSettings settings,
-
-    @Nonnull
-    UUID id,
-
-    @Nonnull
-    GameMode gameMode,
-
-    @Nonnull
-    Players players,
-
-    @Nonnull
-    ApiGamePhase phase,
-
-    @Nonnull
-    List<PlayerGameResult> results
-) {
+@Schema(description = "A phase of the game.")
+public sealed interface GamePhase
+    permits InProgressPhase, UndefinedPhase, WaitingForPlayersPhase, WarmupPhase, WithPlayersPhase {
+  GamePhaseKind getKind();
 }
