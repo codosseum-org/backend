@@ -16,6 +16,7 @@ package org.developerden.codosseum.service.game;
 
 import java.util.UUID;
 import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
+import org.developerden.codosseum.model.GamePhase;
 import org.developerden.codosseum.model.player.GamePlayer;
 
 /**
@@ -46,6 +47,7 @@ public sealed interface GameCommand {
 
   /**
    * Command to add a player to a game.
+   *
    * @param gameId the id of the game to add the player to
    * @param player the player to add
    */
@@ -62,5 +64,15 @@ public sealed interface GameCommand {
   record SetChallengeInfo(UUID gameId, ChallengeInfo info) implements GameCommand {
   }
 
+  /**
+   * Command to start a new round in a game.
+   * The game phase should be {@link GamePhase#IN_PROGRESS} for this to have any effect.
+   * @param gameId the id of the game to start the round for
+   */
+  record StartRound(UUID gameId) implements GameCommand {
+  }
+
+  record EndRound(UUID gameId) implements GameCommand {
+  }
 
 }

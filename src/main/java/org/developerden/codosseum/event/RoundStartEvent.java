@@ -16,6 +16,7 @@ package org.developerden.codosseum.event;
 
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.annotation.Nonnull;
+import java.time.Duration;
 import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
 
 @RecordBuilder
@@ -23,6 +24,8 @@ public record RoundStartEvent(
     @Nonnull
     ChallengeInfo challenge,
 
-    int round
+    int round,
+
+    Duration roundLength
 ) implements GameEvent {
 }

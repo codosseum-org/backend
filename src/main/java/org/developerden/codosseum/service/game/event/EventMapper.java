@@ -49,12 +49,15 @@ public class EventMapper {
       );
 
       case InternalGameEvent.GameStarted ignored -> Optional.empty();
-      case InternalGameEvent.ChallengeSet challengeSet -> Optional.of(
+      case InternalGameEvent.ChallengeSet ignored -> Optional.empty();
+      case InternalGameEvent.RoundStarted roundStarted -> Optional.of(
           new RoundStartEvent(
-              challengeSet.challengeInfo(),
-              1
+              roundStarted.challenge(),
+              roundStarted.roundNumber(),
+              roundStarted.roundLength()
           )
       );
+      case InternalGameEvent.RoundEnded roundEnded -> Optional.empty();
     };
   }
 }

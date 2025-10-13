@@ -17,7 +17,9 @@ package org.developerden.codosseum.service.game;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
 import org.developerden.codosseum.model.GamePhase;
 import org.developerden.codosseum.model.GamePlayersBuilder;
 import org.developerden.codosseum.model.GameState;
@@ -119,6 +121,30 @@ public class GameAggregate {
       case GameCommand.SetChallengeInfo(var id, var challenge) -> Decision.pure(
           new InternalGameEvent.ChallengeSet(gameId, challenge)
       );
+      case GameCommand.StartRound(var id) -> {
+        requirePhase(GamePhase.IN_PROGRESS);
+
+        var nextRound = Math.max(gameState.currentRound() + 1, 1);
+        var roundLength = Duration.ofMinutes(5); // TODO: make configurable / dynamic
+        ChallengeInfo challenge = Objects.requireNonNull(getGameState().currentChallengeInfo(),
+            "Cannot start round without a challenge set");
+        yield Decision.pure(
+            new InternalGameEvent.RoundStarted(gameId, challenge,
+                nextRound, roundLength)
+        ).withEffects(
+            new SideEffect.ScheduleAfter(
+                "round->over",
+                roundLength,
+                new GameCommand.EndRound(gameId)
+            ));
+      }
+      case GameCommand.EndRound endRound -> {
+        requirePhase(GamePhase.IN_PROGRESS);
+        // For now, ending a round is a no-op
+        yield Decision.pure(
+            new InternalGameEvent.RoundEnded(gameId, gameState.currentRound())
+        );
+      }
     };
   }
 
@@ -154,6 +180,9 @@ public class GameAggregate {
           .withPhase(GamePhase.IN_PROGRESS);
       case InternalGameEvent.ChallengeSet challengeSet -> GameStateBuilder.from(state)
           .withCurrentChallengeInfo(challengeSet.challengeInfo());
+      case InternalGameEvent.RoundEnded roundEnded -> state; // TODO: implement round end logic
+      case InternalGameEvent.RoundStarted roundStarted -> GameStateBuilder.from(state)
+          .withCurrentRound(roundStarted.roundNumber());
     };
 
   }

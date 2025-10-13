@@ -33,6 +33,7 @@ public class DefaultInitialGameStateProvider implements InitialGameStateProvider
         .gameId(gameId)
         .phase(GamePhase.WAITING_FOR_PLAYERS)
         .players(new GamePlayers(null, new HashSet<>()))
+        .currentRound(-1)
         .build();
   }
 }

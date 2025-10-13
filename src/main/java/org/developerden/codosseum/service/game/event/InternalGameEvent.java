@@ -15,7 +15,10 @@
 package org.developerden.codosseum.service.game.event;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
+
+import javax.annotation.Nonnull;
 import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
 import org.developerden.codosseum.event.GameEvent;
 import org.developerden.codosseum.model.Game;
@@ -38,13 +41,27 @@ public sealed interface InternalGameEvent {
   record PlayerJoined(UUID gameId, GamePlayer player) implements InternalGameEvent {
   }
 
-  /** Emitted when the warmup countdown begins. */
-  record WarmupStarted(UUID gameId, Duration warmupLength) implements InternalGameEvent {}
+  /**
+   * Emitted when the warmup countdown begins.
+   */
+  record WarmupStarted(UUID gameId, Duration warmupLength) implements InternalGameEvent {
+  }
 
-  /** Emitted when the game transitions to in-progress. */
-  record GameStarted(UUID gameId) implements InternalGameEvent {}
+  /**
+   * Emitted when the game transitions to in-progress.
+   */
+  record GameStarted(UUID gameId) implements InternalGameEvent {
+  }
 
   record ChallengeSet(UUID gameId, ChallengeInfo challengeInfo) implements InternalGameEvent {
 
+  }
+
+  record RoundStarted(UUID gameId, @Nonnull ChallengeInfo challenge, int roundNumber,
+                      @Nonnull Duration roundLength)
+      implements InternalGameEvent {
+  }
+
+  record RoundEnded(UUID gameId, int roundNumber) implements InternalGameEvent {
   }
 }

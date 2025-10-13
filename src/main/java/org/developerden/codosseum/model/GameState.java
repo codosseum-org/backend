@@ -21,17 +21,21 @@ import java.util.UUID;
 import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
 
 /**
- * Internal model representing the current state of a game.
+ * Internal model representing the current mutable state of a game.
  *
- * @param gameId  the unique identifier of the game
- * @param phase   the current phase of the game
- * @param players the players involved in the game
+ * @param gameId               the unique identifier of the game
+ * @param phase                the current phase of the game
+ * @param players              the players involved in the game
+ * @param currentChallengeInfo the current challenge information, if a challenge is active
+ * @param currentRound         the current round number of the game, or -1 if the game hasn't started yet
  */
 @RecordBuilder
 @RecordBuilder.Options(defaultNotNull = true)
 public record GameState(@Nonnull UUID gameId,
                         @Nonnull GamePhase phase,
                         @Nonnull GamePlayers players,
-                        @Nullable ChallengeInfo currentChallengeInfo
+                        @Nullable ChallengeInfo currentChallengeInfo,
+                        int currentRound,
+                        boolean acceptingSolutions
 ) implements GameStateBuilder.With {
 }

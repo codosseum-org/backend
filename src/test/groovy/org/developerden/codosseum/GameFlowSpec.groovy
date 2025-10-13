@@ -90,10 +90,12 @@ class GameFlowSpec extends Specification {
         and: "wait until both events arrive"
         def conditions = new PollingConditions(timeout: 6, initialDelay: 0.1, delay: 0.1)
         conditions.eventually {
-            assert eventsReceived.size() >= 2
+            assert eventsReceived.size() == 2
             assert eventsReceived[0] instanceof SyncEvent
             assert (eventsReceived[0] as SyncEvent).state() == GamePhase.WARMUP
             assert eventsReceived[1] instanceof RoundStartEvent
+            assert (eventsReceived[1] as RoundStartEvent).round() == 1
+
         }
 
 
