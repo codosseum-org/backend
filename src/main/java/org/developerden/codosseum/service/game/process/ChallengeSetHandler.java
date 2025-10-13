@@ -41,9 +41,12 @@ public class ChallengeSetHandler implements ApplicationEventListener<InternalGam
   public void onApplicationEvent(InternalGameEvent event) {
     if (event instanceof InternalGameEvent.ChallengeSet challengeSet) {
       gameRunnerRegistry.find(challengeSet.gameId())
-          .ifPresentOrElse(runner -> runner.tell(new GameCommand.StartRound(
-              challengeSet.gameId()
-          )), () -> log.warn("Tried to start round for non-existent game {}",
+          .ifPresentOrElse(runner -> {
+            runner.tell(new GameCommand.StartRound(
+                challengeSet.gameId()
+            ));
+            log.info("Started round for game {}", challengeSet.gameId());
+          }, () -> log.warn("Tried to start round for non-existent game {}",
               challengeSet.gameId()));
     }
   }
