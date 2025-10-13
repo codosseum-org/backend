@@ -24,15 +24,12 @@ import org.developerden.codosseum.mode.GameMode;
  * All mutable data is held in {@link GameState}.
  *
  * @param id       the unique identifier of the game.
- * @param adminKey the admin key for the game, used to authenticate admin actions.
  * @param settings the settings for the game.
  * @param mode     the game mode.
  */
 @RecordBuilder
 public record Game(
     UUID id,
-    // TODO: this should be removed and handled via players' individual keys + {@link EphemeralPlayer#admin()}
-    @Deprecated String adminKey,
     GameSettings settings,
     GameMode mode
 ) {

@@ -38,7 +38,6 @@ import org.developerden.codosseum.repository.GameRepository;
 import org.developerden.codosseum.service.game.GameCommand;
 import org.developerden.codosseum.service.game.GameRunner;
 import org.developerden.codosseum.service.game.GameRunnerRegistry;
-import org.developerden.codosseum.service.game.event.EventSink;
 import org.developerden.codosseum.service.game.state.SnapshotStore;
 import org.developerden.codosseum.utils.CollectionUtils;
 
@@ -49,19 +48,17 @@ public class GameService {
   private final GameRunnerRegistry gameRunnerRegistry;
   private final SnapshotStore snapshotStore;
 
-  private final EventSink eventSink;
   private final AuthRepository authRepository;
   private final PlayersMapper playersMapper;
 
   public @Inject GameService(GameRepository gameRepository, GameModeFactory gameModeFactory,
                              GameRunnerRegistry gameRunnerRegistry, SnapshotStore snapshotStore,
-                             EventSink eventSink, AuthRepository authRepository,
+                             AuthRepository authRepository,
                              PlayersMapper playersMapper) {
     this.gameRepository = gameRepository;
     this.gameModeFactory = gameModeFactory;
     this.gameRunnerRegistry = gameRunnerRegistry;
     this.snapshotStore = snapshotStore;
-    this.eventSink = eventSink;
     this.authRepository = authRepository;
     this.playersMapper = playersMapper;
   }
@@ -79,7 +76,7 @@ public class GameService {
     var gameModeType = CollectionUtils.pickRandom(gameModeTypes);
     var gameMode = gameModeFactory.fromType(gameModeType);
 
-    var game = new Game(UUID.randomUUID(), generateFreshKey(), request.settings(), gameMode);
+    var game = new Game(UUID.randomUUID(), request.settings(), gameMode);
 
     gameRepository.insertGame(game);
 
