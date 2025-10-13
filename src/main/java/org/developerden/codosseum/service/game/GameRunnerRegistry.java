@@ -36,7 +36,7 @@ public class GameRunnerRegistry {
   private final Map<UUID, GameRunner> runners = new ConcurrentHashMap<>();
 
   @Inject
-  private GameRunnerRegistry(GameRunnerFactory factory) {
+  GameRunnerRegistry(GameRunnerFactory factory) {
     this.factory = factory;
   }
 
