@@ -14,6 +14,7 @@ plugins {
 
 version = "0.1.0"
 group = "org.developerden"
+val challengesOpenApiSpec: Provider<RegularFile> = layout.buildDirectory.file("openapi/challenges-openapi.yaml")
 
 repositories {
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
@@ -116,15 +117,10 @@ micronaut {
         optimizeNetty.set(true)
     }
 
-    val provider: Provider<RegularFile> = project.provider {
-
-        RegularFile { downloadChallengesServiceOpenApi.get().outputFiles[0] }
-    }
-
     openapi {
         client(
             "challenges-service",
-            provider
+            challengesOpenApiSpec
         ) {
             apiPackageName = "org.developerden.codosseum.challenges.client.api"
             modelPackageName = "org.developerden.codosseum.challenges.client.model"
@@ -133,9 +129,10 @@ micronaut {
     }
 }
 
+
 val downloadChallengesServiceOpenApi by tasks.registering(Download::class) {
     src("https://raw.githubusercontent.com/codosseum-org/challenges-service/refs/heads/openapi/openapi.yaml")
-    dest(layout.buildDirectory.dir("openapi"))
+    dest(challengesOpenApiSpec)
     overwrite(true)
     onlyIfModified(false)
 }
