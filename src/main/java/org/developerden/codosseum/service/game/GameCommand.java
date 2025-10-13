@@ -44,9 +44,21 @@ public sealed interface GameCommand {
   record StartGame(UUID gameId) implements GameCommand {
   }
 
+  /**
+   * Command to add a player to a game.
+   * @param gameId the id of the game to add the player to
+   * @param player the player to add
+   */
   record AddPlayer(UUID gameId, GamePlayer player) implements GameCommand {
   }
 
+  /**
+   * Command to set the current challenge for a game.
+   * It is undefined what this does if the game is not in a state to accept a new challenge (i.e. is already in progress).
+   *
+   * @param gameId the id of the game to set the challenge for
+   * @param info   the challenge info to set
+   */
   record SetChallengeInfo(UUID gameId, ChallengeInfo info) implements GameCommand {
   }
 
