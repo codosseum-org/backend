@@ -48,7 +48,6 @@ public class EventMapper {
           )
       );
 
-      case InternalGameEvent.GameStarted ignored -> Optional.empty();
       case InternalGameEvent.ChallengeSet ignored -> Optional.empty();
       case InternalGameEvent.RoundStarted roundStarted -> Optional.of(
           new RoundStartEvent(

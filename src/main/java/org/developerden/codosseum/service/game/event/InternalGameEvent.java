@@ -45,12 +45,6 @@ public sealed interface InternalGameEvent {
   record WarmupStarted(UUID gameId, Duration warmupLength) implements InternalGameEvent {
   }
 
-  /**
-   * Emitted when the game transitions to in-progress.
-   */
-  record GameStarted(UUID gameId) implements InternalGameEvent {
-  }
-
   record ChallengeSet(UUID gameId, ChallengeInfo challengeInfo) implements InternalGameEvent {
 
   }

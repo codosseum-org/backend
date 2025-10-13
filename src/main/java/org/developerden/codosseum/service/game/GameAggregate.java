@@ -28,6 +28,8 @@ import org.developerden.codosseum.model.phase.InProgressPhase;
 import org.developerden.codosseum.model.phase.WarmupPhase;
 import org.developerden.codosseum.service.game.effect.SideEffect;
 import org.developerden.codosseum.service.game.event.InternalGameEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles commands, produces events, and applies events to the game state.
@@ -41,7 +43,9 @@ import org.developerden.codosseum.service.game.event.InternalGameEvent;
 public class GameAggregate {
   private static final Duration DEFAULT_WARMUP_DURATION = Duration.ofSeconds(5);
   private static final String KEY_WARMUP_TO_START = "warmup->start";
-
+  private static final String KEY_START_RETRY = "warmup->await-challenge";
+  private static final String KEY_ROUND_OVER = "round->over";
+  private static final Logger log = LoggerFactory.getLogger(GameAggregate.class);
   private final UUID gameId;
 
   private final GameState gameState;
@@ -108,9 +112,14 @@ public class GameAggregate {
       case GameCommand.StartGame(var id) -> {
         requirePhase(GamePhaseKind.WARMUP);
 
-        yield Decision.pure(
-            new InternalGameEvent.GameStarted(gameId)
-        );
+        if (getGameState().currentChallengeInfo() == null) {
+          log.warn("Cannot start game {}, no challenge set, retrying...", gameId);
+          yield Decision.empty().withEffects(
+              new SideEffect.ScheduleAfter(KEY_START_RETRY, Duration.ofMillis(250),
+                  new GameCommand.StartGame(gameId))
+          );
+        }
+        yield startRound(1);
       }
       case GameCommand.AddPlayer(var id, var player) -> {
         requirePhase(GamePhaseKind.WAITING_FOR_PLAYERS);
@@ -137,18 +146,8 @@ public class GameAggregate {
         var phase = requirePhase(InProgressPhase.class);
 
         var nextRound = phase.currentRound() + 1;
-        var roundLength = Duration.ofMinutes(5); // TODO: make configurable / dynamic
-        ChallengeInfo challenge = Objects.requireNonNull(getGameState().currentChallengeInfo(),
-            "Cannot start round without a challenge set");
-        yield Decision.pure(
-            new InternalGameEvent.RoundStarted(gameId, challenge,
-                nextRound, roundLength)
-        ).withEffects(
-            new SideEffect.ScheduleAfter(
-                "round->over",
-                roundLength,
-                new GameCommand.EndRound(gameId)
-            ));
+
+        yield startRound(nextRound);
       }
       case GameCommand.EndRound endRound -> {
         var phase = requirePhase(InProgressPhase.class);
@@ -158,6 +157,29 @@ public class GameAggregate {
         );
       }
     };
+  }
+
+
+  private Decision startRound(int roundNumber) {
+    var length = getRoundLength();
+    ChallengeInfo challenge = Objects.requireNonNull(
+        getGameState().currentChallengeInfo(),
+        "Cannot start round without a challenge set"
+    );
+    return Decision.pure(
+        new InternalGameEvent.RoundStarted(gameId, challenge, roundNumber, length)
+    ).withEffects(
+        new SideEffect.ScheduleAfter(
+            KEY_ROUND_OVER,
+            length,
+            new GameCommand.EndRound(gameId)
+        )
+    );
+  }
+
+  private Duration getRoundLength() {
+    // TODO: make configurable
+    return Duration.ofMinutes(5);
   }
 
   private GameState applyAll(GameState state, List<InternalGameEvent> events) {
@@ -188,17 +210,18 @@ public class GameAggregate {
               state.players(),
               Instant.now().plus(duration)
           ));
-      case InternalGameEvent.GameStarted(var gameId) -> GameStateBuilder.from(state)
-          .withPhase(new InProgressPhase(
-              state.players(),
-              state.currentChallengeInfo(),
-              0
-          ));
+
       case InternalGameEvent.ChallengeSet challengeSet -> GameStateBuilder.from(state)
           .withCurrentChallengeInfo(challengeSet.challengeInfo());
       case InternalGameEvent.RoundEnded roundEnded -> state; // TODO: implement round end logic
+
       case InternalGameEvent.RoundStarted roundStarted -> GameStateBuilder.from(state)
-          .withCurrentRound(roundStarted.roundNumber());
+          .withCurrentChallengeInfo(roundStarted.challenge())
+          .withPhase(new InProgressPhase(
+              state.players(),
+              roundStarted.challenge(),
+              roundStarted.roundNumber()
+          ));
     };
 
   }

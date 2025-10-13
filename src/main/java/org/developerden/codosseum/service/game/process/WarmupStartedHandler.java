@@ -19,6 +19,7 @@ import io.micronaut.scheduling.annotation.Async;
 import jakarta.inject.Singleton;
 import org.developerden.codosseum.challenges.client.api.DefaultApi;
 import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
+import org.developerden.codosseum.model.phase.WarmupPhase;
 import org.developerden.codosseum.repository.GameRepository;
 import org.developerden.codosseum.service.game.GameCommand;
 import org.developerden.codosseum.service.game.GameRunnerRegistry;
@@ -26,16 +27,19 @@ import org.developerden.codosseum.service.game.event.InternalGameEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Listens for games going into their {@link WarmupPhase} and queries a random challenge for them.
+ */
 @Singleton
-public class GameStartedHandler implements ApplicationEventListener<InternalGameEvent> {
+public class WarmupStartedHandler implements ApplicationEventListener<InternalGameEvent> {
 
   private final DefaultApi defaultApi;
   private final GameRepository gameRepository;
   private final GameRunnerRegistry gameRunnerRegistry;
-  private final Logger log = LoggerFactory.getLogger(GameStartedHandler.class);
+  private final Logger log = LoggerFactory.getLogger(WarmupStartedHandler.class);
 
-  public GameStartedHandler(DefaultApi defaultApi, GameRepository gameRepository,
-                            GameRunnerRegistry gameRunnerRegistry) {
+  public WarmupStartedHandler(DefaultApi defaultApi, GameRepository gameRepository,
+                              GameRunnerRegistry gameRunnerRegistry) {
     this.defaultApi = defaultApi;
     this.gameRepository = gameRepository;
     this.gameRunnerRegistry = gameRunnerRegistry;
@@ -44,7 +48,7 @@ public class GameStartedHandler implements ApplicationEventListener<InternalGame
   @Override
   @Async
   public void onApplicationEvent(InternalGameEvent event) {
-    var gameStarted = (InternalGameEvent.GameStarted) event;
+    var gameStarted = (InternalGameEvent.WarmupStarted) event;
 
     var game = gameRepository.findGameById(gameStarted.gameId())
         .orElseThrow();
@@ -65,6 +69,6 @@ public class GameStartedHandler implements ApplicationEventListener<InternalGame
 
   @Override
   public boolean supports(InternalGameEvent event) {
-    return event instanceof InternalGameEvent.GameStarted;
+    return event instanceof InternalGameEvent.WarmupStarted;
   }
 }

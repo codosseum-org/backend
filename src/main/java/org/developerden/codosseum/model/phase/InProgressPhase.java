@@ -20,9 +20,17 @@ import jakarta.validation.constraints.Positive;
 import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
 import org.developerden.codosseum.model.GamePlayers;
 
+/**
+ * The game is in progress.
+ * Due to the internal workings of the game loop, it is possible for the game to be in progress
+ * @param players
+ * @param currentChallenge
+ * @param currentRound
+ */
 @Serdeable
 @RecordBuilder
-public record InProgressPhase(GamePlayers players, ChallengeInfo currentChallenge,
+public record InProgressPhase(GamePlayers players,
+                              ChallengeInfo currentChallenge,
                               @Positive int currentRound)
     implements GamePhase, WithPlayersPhase {
   @Override
