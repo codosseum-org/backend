@@ -18,7 +18,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
 import org.developerden.codosseum.dto.GameCreateRequest;
@@ -41,7 +40,7 @@ import org.developerden.codosseum.service.game.GameCommand;
 import org.developerden.codosseum.service.game.GameRunner;
 import org.developerden.codosseum.service.game.GameRunnerRegistry;
 import org.developerden.codosseum.service.game.state.SnapshotStore;
-import org.developerden.codosseum.utils.CollectionUtils;
+import org.developerden.codosseum.utils.EnumUtils;
 
 @Singleton
 public class GameService {
@@ -54,11 +53,12 @@ public class GameService {
   private final PlayersMapper playersMapper;
   private final PhaseMapper phaseMapper;
 
-  public @Inject GameService(GameRepository gameRepository, GameModeFactory gameModeFactory,
-                             GameRunnerRegistry gameRunnerRegistry, SnapshotStore snapshotStore,
-                             AuthRepository authRepository,
-                             PlayersMapper playersMapper,
-                             PhaseMapper phaseMapper) {
+  @Inject
+  GameService(GameRepository gameRepository, GameModeFactory gameModeFactory,
+              GameRunnerRegistry gameRunnerRegistry, SnapshotStore snapshotStore,
+              AuthRepository authRepository,
+              PlayersMapper playersMapper,
+              PhaseMapper phaseMapper) {
     this.gameRepository = gameRepository;
     this.gameModeFactory = gameModeFactory;
     this.gameRunnerRegistry = gameRunnerRegistry;
@@ -72,13 +72,14 @@ public class GameService {
     return UUID.randomUUID().toString();
   }
 
+  /**
+   * Create a new game with the given settings and player as the creator.
+   *
+   * @param request the game creation request
+   * @return the response containing the game ID and player key
+   */
   public GameCreateResponse createGame(GameCreateRequest request) {
-    var gameModeTypes = EnumSet.allOf(GameModeType.class);
-    if (Optional.ofNullable(request.settings().allowedGameModes()).map(modes -> !modes.isEmpty())
-        .orElse(false)) {
-      gameModeTypes.retainAll(request.settings().allowedGameModes());
-    }
-    var gameModeType = CollectionUtils.pickRandom(gameModeTypes);
+    var gameModeType = EnumUtils.random(GameModeType.class, request.settings().allowedGameModes());
     var gameMode = gameModeFactory.fromType(gameModeType);
 
     var game = new Game(UUID.randomUUID(), request.settings(), gameMode);
