@@ -237,17 +237,10 @@ public class GameAggregate {
       return new Decision(List.of(), List.of());
     }
 
-    static Decision pure(List<InternalGameEvent> events) {
-      return new Decision(events, List.of());
-    }
-
     static Decision pure(InternalGameEvent... events) {
       return new Decision(Arrays.asList(events), List.of());
     }
 
-    public Decision withEffects(List<SideEffect> effects) {
-      return new Decision(events, effects);
-    }
 
     public Decision withEffects(SideEffect... effects) {
       return new Decision(events, Arrays.asList(effects));
