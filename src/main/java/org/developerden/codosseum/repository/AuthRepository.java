@@ -21,6 +21,17 @@ import org.developerden.codosseum.model.Game;
 import org.developerden.codosseum.model.player.EphemeralPlayer;
 import org.developerden.codosseum.model.player.GamePlayer;
 
+/**
+ * Repository for storing and retrieving authentication-related data.
+ *
+ * <p>There are 2 methods of authentication supported by Codosseum:
+ * <ul>
+ *   <li>Anonymous: When creating or joining a game, a player is assigned a name of their choosing, and a unique game key, which is used to authenticate them for the duration of the game. There is no long term persistence</li>
+ *   <li>Registered: A user signs up by providing email and password, or uses OIDC (e.g. to sign up with GitHub).  This creates a long term user account, which can be used to create and join games. Users authenticated through this method can be in multiple games at once with the same key.</li>
+ * </ul>
+ *
+ * <p>This type provides state management for both types of authentication.
+ */
 public interface AuthRepository {
 
   /**
@@ -32,9 +43,27 @@ public interface AuthRepository {
   Optional<EphemeralPlayer> findPlayerByGameKey(String gameKey);
 
 
-  Collection<EphemeralPlayer> allPlayers();
+  /**
+   * Get all players in the repository.
+   *
+   * @return all players.
+   */
+  Iterable<GamePlayer> allPlayers();
 
+  /**
+   * Save a player to the repository.
+   *
+   * @param game   the game the player is in.
+   * @param player the player to save.
+   */
   void save(Game game, EphemeralPlayer player);
 
+  /**
+   * Find a player by its name and game id.
+   *
+   * @param name the name of the player.
+   * @param id   the id of the game.
+   * @return a player in the given game going by the given name, or empty if not found.
+   */
   Optional<GamePlayer> findPlayerByNameAndGameId(String name, UUID id);
 }

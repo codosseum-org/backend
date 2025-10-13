@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 /**
  * An ephemeral player, not tied to any persistent identity.
  *
- * @param name   the name of the player, must be unique within a game.
+ * @param name   the name of the player, which must be unique within a game.
  * @param gameId the ID of the game the player is in.
  * @param key    a unique key for the player, used to identify them in the game.
  * @param admin  whether the player is an admin - if this is true, the {@link #key} can be also used to authenticate admin actions.

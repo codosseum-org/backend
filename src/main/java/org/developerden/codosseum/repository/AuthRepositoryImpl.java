@@ -15,7 +15,7 @@
 package org.developerden.codosseum.repository;
 
 import jakarta.inject.Singleton;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,8 +37,8 @@ public class AuthRepositoryImpl implements AuthRepository {
   }
 
   @Override
-  public Collection<EphemeralPlayer> allPlayers() {
-    return players.values();
+  public Iterable<GamePlayer> allPlayers() {
+    return new HashSet<>(players.values());
   }
 
   @Override
