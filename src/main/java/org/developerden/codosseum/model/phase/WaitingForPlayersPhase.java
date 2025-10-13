@@ -16,11 +16,18 @@ package org.developerden.codosseum.model.phase;
 
 import io.micronaut.serde.annotation.Serdeable;
 import jakarta.validation.constraints.NotNull;
+import javax.annotation.Nonnull;
 import org.developerden.codosseum.model.GamePlayers;
 
+/**
+ * Phase representing waiting for players to join, i.e. a "lobby"
+ *
+ * @param players the players in the game so far
+ */
 @Serdeable
 public record WaitingForPlayersPhase(@NotNull GamePlayers players)
     implements GamePhase, WithPlayersPhase {
+  @Nonnull
   @Override
   public GamePhaseKind getKind() {
     return GamePhaseKind.WAITING_FOR_PLAYERS;

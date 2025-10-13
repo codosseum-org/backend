@@ -20,12 +20,23 @@ import org.developerden.codosseum.model.GamePhase;
 import org.developerden.codosseum.model.player.GamePlayer;
 
 /**
- * A command that can be executed on a {@link org.developerden.codosseum.model.Game}.
+ * A command that can be executed on a {@link org.developerden.codosseum.model.Game} by sending it to its {@link GameRunner}.
  */
 public sealed interface GameCommand {
+  /**
+   * The id of the game this command is for.
+   *
+   * @return the game id
+   */
   UUID gameId();
 
 
+  /**
+   * Command to create a new game, triggering initial state setup.
+   *
+   * @param gameId  the id of the game to create. This should be unique.
+   * @param creator the player who created the game.
+   */
   record CreateGame(UUID gameId, GamePlayer creator) implements GameCommand {
   }
 
@@ -57,6 +68,7 @@ public sealed interface GameCommand {
   /**
    * Command to set the current challenge for a game.
    * It is undefined what this does if the game is not in a state to accept a new challenge (i.e. is already in progress).
+   * Generally, this command is only safe to send if the game is in the {@link GamePhase#WAITING_FOR_PLAYERS}, {@link GamePhase#WARMUP}, or {@link GamePhase#ROUND_OVER} phases.
    *
    * @param gameId the id of the game to set the challenge for
    * @param info   the challenge info to set
@@ -66,13 +78,20 @@ public sealed interface GameCommand {
 
   /**
    * Command to start a new round in a game.
-   * The game phase should be {@link GamePhase#IN_PROGRESS} for this to have any effect.
+   * The game phase should be {@link GamePhase#IN_PROGRESS} for this to have any effect,
+   * and an error may be thrown if it is not.
    *
    * @param gameId the id of the game to start the round for
    */
   record StartRound(UUID gameId) implements GameCommand {
   }
 
+  /**
+   * Command to end the current round in a game.
+   * The game phase should be {@link GamePhase#IN_PROGRESS} for this to have any effect.
+   *
+   * @param gameId the id of the game to end the round for
+   */
   record EndRound(UUID gameId) implements GameCommand {
   }
 

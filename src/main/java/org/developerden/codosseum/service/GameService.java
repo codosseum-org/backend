@@ -185,9 +185,6 @@ public class GameService {
   }
 
   public void beginWarmup(Game game) {
-    var runner = gameRunnerRegistry
-        .getOrCreate(game.id());
-
-    runner.tell(new GameCommand.StartWarmup(game.id()));
+    gameRunnerRegistry.sendCommand(new GameCommand.StartWarmup(game.id()));
   }
 }

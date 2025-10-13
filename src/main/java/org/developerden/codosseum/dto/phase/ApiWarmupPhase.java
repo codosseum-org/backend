@@ -11,13 +11,13 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+
 package org.developerden.codosseum.dto.phase;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.micronaut.serde.annotation.Serdeable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;
-import org.developerden.codosseum.model.phase.GamePhaseKind;
 
 @Serdeable
 @Schema(description = "Warmup countdown before the game starts")

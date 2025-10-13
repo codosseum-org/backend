@@ -14,12 +14,27 @@
 
 package org.developerden.codosseum.model.phase;
 
-import io.micronaut.serde.annotation.Serdeable;
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.annotation.Nonnull;
+import org.developerden.codosseum.dto.phase.ApiGamePhase;
+import org.developerden.codosseum.model.GameState;
 
-@Serdeable
+/**
+ * Internal model of a phase of the game.
+ * The phase is the state of a game that is specific to the current part of the game lifecycle.
+ * For example, the state needed while waiting for players to join is different to the state needed while the game is in progress.
+ *
+ * @see GamePhaseKind for the different kinds of phases.
+ * @see GameState for state across the entire game lifecycle.
+ * @see ApiGamePhase for the DTO representation of this interface.
+ */
 @Schema(description = "A phase of the game.")
 public sealed interface GamePhase
     permits InProgressPhase, UndefinedPhase, WaitingForPlayersPhase, WarmupPhase, WithPlayersPhase {
-  GamePhaseKind getKind();
+  /**
+   * The kind of phase this is. Serves as a simple discriminator for serialization or for checking the type of phase.
+   *
+   * @return the kind of phase, which should generally be unique across implementations of this interface.
+   */
+  @Nonnull GamePhaseKind getKind();
 }

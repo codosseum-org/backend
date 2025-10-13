@@ -15,9 +15,11 @@
 package org.developerden.codosseum.model.phase;
 
 import io.micronaut.serde.annotation.Serdeable;
+import javax.annotation.Nonnull;
 
 @Serdeable
 public record UndefinedPhase() implements GamePhase {
+  @Nonnull
   @Override
   public GamePhaseKind getKind() {
     return GamePhaseKind.UNDEFINED;

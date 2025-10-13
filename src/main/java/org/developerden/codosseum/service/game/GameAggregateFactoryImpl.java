@@ -18,8 +18,12 @@ import jakarta.inject.Singleton;
 import java.util.UUID;
 import org.developerden.codosseum.model.GameState;
 
+/**
+ * Implementation of {@link GameAggregateFactory}, used to create new instances of {@link GameAggregate}.
+ */
 @Singleton
 public class GameAggregateFactoryImpl implements GameAggregateFactory {
+
   @Override
   public GameAggregate create(UUID gameId, GameState snapshot) {
     return new GameAggregate(gameId, snapshot);

@@ -45,7 +45,7 @@ public record GameState(@Nonnull UUID gameId,
     var phase = phase();
     if (phase instanceof WithPlayersPhase wp) {
       var newPlayers = mutate.apply(wp.players());
-      var newPhase = (GamePhase) wp.withPlayers(newPlayers);
+      var newPhase = wp.withPlayers(newPlayers);
       return GameStateBuilder.from(this).withPhase(newPhase);
     }
     throw new IllegalStateException(

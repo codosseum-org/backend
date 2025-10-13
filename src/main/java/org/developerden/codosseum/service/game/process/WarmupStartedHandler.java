@@ -59,12 +59,7 @@ public class WarmupStartedHandler implements ApplicationEventListener<InternalGa
         null
     ).block();
 
-    gameRunnerRegistry.find(game.id())
-        .ifPresentOrElse(
-            runner -> // use ifPresent in case of race condition where the game has ended
-                runner.tell(new GameCommand.SetChallengeInfo(game.id(), info)),
-            () -> log.warn("Game runner does not exist for game {}", game.id()));
-
+    gameRunnerRegistry.sendCommand(new GameCommand.SetChallengeInfo(game.id(), info));
   }
 
   @Override

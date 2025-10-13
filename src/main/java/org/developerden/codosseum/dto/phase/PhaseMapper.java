@@ -25,6 +25,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.SubclassExhaustiveStrategy;
 import org.mapstruct.SubclassMapping;
 
+/**
+ * MapStruct Mapper for converting game phases to their API DTO representations.
+ */
 @Singleton
 @Mapper(
     componentModel = "jsr330"

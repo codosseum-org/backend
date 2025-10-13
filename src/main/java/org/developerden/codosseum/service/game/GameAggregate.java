@@ -50,7 +50,7 @@ public class GameAggregate {
 
   private final GameState gameState;
 
-  public GameAggregate(UUID gameId, GameState gameState) {
+  GameAggregate(UUID gameId, GameState gameState) {
     this.gameId = gameId;
     this.gameState = gameState;
   }
@@ -90,18 +90,26 @@ public class GameAggregate {
       Class<P> phaseClass) {
     if (!phaseClass.isInstance(gameState.phase())) {
       throw new IllegalStateException(
-          "Game is not in required phase: " + phaseClass.getSimpleName() + ", current phase: " +
-              gameState.phase());
+          "Game is not in required phase: " + phaseClass.getSimpleName() + ", current phase: "
+              + gameState.phase());
     }
     return phaseClass.cast(gameState.phase());
   }
 
+  /**
+   * Decide how to handle a command, producing events to send and side effects.
+   *
+   * @param cmd the command to handle.
+   * @return the decision containing events and side effects.
+   */
   private Decision decide(GameCommand cmd) {
     if (!cmd.gameId().equals(gameId)) {
       throw new IllegalArgumentException("Command gameId does not match aggregate gameId");
     }
 
     return switch (cmd) {
+      // Create Game command can only be handled in WAITING_FOR_PLAYERS phase
+      // and produces a GameCreated event
       case GameCommand.CreateGame(var id, var creator) -> {
         requirePhase(GamePhaseKind.WAITING_FOR_PLAYERS);
         yield Decision.pure(
@@ -109,6 +117,12 @@ public class GameAggregate {
         );
 
       }
+      /*
+       Start Game command can only be handled in WARMUP phase
+       and produces a RoundStarted event for round 1
+       If no challenge is set yet, it retries after a short delay in case the challenges service query is slow
+       The challenge is set by [WarmupStartedHandler] as soon as the warmup starts
+      */
       case GameCommand.StartGame(var id) -> {
         requirePhase(GamePhaseKind.WARMUP);
 
@@ -121,11 +135,15 @@ public class GameAggregate {
         }
         yield startRound(1);
       }
+      // Add Player command can only be handled in WAITING_FOR_PLAYERS phase
+      // and produces a PlayerJoined event
       case GameCommand.AddPlayer(var id, var player) -> {
         requirePhase(GamePhaseKind.WAITING_FOR_PLAYERS);
         yield Decision.pure(new InternalGameEvent.PlayerJoined(gameId, player));
       }
 
+      // Start Warmup command can only be handled in WAITING_FOR_PLAYERS phase
+      // and produces a WarmupStarted event and schedules a StartGame command after the warmup duration
       case GameCommand.StartWarmup(var id) -> {
         requirePhase(GamePhaseKind.WAITING_FOR_PLAYERS);
         // Emit warmup started and schedule transition to start after countdown
@@ -139,6 +157,8 @@ public class GameAggregate {
             )
         );
       }
+      // Set Challenge Info command can be handled in any phase (TODO: is this correct?)
+      // and produces a ChallengeSet event
       case GameCommand.SetChallengeInfo(var id, var challenge) -> Decision.pure(
           new InternalGameEvent.ChallengeSet(gameId, challenge)
       );

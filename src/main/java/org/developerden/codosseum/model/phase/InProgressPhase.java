@@ -17,15 +17,17 @@ package org.developerden.codosseum.model.phase;
 import io.micronaut.serde.annotation.Serdeable;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import jakarta.validation.constraints.Positive;
+import javax.annotation.Nonnull;
 import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
 import org.developerden.codosseum.model.GamePlayers;
 
 /**
  * The game is in progress.
- * Due to the internal workings of the game loop, it is possible for the game to be in progress
- * @param players
- * @param currentChallenge
- * @param currentRound
+ * This phase includes information about the current challenge and round
+ *
+ * @param players          the players in the game
+ * @param currentChallenge the current challenge
+ * @param currentRound     the current round number (1-based)
  */
 @Serdeable
 @RecordBuilder
@@ -33,6 +35,8 @@ public record InProgressPhase(GamePlayers players,
                               ChallengeInfo currentChallenge,
                               @Positive int currentRound)
     implements GamePhase, WithPlayersPhase {
+
+  @Nonnull
   @Override
   public GamePhaseKind getKind() {
     return GamePhaseKind.IN_PROGRESS;

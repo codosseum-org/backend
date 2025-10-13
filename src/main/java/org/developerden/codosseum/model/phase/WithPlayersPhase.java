@@ -16,6 +16,7 @@ package org.developerden.codosseum.model.phase;
 
 import io.micronaut.serde.annotation.Serdeable;
 import org.developerden.codosseum.model.GamePlayers;
+
 @Serdeable
 public sealed interface WithPlayersPhase extends GamePhase
     permits InProgressPhase, WaitingForPlayersPhase, WarmupPhase {

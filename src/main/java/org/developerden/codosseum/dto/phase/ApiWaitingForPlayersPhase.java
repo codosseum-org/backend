@@ -17,7 +17,6 @@ package org.developerden.codosseum.dto.phase;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.micronaut.serde.annotation.Serdeable;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.developerden.codosseum.model.phase.GamePhaseKind;
 
 @Serdeable
 @Schema(description = "Waiting for players to join before the game can begin")

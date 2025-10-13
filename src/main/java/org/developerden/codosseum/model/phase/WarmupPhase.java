@@ -16,11 +16,13 @@ package org.developerden.codosseum.model.phase;
 
 import io.micronaut.serde.annotation.Serdeable;
 import java.time.Instant;
+import javax.annotation.Nonnull;
 import org.developerden.codosseum.model.GamePlayers;
 
 @Serdeable
 public record WarmupPhase(GamePlayers players, Instant warmupEndsAt)
     implements GamePhase, WithPlayersPhase {
+  @Nonnull
   @Override
   public GamePhaseKind getKind() {
     return GamePhaseKind.WARMUP;
