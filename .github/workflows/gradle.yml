@@ -21,7 +21,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Build with Gradle
-        run: ./gradlew build --no-daemon --no-configuration-cache
+        run: ./gradlew build --no-daemon --no-configuration-cache --stacktrace --info
   checkstyle:
     runs-on: ubuntu-latest
     steps:
