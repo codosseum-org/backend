@@ -12,24 +12,19 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.developerden.codosseum.model.player;
+package org.developerden.codosseum.auth;
 
+import java.util.Set;
 import java.util.UUID;
-import javax.annotation.Nonnull;
-
 
 /**
- * An ephemeral player, not tied to any persistent identity.
- *
- * @param name   the name of the player, which must be unique within a game.
- * @param gameId the ID of the game the player is in.
- * @param key    a unique key for the player, used to identify them in the game.
- * @param admin  whether the player is an admin - if this is true, the {@link #key} can be also used to authenticate admin actions.
+ * Request-scoped view of the authenticated caller in the context of a game.
+ * Values are parsed and normalised from {@link io.micronaut.security.authentication.Authentication} attributes.
  */
-public record EphemeralPlayer(@Nonnull String name,
-                              @Nonnull UUID gameId,
-                              @Nonnull String key,
-                              boolean admin)
-    implements GamePlayer, CodosseumUser {
-
+public record CurrentPlayer(
+    String name,
+    UUID userId, // present for oauth users
+    UUID activeGameId, // present for game-scoped operations
+    Set<String> roles
+) {
 }

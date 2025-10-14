@@ -14,6 +14,6 @@
 
 package org.developerden.codosseum.model.player;
 
-public sealed interface GamePlayer permits EphemeralPlayer {
+public sealed interface GamePlayer permits EphemeralPlayer, RegisteredPlayer {
   String name();
 }

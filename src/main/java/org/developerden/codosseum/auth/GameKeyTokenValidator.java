@@ -28,13 +28,22 @@ import reactor.core.publisher.Mono;
 @Singleton
 public class GameKeyTokenValidator implements TokenValidator<HttpRequest<?>> {
   private final AuthRepository authRepository;
+  private final GameKeyTokenReader gameKeyTokenReader;
 
-  public GameKeyTokenValidator(AuthRepository authRepository) {
+  public GameKeyTokenValidator(AuthRepository authRepository,
+                               GameKeyTokenReader gameKeyTokenReader) {
     this.authRepository = authRepository;
+    this.gameKeyTokenReader = gameKeyTokenReader;
   }
 
   @Override
   public Publisher<Authentication> validateToken(String token, @Nullable HttpRequest<?> request) {
+    if (request == null || token == null || token.isBlank()) {
+      return Mono.empty();
+    }
+    if (gameKeyTokenReader.findToken(request).isEmpty()) {
+      return Mono.empty(); // not applicable here
+    }
     Optional<EphemeralPlayer> playerByGameKey = authRepository.findPlayerByGameKey(token);
     return Mono.justOrEmpty(playerByGameKey)
         .map(PlayerAuthentication::buildFrom);

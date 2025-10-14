@@ -14,12 +14,12 @@
 
 package org.developerden.codosseum.repository;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 import org.developerden.codosseum.model.Game;
 import org.developerden.codosseum.model.player.EphemeralPlayer;
 import org.developerden.codosseum.model.player.GamePlayer;
+import org.developerden.codosseum.model.player.RegisteredUser;
 
 /**
  * Repository for storing and retrieving authentication-related data.
@@ -65,5 +65,11 @@ public interface AuthRepository {
    * @param id   the id of the game.
    * @return a player in the given game going by the given name, or empty if not found.
    */
-  Optional<GamePlayer> findPlayerByNameAndGameId(String name, UUID id);
+  Optional<EphemeralPlayer> findPlayerByNameAndGameId(String name, UUID id);
+
+
+  Optional<RegisteredUser> findRegisteredUserById(UUID id);
+
+  void saveRegisteredUser(RegisteredUser user);
+
 }

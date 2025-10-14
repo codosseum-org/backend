@@ -24,7 +24,7 @@ import org.developerden.codosseum.mode.GameModeType
 import spock.lang.Specification
 
 @MicronautTest
-class PlayerControllerSpec extends Specification {
+class PlayersControllerSpec extends Specification {
     @Inject
     @Client("/")
     HttpClient http

@@ -14,22 +14,11 @@
 
 package org.developerden.codosseum.model.player;
 
-import java.util.UUID;
-import javax.annotation.Nonnull;
-
-
 /**
- * An ephemeral player, not tied to any persistent identity.
+ * Internal representation of a <i>user</i>, as in, someone with some information registered on the system.
+ * This can be either a {@link RegisteredUser}, who has an account, or an {@link EphemeralPlayer}, who does not.
  *
- * @param name   the name of the player, which must be unique within a game.
- * @param gameId the ID of the game the player is in.
- * @param key    a unique key for the player, used to identify them in the game.
- * @param admin  whether the player is an admin - if this is true, the {@link #key} can be also used to authenticate admin actions.
+ * @apiNote This is distinct from a {@link GamePlayer}, which is a user in the context of a specific game.
  */
-public record EphemeralPlayer(@Nonnull String name,
-                              @Nonnull UUID gameId,
-                              @Nonnull String key,
-                              boolean admin)
-    implements GamePlayer, CodosseumUser {
-
+public sealed interface CodosseumUser permits EphemeralPlayer, RegisteredUser {
 }

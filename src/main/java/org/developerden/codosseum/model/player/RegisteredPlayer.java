@@ -14,22 +14,23 @@
 
 package org.developerden.codosseum.model.player;
 
+import java.util.Set;
 import java.util.UUID;
-import javax.annotation.Nonnull;
-
+import org.developerden.codosseum.auth.GameRole;
+import org.developerden.codosseum.model.Game;
 
 /**
- * An ephemeral player, not tied to any persistent identity.
+ * Membership of a {@link RegisteredUser} in a specific game.
  *
- * @param name   the name of the player, which must be unique within a game.
- * @param gameId the ID of the game the player is in.
- * @param key    a unique key for the player, used to identify them in the game.
- * @param admin  whether the player is an admin - if this is true, the {@link #key} can be also used to authenticate admin actions.
+ * @param userId the unique identifier of the {@link RegisteredUser}
+ * @param gameId the unique identifier of the {@link Game}
+ * @param name the display name of the player in the game
+ * @param roles the roles assigned to the player in the game
  */
-public record EphemeralPlayer(@Nonnull String name,
-                              @Nonnull UUID gameId,
-                              @Nonnull String key,
-                              boolean admin)
-    implements GamePlayer, CodosseumUser {
-
+public record RegisteredPlayer(
+    UUID userId,
+    UUID gameId,
+    String name,
+    Set<GameRole> roles
+) implements GamePlayer {
 }

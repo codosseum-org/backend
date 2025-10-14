@@ -12,36 +12,30 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.developerden.codosseum.auth;
+package org.developerden.codosseum.dto.user;
 
-import io.micronaut.security.authentication.Authentication;
+import io.micronaut.serde.annotation.Serdeable;
 import jakarta.annotation.Nonnull;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
+import jakarta.annotation.Nullable;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import org.developerden.codosseum.dto.Player;
+import org.developerden.codosseum.model.player.CodosseumUser;
 import org.developerden.codosseum.model.player.EphemeralPlayer;
+import org.developerden.codosseum.model.player.RegisteredUser;
 
-public final class PlayerAuthentication {
-
-  public static final String ACTIVE_GAME_ID = "activeGameId";
-
-  public static Authentication build(
-      @Nonnull String name, @Nonnull UUID activeGameId, @Nonnull Set<GameRole> roles) {
-    return Authentication.build(
-        name,
-        roles.stream().map(Enum::name).collect(Collectors.toSet()),
-        Map.of(ACTIVE_GAME_ID, activeGameId)
-    );
-  }
-
-  public static Authentication buildFrom(EphemeralPlayer ephemeralPlayer) {
-    return build(
-        ephemeralPlayer.name(),
-        ephemeralPlayer.gameId(),
-        ephemeralPlayer.admin() ? EnumSet.of(GameRole.ADMIN, GameRole.PLAYER) : EnumSet.of(GameRole.PLAYER)
-    );
-  }
-
+/**
+ * DTO for a user, with minimal game-specific information.
+ *
+ * @param id     the unique identifier of the user, or null if the user is not a {@link RegisteredUser}.
+ * @param name   the display name of the user.
+ * @param gameId the unique identifier of the game the user is registered in, if the user is a {@link EphemeralPlayer}, null otherwise
+ * @see CodosseumUser the internal representation of this type
+ * @see Player the game-specific DTO representation of a user
+ */
+@Serdeable
+public record User(
+    @Nullable UUID id,
+    @Nonnull String name,
+    @Nullable UUID gameId
+) {
 }

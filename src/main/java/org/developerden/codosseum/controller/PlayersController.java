@@ -40,12 +40,14 @@ import org.developerden.codosseum.service.GameService;
 @Validated
 @Controller("/games/{id}/players")
 @Secured(SecurityRule.IS_AUTHENTICATED)
-public class PlayerController {
+public class PlayersController {
 
   private final GameService gameService;
 
-  public PlayerController(GameService gameService) {
+
+  public PlayersController(GameService gameService) {
     this.gameService = gameService;
+
   }
 
   @Get
@@ -73,11 +75,11 @@ public class PlayerController {
     }
   }
 
-
   @Delete("/@self")
   @GameAuthorized(GameRole.PLAYER)
   public HttpResponse<Void> leaveGame(Principal principal, @PathVariable("id") Game game) {
     throw new UnsupportedOperationException();
   }
+
 
 }
