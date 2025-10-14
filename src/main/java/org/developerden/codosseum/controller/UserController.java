@@ -22,8 +22,6 @@ import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import jakarta.inject.Inject;
-import org.developerden.codosseum.auth.GameAuthorized;
-import org.developerden.codosseum.auth.GameRole;
 import org.developerden.codosseum.dto.PlayersMapper;
 import org.developerden.codosseum.dto.user.User;
 import org.developerden.codosseum.model.player.UserMapper;
@@ -50,7 +48,6 @@ public class UserController {
   }
 
   @Get("/@self")
-  @GameAuthorized(GameRole.PLAYER)
   public HttpResponse<User> getSelf(Authentication principal) {
     return authService.getUserInfoFromAuth(principal)
         .map(userMapper::toDto)

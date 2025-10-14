@@ -36,6 +36,11 @@ public class GameAuthorizationRule extends AbstractSecurityRule<HttpRequest<?>> 
   }
 
   @Override
+  public int getOrder() {
+    return Integer.MIN_VALUE + 100;
+  }
+
+  @Override
   public Publisher<SecurityRuleResult> check(@Nullable HttpRequest<?> request,
                                              @Nullable Authentication authentication) {
 
@@ -64,6 +69,8 @@ public class GameAuthorizationRule extends AbstractSecurityRule<HttpRequest<?>> 
   }
 
   private boolean matchesGameId(Authentication authentication, String gameId) {
-    return gameId.equals(authentication.getAttributes().get("activeGameId"));
+    return gameId.equals(
+        String.valueOf(authentication.getAttributes().get(PlayerAuthentication.ACTIVE_GAME_ID))
+    );
   }
 }

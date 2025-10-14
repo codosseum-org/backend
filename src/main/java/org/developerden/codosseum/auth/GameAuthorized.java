@@ -19,6 +19,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation to specify that a route requires the user to have one of the specified roles in a game.
+ * If the user does not have one of the specified roles, a 403 Forbidden response will be returned.
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface GameAuthorized {
