@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2023 JohnnyJayJay
+ * SPDX-FileCopyrightText: 2025 Alexander Wood (BristerMitten)
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of
@@ -12,10 +12,24 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
-package org.developerden.codosseum.model;
+package org.developerden.codosseum;
 
-public record EphemeralPlayer(String name, String key, boolean admin) {
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+import io.micronaut.http.client.BlockingHttpClient;
+import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.annotation.Client;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
+
+@MicronautTest
+class SwaggerUiTest {
+
+  @Test
+  void openApi(@Client("/") HttpClient httpClient) {
+    BlockingHttpClient client = httpClient.toBlocking();
+    assertDoesNotThrow(() -> client.exchange("/swagger-ui/index.html"));
+  }
 }

@@ -699,7 +699,7 @@ components:
           description: Current game state
         timeLeft:
           type: integer
-          description: Time left in seconds until "next thing" (warmup countdown, round timer, next rount countdown)
+          description: Time left in seconds until "next thing" (warmup countdown, round timer, next round countdown)
 
     EliminatedEvent:
       type: object

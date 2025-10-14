@@ -1,9 +1,7 @@
 name: Gradle build
 on:
   push:
-    branches: [ main, develop ]
   pull_request:
-    branches: [ main, develop ]
 
 permissions:
   contents: read
@@ -17,11 +15,13 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 25
+
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build --no-daemon
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Build with Gradle
+        run: ./gradlew build --no-daemon
   checkstyle:
     runs-on: ubuntu-latest
     steps:
@@ -30,8 +30,9 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 25
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: checkstyleMain checkstyleTest --no-daemon
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Run Checkstyle
+        run: ./gradlew checkstyleMain checkstyleTest --no-daemon

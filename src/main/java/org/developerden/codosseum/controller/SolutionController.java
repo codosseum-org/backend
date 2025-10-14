@@ -1,18 +1,15 @@
 /*
- * SPDX-FileCopyrightText: 2023 JohnnyJayJay
- * SPDX-License-Identifier: AGPL-3.0-or-later
+ * # SPDX-FileCopyrightText: 2025 Alexander Wood (BristerMitten)
+ * # SPDX-License-Identifier: AGPL-3.0-or-later
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation, either
- * version 3 of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
+ *  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  See the GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package org.developerden.codosseum.controller;
@@ -31,7 +28,6 @@ import org.developerden.codosseum.auth.GameAuthorized;
 import org.developerden.codosseum.auth.GameRole;
 import org.developerden.codosseum.dto.Submission;
 import org.developerden.codosseum.dto.TestResponse;
-import org.developerden.codosseum.model.Game;
 
 @Validated
 @Controller("/games/{id}/solutions")
@@ -40,7 +36,7 @@ public class SolutionController {
   @Post("/test")
   @GameAuthorized(GameRole.PLAYER)
   public HttpResponse<TestResponse> testSolution(
-      @PathVariable("id") Game game,
+      @PathVariable("id") String gameId,
       @Nullable @QueryValue List<Integer> testNumbers,
       @Valid @Body Submission submission
   ) {
@@ -50,7 +46,7 @@ public class SolutionController {
   @Post("/submit")
   @GameAuthorized(GameRole.PLAYER)
   public HttpResponse<Void> submitSolution(
-      @PathVariable("id") Game game,
+      @PathVariable("id") String gameId,
       @Valid @Body Submission submission
   ) {
     throw new UnsupportedOperationException();

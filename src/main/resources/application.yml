@@ -12,5 +12,41 @@
 # You should have received a copy of the GNU Affero General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>.
 micronaut:
+
   application:
     name: codosseum
+  security:
+    authentication: idtoken
+    oauth2:
+      clients:
+        keycloak:
+          client-secret: '${OAUTH_CLIENT_SECRET:secret}'
+          client-id: '${OAUTH_CLIENT_ID:myclient}'
+          openid:
+            issuer: '${OIDC_ISSUER_DOMAIN:`http://localhost:8080`}/realms/${KEYCLOAK_REALM:myrealm}'
+    endpoints:
+      logout:
+        get-allowed: true
+    intercept-url-map:
+      - pattern: /swagger/**
+        http-method: GET
+        access:
+          - isAnonymous()
+      - pattern: /swagger-ui/**
+        http-method: GET
+        access:
+          - isAnonymous()
+
+  caches:
+    templates:
+      expire-after-write: 5m
+
+  router:
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /swagger/**
+
+      swagger-ui:
+        paths: classpath:META-INF/swagger/views/swagger-ui
+        mapping: /swagger-ui/**

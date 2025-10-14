@@ -1,0 +1,49 @@
+/*
+ * # SPDX-FileCopyrightText: 2025 Alexander Wood (BristerMitten)
+ * # SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package org.developerden.codosseum.model.phase;
+
+import io.micronaut.serde.annotation.Serdeable;
+import io.soabase.recordbuilder.core.RecordBuilder;
+import jakarta.validation.constraints.Positive;
+import javax.annotation.Nonnull;
+import org.developerden.codosseum.challenges.client.model.ChallengeInfo;
+import org.developerden.codosseum.model.GamePlayers;
+
+/**
+ * The game is in progress.
+ * This phase includes information about the current challenge and round
+ *
+ * @param players          the players in the game
+ * @param currentChallenge the current challenge
+ * @param currentRound     the current round number (1-based)
+ */
+@Serdeable
+@RecordBuilder
+public record InProgressPhase(GamePlayers players,
+                              ChallengeInfo currentChallenge,
+                              @Positive int currentRound)
+    implements GamePhase, WithPlayersPhase {
+
+  @Nonnull
+  @Override
+  public GamePhaseKind getKind() {
+    return GamePhaseKind.IN_PROGRESS;
+  }
+
+  @Override
+  public WithPlayersPhase withPlayers(GamePlayers players) {
+    return new InProgressPhase(players, currentChallenge, currentRound);
+  }
+}

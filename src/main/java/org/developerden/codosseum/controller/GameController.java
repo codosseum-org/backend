@@ -1,23 +1,21 @@
 /*
- * SPDX-FileCopyrightText: 2023 JohnnyJayJay
- * SPDX-License-Identifier: AGPL-3.0-or-later
+ * # SPDX-FileCopyrightText: 2025 Alexander Wood (BristerMitten)
+ * # SPDX-License-Identifier: AGPL-3.0-or-later
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation, either
- * version 3 of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
+ *  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  See the GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package org.developerden.codosseum.controller;
 
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -31,54 +29,145 @@ import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.sse.Event;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import java.net.URI;
 import java.security.Principal;
+import java.util.Optional;
+import java.util.UUID;
 import org.developerden.codosseum.auth.GameAuthorized;
 import org.developerden.codosseum.auth.GameRole;
+import org.developerden.codosseum.controller.binder.GameParam;
+import org.developerden.codosseum.dto.GameCreateRequest;
 import org.developerden.codosseum.dto.GameCreateResponse;
 import org.developerden.codosseum.dto.GameInfo;
 import org.developerden.codosseum.dto.GameSettings;
 import org.developerden.codosseum.event.GameEvent;
 import org.developerden.codosseum.model.Game;
+import org.developerden.codosseum.service.GameService;
+import org.developerden.codosseum.service.game.event.SseEventSink;
 import org.reactivestreams.Publisher;
 
 @Validated
 @Controller("/games")
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class GameController {
 
-  @Post
-  public HttpResponse<GameCreateResponse> createGame(@Valid @Body GameSettings settings) {
-    throw new UnsupportedOperationException();
+  private final GameService gameService;
+
+  private final SseEventSink eventSink;
+
+  public GameController(GameService gameService, SseEventSink eventSink) {
+    this.gameService = gameService;
+    this.eventSink = eventSink;
   }
 
-  // typed argument binding for looking up games
+  @Post
+  @Secured(SecurityRule.IS_ANONYMOUS)
+  @ApiResponse(
+      responseCode = "201",
+      description = "new game created",
+      content = @Content(),
+      headers = @Header(
+          name = "Location",
+          description = "URL of the newly created game",
+          required = true,
+          schema = @Schema(
+              type = "string",
+              format = "uri-reference"
+          )
+      )
+  )
+  public HttpResponse<GameCreateResponse> createGame(@Valid @Body GameCreateRequest request) {
+    GameCreateResponse response = gameService.createGame(request);
+    return HttpResponse.created(response, URI.create(response.id().toString()));
+  }
+
   @Get("/{id}")
-  public HttpResponse<GameInfo> getGame(@PathVariable("id") Game game) {
-    throw new UnsupportedOperationException();
+  @Secured(SecurityRule.IS_ANONYMOUS)
+  public HttpResponse<GameInfo> getGame(@PathVariable("id") UUID gameId) {
+    Optional<GameInfo> game = gameService.getGame(gameId);
+    if (game.isEmpty()) {
+      return HttpResponse.notFound();
+    }
+    return HttpResponse.ok(game.get());
   }
 
   @Patch("/{id}")
   @GameAuthorized(GameRole.ADMIN)
   public HttpResponse<GameInfo> updateGame(
       Principal principal,
-      @PathVariable("id") Game game,
+      @PathVariable("id") String gameId,
       @Valid @Body GameSettings settings
   ) {
-    throw new UnsupportedOperationException();
+    return HttpResponse.ok(gameService.updateGame(gameId, settings));
   }
 
   @Delete("/{id}")
   @GameAuthorized(GameRole.ADMIN)
-  public HttpResponse<Void> deleteGame(Principal principal, @PathVariable("id") Game game) {
-    throw new UnsupportedOperationException();
+  public HttpResponse<Void> deleteGame(Principal principal, @PathVariable("id") String gameId) {
+    gameService.deleteGame(gameId);
+    return HttpResponse.noContent();
   }
+
+  @Post("/{id}/warmup")
+  @GameAuthorized(GameRole.ADMIN)
+  @Operation(operationId = "beginWarmup",
+      summary = "Force the warmup phase of a game to begin",
+      description = "Starts the warmup phase of a game, regardless of player-count"
+  )
+  @ApiResponse(
+      responseCode = "204",
+      description = "Successfully started the warmup phase. "
+          + "Further info will be received via server-sent events."
+  )
+  @ApiResponse(
+      responseCode = "409",
+      description = "Game is already running or finished")
+  public HttpResponse<Void> beginWarmup(Principal principal,
+                                        @PathVariable("id") UUID id,
+                                        @Parameter(hidden = true) @GameParam Game game) {
+    try {
+      gameService.beginWarmup(game);
+      return HttpResponse.noContent();
+    } catch (IllegalStateException e) {
+      return HttpResponse.status(HttpStatus.CONFLICT);
+    }
+  }
+
 
   @Post("/{id}/start")
   @GameAuthorized(GameRole.ADMIN)
-  public HttpResponse<Void> startGame(Principal principal, @PathVariable("id") Game game) {
-    throw new UnsupportedOperationException();
+  @Operation(operationId = "startGame",
+      summary = "Start a game",
+      description = "Forcefully start a game, regardless of player-count and warmup time")
+  @ApiResponse(
+      responseCode = "204",
+      description = "Successfully started the game. "
+          + "Further info will be received via server-sent events."
+  )
+  @ApiResponse(
+      responseCode = "409",
+      description = "Game is already running or finished"
+  )
+
+  public HttpResponse<Void> startGame(Principal principal, @PathVariable("id") UUID gameId) {
+    try {
+      gameService.startGame(gameId);
+    } catch (IllegalStateException e) {
+      return HttpResponse.status(HttpStatus.CONFLICT);
+    }
+
+    return HttpResponse.noContent();
   }
 
   @Get("/{id}/template")
@@ -86,27 +175,33 @@ public class GameController {
   @Produces(MediaType.TEXT_PLAIN)
   public HttpResponse<String> getCodeTemplate(
       Principal principal,
-      @PathVariable("id") Game game,
+      @PathVariable("id") String gameId,
+      // add custom validation annotation here
       @QueryValue("lang") String language
   ) {
-    throw new UnsupportedOperationException();
+    return HttpResponse.ok(gameService.getTemplate(gameId, language));
   }
 
   @Post("/{id}/restart")
   @GameAuthorized(GameRole.PLAYER)
   public HttpResponse<GameCreateResponse> restartGame(
-      Principal principal, @PathVariable("id") Game game
+      Principal principal,
+      @PathVariable("id") String gameId,
+      @Valid @Body GameSettings settings
   ) {
-    throw new UnsupportedOperationException();
+    GameCreateResponse response = gameService.restartGame(gameId);
+    return HttpResponse.created(response, URI.create(response.id().toString()));
   }
 
   @ExecuteOn(TaskExecutors.IO)
   @Get("/{id}/events")
   @Produces(MediaType.TEXT_EVENT_STREAM)
+  @Secured(SecurityRule.IS_ANONYMOUS)
   public Publisher<Event<GameEvent>> subscribeToGameEvents(
       @Nullable Principal principal,
-      @PathVariable("id") Game game
+      @PathVariable("id") UUID gameId
   ) {
-    throw new UnsupportedOperationException();
+    return eventSink.subscribeToPublicSse(gameId);
   }
+
 }
